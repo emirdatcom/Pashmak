@@ -169,3 +169,7 @@ abstract PaymentGateway {
 | DB | drift in-memory (`NativeDatabase.memory()`) | DAOها، migration (`drift_dev` schema dumps + `SchemaVerifier`) |
 | Widget | `flutter_test` + golden (فونت فارسی بارگذاری‌شده) | صفحات کلیدی RTL |
 | Integration | `integration_test` با `FakeGateway` و سرور mock | آنبوردینگ ← عادت ← ماجراجویی ← خرید |
+
+
+## چت پشتیبانی (پرامپت 21)
+`features/support`: `SupportSocket` (WebSocket با فریم auth)، fallback HTTP cursor، `support_poll` در WorkManager (خودزمان‌بندی)، outbox با backoff؛ متن‌ها فقط با `copy.t()`. SDK بازار/مایکت جدا و با `app/tool/check_sdk_separation.sh` در CI اعمال می‌شود (D-7).

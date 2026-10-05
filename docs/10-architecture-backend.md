@@ -109,9 +109,10 @@ backend/
 | `daily_metrics` (materialized/rollup توسط worker) | `day`, `metric`, `dims` JSONB, `value` |
 
 ### ۵.۵ backup (فاز ۲)
+بدون object storage (D-3): blob فقط در Postgres نگه‌داری می‌شود؛ بیش از ۵MB ← `BACKUP_TOO_LARGE`.
 | جدول | فیلدها |
 |---|---|
-| `backups` | `user_id` PK, `blob_ref` (کلید object storage یا bytea اگر < 5MB), `size_bytes`, `schema_version`, `sha256`, `kdf_params` JSONB, `updated_at` |
+| `backups` | `user_id` PK, `blob` bytea NOT NULL (حداکثر ۵MB، `BACKUP_MAX_BYTES`), `size_bytes`, `schema_version`, `sha256`, `kdf_params` JSONB, `updated_at` |
 
 ```mermaid
 erDiagram
@@ -125,6 +126,15 @@ erDiagram
   users ||--o| backups : has
   users ||--o{ events : emits
 ```
+
+### ۵.۶ support (چت پشتیبانی، D-2)
+| جدول | فیلدها |
+|---|---|
+| `support_conversations` | یک مکالمه‌ی غیربسته per کاربر؛ `status`, `last_message_at`, `closed_at`, `device_meta` (فقط با رضایت) |
+| `support_messages` | `id` UUIDv7 (cursor), `conversation_id`, `sender`, `body_enc` (AES-GCM با `DATA_ENC_KEY`), `client_msg_id` (idempotent) |
+| `support_operators` / `support_canned_replies` | اپراتور (bcrypt، session cookie + CSRF، IP allowlist، audit) و پاسخ‌های آماده (شامل پاسخ «پریشانی» که به صفحه ایمنی ارجاع می‌دهد) |
+
+WebSocket: فریم auth (توکن هرگز در URL)؛ بستن با 4401 (unauthorized) / 4503 (disabled)؛ fan-out با Postgres LISTEN/NOTIFY؛ fallback HTTP با cursor. کلید kill switch: `support.enabled` ← `SUPPORT_DISABLED` 503 (کاربر همچنان می‌تواند مکالمه‌اش را حذف کند). مکالمه‌ی بسته‌شده ۱۲ ماه نگه‌داری می‌شود؛ `DELETE /v1/me` مکالمه را حذف می‌کند.
 
 ## ۶. قرارداد API (v1)
 - Base: `https://api.{domain}/v1`، JSON، `snake_case`.
@@ -187,7 +197,7 @@ erDiagram
 **Event**: `{event_id (uuid, idempotency), name, ts, session_id, props}` — نام‌ها فقط از فهرست سند ۷۰؛ رویداد ناشناخته `rejected`.
 
 ### ۶.۳ کدهای خطا
-`INVALID_INPUT` 400، `PHONE_INVALID` 400، `OTP_INVALID` 400، `OTP_EXPIRED` 400، `UNAUTHENTICATED` 401، `TOKEN_INVALID` 401، `TOKEN_REUSED` 401، `FORBIDDEN` 403، `NOT_FOUND` 404، `TRIAL_ALREADY_USED` 409، `TRIAL_DISABLED` 409، `PURCHASE_ALREADY_CLAIMED` 409، `PURCHASE_INVALID` 422، `PAYLOAD_TOO_LARGE` 413، `BACKUP_TOO_LARGE` 413، `RATE_LIMITED` 429، `UPGRADE_REQUIRED` 426، `MARKET_UNAVAILABLE` 503، `SMS_UNAVAILABLE` 503، `INTERNAL` 500.
+`INVALID_INPUT` 400، `PHONE_INVALID` 400، `OTP_INVALID` 400، `OTP_EXPIRED` 400، `UNAUTHENTICATED` 401، `TOKEN_INVALID` 401، `TOKEN_REUSED` 401، `FORBIDDEN` 403، `NOT_FOUND` 404، `TRIAL_ALREADY_USED` 409، `TRIAL_DISABLED` 409، `PURCHASE_ALREADY_CLAIMED` 409، `PURCHASE_INVALID` 422، `PAYLOAD_TOO_LARGE` 413، `BACKUP_TOO_LARGE` 413، `RATE_LIMITED` 429، `UPGRADE_REQUIRED` 426، `MARKET_UNAVAILABLE` 503، `SMS_UNAVAILABLE` 503، `SUPPORT_DISABLED` 503، `INTERNAL` 500.
 
 ### ۶.۴ Admin (`/admin/v1`، Basic Auth + IP allowlist، فقط از شبکه مدیریت)
 | متد | مسیر | کار |
@@ -263,7 +273,7 @@ flowchart LR
   Caddy --> API[api container]
   API --> PG[(postgres container + volume)]
   Worker[worker container] --> PG
-  Cron[pg_dump روزانه] --> OS[(object storage ایرانی\n[نیاز به راستی‌آزمایی])]
+  Cron[pg_dump شبانه → age → volume] --> OFF[(rsync به سرور دوم\nپس از age)]
 ```
 - یک VPS ایرانی (پیشنهاد اولیه: ۴ vCPU، ۸GB RAM، ۱۶۰GB SSD).
 - Docker Compose؛ image چندمرحله‌ای distroless؛ مهاجرت قبل از start (`cmd/migrate up`).
@@ -274,7 +284,7 @@ flowchart LR
 ## ۱۴. مشاهده‌پذیری
 - لاگ JSON با `request_id`, `user_id` (نه توکن، نه شماره)، `route`, `status`, `latency_ms`.
 - متریک‌ها: `http_requests_total{route,status}`، `http_request_duration_seconds`، `market_verify_total{market,result}`، `events_ingested_total`، `db_pool_*`.
-- هشدار (Alertmanager یا اسکریپت ساده به تلگرام/بله **[نیاز به راستی‌آزمایی]**): 5xx > 2% در ۵ دقیقه، `market_verify` خطا > 20%، دیسک > 80%.
+- هشدار (Alertmanager → `alert-relay` → پیامک sms.ir به `ALERT_PHONES`؛ D-5؛ تنظیمات با promtool راستی‌آزمایی نشده): 5xx > 2% در ۵ دقیقه، `market_verify` خطا > 20%، دیسک > 80%.
 - Error tracking اختیاری: GlitchTip خودمیزبان (Sentry-compatible).
 
 ## ۱۵. تست

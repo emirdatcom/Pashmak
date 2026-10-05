@@ -13,6 +13,7 @@
 ## ۲. قواعد عمومی جداول محلی
 - PK: `id TEXT` UUIDv7 تولید روی دستگاه.
 - زمان‌ها: `INTEGER` epoch ms UTC. روز: `local_day TEXT` `YYYY-MM-DD` (گرگوری، محاسبه با `day_start_hour` و timezone دستگاه).
+- چت پشتیبانی (D-2): جداول `support_*` فقط روی سرور؛ کلاینت یک کش محلی دارد (drift schema v2، جدول پیام‌های پشتیبانی) و صف outbox برای ارسال idempotent با `client_msg_id`.
 - حذف نرم برای داده‌ی کاربر: `deleted_at` (برای backup و undo).
 - هر جدول کاربر: `created_at`, `updated_at`.
 - `schema_version` در `PRAGMA user_version` (drift).

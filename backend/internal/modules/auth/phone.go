@@ -28,7 +28,7 @@ const (
 	otpResendCooldown = 60 * time.Second
 )
 
-// SMSSender delivers OTP codes (Kavenegar/sms.ir/Ghasedak adapters, V6; `log` adapter for dev).
+// SMSSender delivers OTP codes (sms.ir adapter, D-4/V6; `log` adapter for dev).
 type SMSSender interface {
 	SendOTP(ctx context.Context, phone, code string) error
 }

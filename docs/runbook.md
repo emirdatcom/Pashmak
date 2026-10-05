@@ -28,11 +28,11 @@ Caddy مسیر `/admin/*` را از بیرون ۴۰۴ می‌کند؛ دسترس
 
 ## ۵. بکاپ و بازیابی DB
 - روزانه (cron روی هاست): 
-  `docker compose exec -T postgres pg_dump -U app -Fc app | gzip > /backup/app-$(date +%F).dump.gz` و آپلود به object storage (`rclone`/`s3cmd`)؛ نگهداری ۳۰ روز؛ بکاپ را رمز کن (`age`/`gpg`).
+  اسکریپت `backend/deploy/backup/` (pg_dump → `age` با `AGE_RECIPIENT` → volume محلی → `rsync` به `OFFSITE_*`)؛ نگهداری ۳۰ روز. بدون object storage (D-3).
 - بازیابی (RTO ≤ ۴ ساعت): سرور جدید با همان compose، `docker compose up -d postgres`، 
   `gunzip -c app-DATE.dump.gz | docker compose exec -T postgres pg_restore -U app -d app --clean --if-exists`، سپس `up -d`.
 - تست restore ماهانه روی سرور جدا؛ زمان‌ها را در `docs/release-checklist-<version>.md` ثبت کن. **تا امروز تست نشده.**
-- اگر `BACKUP_STORAGE=db` باشد، blobهای backup کاربران هم داخل همین dump هستند.
+- blobهای backup کاربران (حداکثر ۵MB، `BACKUP_MAX_BYTES`) همیشه داخل همین dump هستند.
 
 ## ۶. واکنش به قطعی مارکت
 - نشانه: `market_verify_total{result="error"}` بالا، یا `MARKET_UNAVAILABLE`. **اپ نباید کاربر را قفل کند**: خرید در outbox می‌ماند، premium موقت ۷۲ ساعته فعال است و reverify کار worker است.
@@ -40,7 +40,11 @@ Caddy مسیر `/admin/*` را از بیرون ۴۰۴ می‌کند؛ دسترس
 - خاموش‌کردن اضطراری یک مارکت: `BILLING_BAZAAR_ENABLED=false` (یا Myket) و restart؛ اپ پاسخ `MARKET_UNAVAILABLE` می‌گیرد و خرید را صف می‌کند.
 
 ## ۷. هشدارها (حداقل)
-5xx > ۲٪ در ۵ دقیقه · `market_verify` خطا > ۲۰٪ · دیسک > ۸۰٪ · `pg_dump` شب قبل نبوده. ابزار: Alertmanager یا اسکریپت ساده به تلگرام/بله **[نیاز به راستی‌آزمایی]** (دسترسی از ایران).
+5xx > ۲٪ در ۵ دقیقه · `market_verify` خطا > ۲۰٪ · دیسک > ۸۰٪ · `pg_dump` شب قبل نبوده. ابزار: Alertmanager → `alert-relay` → پیامک sms.ir به `ALERT_PHONES` (D-5؛ توکن `ALERT_RELAY_TOKEN`). پیکربندی با promtool و ارسال واقعی راستی‌آزمایی نشده.
+
+## ۷.۱ چت پشتیبانی
+- پنل اپراتور: مسیر پنل با IP allowlist؛ اپراتور با `admin-cli support-operator`. خاموش‌کردن اضطراری: `support.enabled=false` در config ← `SUPPORT_DISABLED`.
+- پیام پریشانی ← پاسخ آماده‌ی «distress» و ارجاع به صفحه ایمنی (۱۱۵/۱۲۳/۱۴۸۰).
 
 ## ۸. موارد اضطراری رایج
 | مشکل | اقدام |

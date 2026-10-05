@@ -6,7 +6,7 @@
 ## ۲. Packها
 | `pack_key` | محتوا | به‌روزرسانی از راه دور |
 |---|---|---|
-| `brand` | `app_name`, `cat_default_name`, `support_contact` | بله |
+| `brand` | `app_name`, `cat_default_name`, `support_contact` (`in_app_chat`، D-2) | بله |
 | `copy_fa` | همه رشته‌های UI و نوتیف با کلید | بله |
 | `habit_templates` | عادت‌های پایه (`water`, `sleep`, `short_break`, `walk`, `healthy_food`, `medicine`, `loved_ones`) | بله |
 | `exercises` | تمرین‌ها: گام‌ها، زمان‌بندی، متن | بله |
