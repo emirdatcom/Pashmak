@@ -49,6 +49,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
     await ref.read(streakServiceProvider).evaluate(today);
     await ref.read(adventureServiceProvider).current();
     await ref.read(analyticsProvider).track(AnalyticsEvent.appOpened, {'source': 'launcher'});
+    final scheduler = ref.read(notificationSchedulerProvider);
+    await scheduler.recordOpen();
+    await scheduler.replan();
   }
 
   String _greetingKey(int hour) {

@@ -9,6 +9,7 @@ import '../core/widget_snapshot.dart';
 import '../core/widgets/cat_renderer.dart';
 import '../core/screen_awake.dart';
 import 'adventure/domain/adventure_service.dart';
+import 'notifications/data/notification_scheduler.dart';
 import 'cat/domain/cat_mood_resolver.dart';
 import 'checkin/domain/checkin_service.dart';
 import 'exercises/domain/exercise_service.dart';
@@ -18,8 +19,45 @@ import 'shop/domain/shop_service.dart';
 import 'streak/domain/streak_service.dart';
 import 'wallet/domain/wallet_service.dart';
 
-/// Real implementation arrives with prompt 13B.
-final widgetSnapshotPublisherProvider = Provider<WidgetSnapshotPublisher>((ref) => const NoopWidgetSnapshotPublisher());
+/// Data-changed hook: services call `refresh()` after writes. It replans notifications (and, with
+/// prompt 13B/16, republishes the widget snapshot). Calls made while a replan runs are coalesced.
+class DataChangedPublisher implements WidgetSnapshotPublisher {
+  DataChangedPublisher(this._onChange);
+  final Future<void> Function() _onChange;
+  bool _running = false;
+  bool _again = false;
+
+  @override
+  Future<void> refresh() async {
+    if (_running) {
+      _again = true;
+      return;
+    }
+    _running = true;
+    try {
+      do {
+        _again = false;
+        await _onChange();
+      } while (_again);
+    } finally {
+      _running = false;
+    }
+  }
+}
+
+final notificationSchedulerProvider = Provider<NotificationScheduler>((ref) => NotificationScheduler(
+      db: ref.watch(databaseProvider),
+      clock: ref.watch(clockProvider),
+      service: ref.watch(notificationServiceProvider),
+      config: () => ref.read(appConfigProvider),
+      copy: () => ref.read(copyProvider),
+      analytics: ref.watch(analyticsProvider),
+      dayStartHour: ref.watch(dayStartHourProvider),
+    ));
+
+final widgetSnapshotPublisherProvider = Provider<WidgetSnapshotPublisher>((ref) => DataChangedPublisher(() async {
+      await ref.read(notificationSchedulerProvider).replan();
+    }));
 
 final walletServiceProvider = Provider<WalletService>((ref) =>
     WalletService(ref.watch(databaseProvider), ref.watch(clockProvider), energyCap: () => ref.read(appConfigProvider).energyCap));

@@ -9,6 +9,7 @@ import '../../features/habits/presentation/habits_screens.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/safety/presentation/safety_screen.dart';
 import '../../features/shop/presentation/shop_screens.dart';
+import '../../features/settings/presentation/settings_screens.dart';
 import '../../features/system/force_update_screen.dart';
 import '../../features/system/placeholder_screen.dart';
 import '../../features/system/splash_screen.dart';
@@ -67,7 +68,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       ]),
       GoRoute(path: Routes.stats, builder: (_, _) => ph('stats')),
       GoRoute(path: '/paywall', builder: (_, s) => ph('paywall?trigger=${s.uri.queryParameters['trigger'] ?? ''}')),
-      GoRoute(path: Routes.settings, builder: (_, _) => ph('settings'), routes: [
+      GoRoute(path: Routes.settings, builder: (_, _) => const SettingsScreen(), routes: [
+        GoRoute(path: 'notifications', builder: (_, _) => const NotificationSettingsScreen()),
         GoRoute(path: ':section', builder: (_, s) => ph('settings/${s.pathParameters['section']}')),
       ]),
       GoRoute(path: Routes.safety, builder: (_, _) => const SafetyScreen()),

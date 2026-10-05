@@ -26,6 +26,7 @@ class Loop {
     final assets = realAssets().files;
     config = AppConfig(jsonDecode(assets['assets/config/default.json']!) as Map<String, dynamic>);
     adventuresPack = (jsonDecode(assets['assets/content/adventures.json']!)['entries'] as Map<String, dynamic>);
+    copyEntries = (jsonDecode(assets['assets/content/copy_fa.json']!)['entries'] as Map<String, dynamic>);
     shopPack = (jsonDecode(assets['assets/content/shop_items.json']!)['entries'] as List);
     keywords = ((jsonDecode(assets['assets/content/safety.json']!)['entries'] as Map)['keywords'] as List).cast<String>();
     analytics = QueueAnalytics(db, clock, sessionId: () => 's1');
@@ -70,6 +71,7 @@ class Loop {
   late final AppConfig config;
   late final Map<String, dynamic> adventuresPack;
   late final List<dynamic> shopPack;
+  late final Map<String, dynamic> copyEntries;
   late final List<String> keywords;
   late final QueueAnalytics analytics;
   late final WalletService wallet;

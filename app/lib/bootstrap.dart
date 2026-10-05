@@ -25,6 +25,8 @@ import 'core/db/connection.dart';
 import 'core/flavor.dart';
 import 'core/logger.dart';
 import 'core/network/api_client.dart';
+import 'core/notifications/local_notification_service.dart';
+import 'core/background/background_handlers.dart';
 import 'core/providers.dart';
 import 'core/time/clock.dart';
 import 'features/system/db_error_screen.dart';
@@ -58,6 +60,7 @@ Future<void> _start(Flavor flavor) async {
     runApp(_DbErrorApp(failure: overrides, retry: () => unawaited(_start(flavor))));
     return;
   }
+  unawaited(registerBackgroundTasks().catchError((Object e, StackTrace s) => AppLogger.error(e, s, 'register tasks')));
   runApp(ProviderScope(overrides: (overrides as _Ok).overrides, child: const App()));
 }
 
@@ -101,6 +104,16 @@ Future<Object> buildOverrides(Flavor flavor) async {
   final content = ContentRepository(db, assets, api, appVersion: info.version);
   await content.load();
 
+  final copyEntries = content.bundledEntries('copy_fa');
+  final catDefault = (content.bundledEntries('brand')['cat_default_name'] as String?) ?? '';
+  String chan(String suffix, String id) => ((copyEntries['notif.channel.$id.$suffix'] as String?) ?? id).replaceAll('{CAT_NAME}', catDefault);
+  final notifications = LocalNotificationService(
+    channels: NotificationChannels(
+      names: {for (final id in NotificationChannels.ids) id: chan('name', id)},
+      descriptions: {for (final id in NotificationChannels.ids) id: chan('desc', id)},
+    ),
+    onBackgroundAction: notificationBackgroundHandler,
+  );
   final onboarded = await db.meta('onboarding_completed') == 'true';
   final catName = await db.meta('cat_name') ?? '';
 
@@ -113,6 +126,7 @@ Future<Object> buildOverrides(Flavor flavor) async {
     configRepositoryProvider.overrideWithValue(config),
     contentRepositoryProvider.overrideWithValue(content),
     deviceIdentityProvider.overrideWithValue(identity),
+    notificationServiceProvider.overrideWithValue(notifications),
     onboardingCompletedProvider.overrideWith(() => _PresetOnboarding(onboarded)),
     catNameProvider.overrideWith(() => _PresetCatName(catName)),
   ]);
@@ -157,3 +171,14 @@ class _DbErrorApp extends StatelessWidget {
 
 Map<String, dynamic> _entries(String json) =>
     ((jsonDecode(json) as Map<String, dynamic>)['entries'] as Map<String, dynamic>);
+
+/// Opens the same dependency graph in a background isolate (WorkManager task, notification action).
+/// Returns null if the database cannot be opened.
+Future<ProviderContainer?> openBackgroundContainer() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await _initTimezone();
+  // Background work only needs local data; the flavor only matters for network headers.
+  final r = await buildOverrides(Flavor.bazaar);
+  if (r is! _Ok) return null;
+  return ProviderContainer(overrides: r.overrides);
+}
