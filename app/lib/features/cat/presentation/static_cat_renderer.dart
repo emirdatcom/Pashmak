@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/tokens.dart';
 import '../../../core/widgets/cat_renderer.dart';
+import 'layered_cat.dart';
 
 /// MVP renderer (docs/20 §9): a vector cat with code-driven motion (breathing, blinking, bounce).
 /// It is a stand-in until the final WebP art exists; the [CatRenderer] contract stays the same.
@@ -61,7 +62,7 @@ class _AnimatedCatState extends State<_AnimatedCat> with TickerProviderStateMixi
               offset: Offset(0, hop),
               child: Transform.scale(
                 scale: breathe,
-                child: CustomPaint(size: const Size(180, 180), painter: _CatPainter(widget.state, _breath.value > 0.5)),
+                child: LayeredCat.supports(widget.state) ? LayeredCat(state: widget.state) : CustomPaint(size: const Size(180, 180), painter: _CatPainter(widget.state, _breath.value > 0.5)),
               ),
             ),
           );

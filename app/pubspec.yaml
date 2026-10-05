@@ -98,6 +98,26 @@ flutter:
     - assets/config/
     - assets/content/
     - assets/keys/
+    - assets/art/background/
+    - assets/art/cat/
+    - assets/art/emoji/
+    - assets/art/emoji/animals/
+    - assets/art/emoji/body/
+    - assets/art/emoji/calm/
+    - assets/art/emoji/clothing/
+    - assets/art/emoji/connection/
+    - assets/art/emoji/faces/
+    - assets/art/emoji/food/
+    - assets/art/emoji/hands/
+    - assets/art/emoji/hearts/
+    - assets/art/emoji/hobbies/
+    - assets/art/emoji/home/
+    - assets/art/emoji/hygiene/
+    - assets/art/emoji/misc/
+    - assets/art/emoji/nature/
+    - assets/art/emoji/nav/
+    - assets/art/emoji/people/
+    - assets/art/emoji/tech/
   fonts:
     - family: Vazirmatn
       fonts:

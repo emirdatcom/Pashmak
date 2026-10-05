@@ -113,7 +113,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
     final checkedIn = ref.watch(lastMoodTodayProvider).value != null;
     final cardVisible = ref.watch(safetyCardVisibleProvider).value ?? false;
     final paused = ref.watch(pausedProvider).value ?? false;
-    final profile = ref.watch(catProfileProvider).value;
     final filter = ref.watch(homeAreaFilterProvider);
     final library = {for (final g in ref.watch(goalLibraryProvider)) g.key: g};
     final shown = [for (final h in habits) if (filter == null || h.habit.areaKey == filter) h];
@@ -121,10 +120,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
 
     return Scaffold(
       backgroundColor: DS.cardCat,
-      body: ListView(padding: EdgeInsets.zero, children: [
+      body: Stack(children: [
+        Positioned.fill(child: Image.asset('assets/art/background/home_forest.webp', fit: BoxFit.cover, alignment: Alignment.topCenter)),
+        ListView(padding: EdgeInsets.zero, children: [
         SceneHeader(
           time: SceneHeader.timeFor(now.hour),
           height: 330,
+          paintScene: false,
           overlay: SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -139,8 +141,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
                   const Spacer(),
                   const _WalletChips(),
                 ]),
-                const SizedBox(height: 4),
-                Align(alignment: const Alignment(0, 0), child: FractionallySizedBox(widthFactor: 0.7, child: SpeechBubble(text: _dialog(copy, profile?.trait ?? 'curious'))))
               ]),
             ),
           ),
@@ -182,10 +182,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
           ]),
         ),
       ]),
+      ]),
     );
   }
-
-  String _dialog(CopyResolver copy, String trait) => copy.t('home.dialog.${const ['curious', 'kind', 'playful'].contains(trait) ? trait : 'curious'}');
 
   Future<void> _pickFilter(BuildContext context) async {
     final copy = ref.read(copyProvider);

@@ -1,0 +1,372 @@
+[
+  {
+    "id": "animals/cat",
+    "path": "assets/art/emoji/animals/cat.png",
+    "source": "sheet1#16"
+  },
+  {
+    "id": "animals/chick",
+    "path": "assets/art/emoji/animals/chick.png",
+    "source": "sheet1#4"
+  },
+  {
+    "id": "animals/lion",
+    "path": "assets/art/emoji/animals/lion.png",
+    "source": "sheet4#12"
+  },
+  {
+    "id": "animals/monkey",
+    "path": "assets/art/emoji/animals/monkey.png",
+    "source": "sheet3#15"
+  },
+  {
+    "id": "body/brain",
+    "path": "assets/art/emoji/body/brain.png",
+    "source": "sheet4#3"
+  },
+  {
+    "id": "body/lungs",
+    "path": "assets/art/emoji/body/lungs.png",
+    "source": "sheet2#14"
+  },
+  {
+    "id": "body/sweat_droplets",
+    "path": "assets/art/emoji/body/sweat_droplets.png",
+    "source": "sheet4#11"
+  },
+  {
+    "id": "calm/candle",
+    "path": "assets/art/emoji/calm/candle.png",
+    "source": "sheet1#6"
+  },
+  {
+    "id": "calm/dove_peace",
+    "path": "assets/art/emoji/calm/dove_peace.png",
+    "source": "sheet2#5"
+  },
+  {
+    "id": "clothing/dress",
+    "path": "assets/art/emoji/clothing/dress.png",
+    "source": "sheet1#15"
+  },
+  {
+    "id": "clothing/jeans",
+    "path": "assets/art/emoji/clothing/jeans.png",
+    "source": "sheet1#5"
+  },
+  {
+    "id": "clothing/shirt_tie",
+    "path": "assets/art/emoji/clothing/shirt_tie.png",
+    "source": "sheet4#13"
+  },
+  {
+    "id": "clothing/socks",
+    "path": "assets/art/emoji/clothing/socks.png",
+    "source": "sheet4#14"
+  },
+  {
+    "id": "clothing/sweatpants",
+    "path": "assets/art/emoji/clothing/sweatpants.png",
+    "source": "sheet1#14"
+  },
+  {
+    "id": "clothing/tshirt",
+    "path": "assets/art/emoji/clothing/tshirt.png",
+    "source": "sheet4#19"
+  },
+  {
+    "id": "connection/love_letter",
+    "path": "assets/art/emoji/connection/love_letter.png",
+    "source": "sheet2#16"
+  },
+  {
+    "id": "connection/people_hugging",
+    "path": "assets/art/emoji/connection/people_hugging.png",
+    "source": "sheet2#10"
+  },
+  {
+    "id": "connection/people_search",
+    "path": "assets/art/emoji/connection/people_search.png",
+    "source": "sheet3#23"
+  },
+  {
+    "id": "connection/selfie",
+    "path": "assets/art/emoji/connection/selfie.png",
+    "source": "sheet2#18"
+  },
+  {
+    "id": "connection/speech_bubble",
+    "path": "assets/art/emoji/connection/speech_bubble.png",
+    "source": "sheet2#21"
+  },
+  {
+    "id": "connection/teddy_bear",
+    "path": "assets/art/emoji/connection/teddy_bear.png",
+    "source": "sheet2#17"
+  },
+  {
+    "id": "connection/telephone",
+    "path": "assets/art/emoji/connection/telephone.png",
+    "source": "sheet2#19"
+  },
+  {
+    "id": "faces/hugging",
+    "path": "assets/art/emoji/faces/hugging.png",
+    "source": "sheet3#9"
+  },
+  {
+    "id": "faces/relieved",
+    "path": "assets/art/emoji/faces/relieved.png",
+    "source": "sheet2#7"
+  },
+  {
+    "id": "faces/smiling_blush",
+    "path": "assets/art/emoji/faces/smiling_blush.png",
+    "source": "sheet2#13"
+  },
+  {
+    "id": "faces/smiling_halo",
+    "path": "assets/art/emoji/faces/smiling_halo.png",
+    "source": "sheet2#20"
+  },
+  {
+    "id": "faces/winking_tongue",
+    "path": "assets/art/emoji/faces/winking_tongue.png",
+    "source": "sheet3#4"
+  },
+  {
+    "id": "food/croissant",
+    "path": "assets/art/emoji/food/croissant.png",
+    "source": "sheet3#12"
+  },
+  {
+    "id": "food/cutlery",
+    "path": "assets/art/emoji/food/cutlery.png",
+    "source": "sheet2#6"
+  },
+  {
+    "id": "food/frying_pan_egg",
+    "path": "assets/art/emoji/food/frying_pan_egg.png",
+    "source": "sheet3#20"
+  },
+  {
+    "id": "food/matcha",
+    "path": "assets/art/emoji/food/matcha.png",
+    "source": "sheet3#11"
+  },
+  {
+    "id": "hands/clapping_hands",
+    "path": "assets/art/emoji/hands/clapping_hands.png",
+    "source": "sheet4#24"
+  },
+  {
+    "id": "hands/folded_hands",
+    "path": "assets/art/emoji/hands/folded_hands.png",
+    "source": "sheet2#9"
+  },
+  {
+    "id": "hands/waving_hand",
+    "path": "assets/art/emoji/hands/waving_hand.png",
+    "source": "sheet3#7"
+  },
+  {
+    "id": "hearts/orange_heart",
+    "path": "assets/art/emoji/hearts/orange_heart.png",
+    "source": "sheet2#12"
+  },
+  {
+    "id": "hearts/sparkling_heart",
+    "path": "assets/art/emoji/hearts/sparkling_heart.png",
+    "source": "sheet2#8"
+  },
+  {
+    "id": "hobbies/paintbrush",
+    "path": "assets/art/emoji/hobbies/paintbrush.png",
+    "source": "sheet4#17"
+  },
+  {
+    "id": "hobbies/sewing_thread",
+    "path": "assets/art/emoji/hobbies/sewing_thread.png",
+    "source": "sheet4#16"
+  },
+  {
+    "id": "hobbies/soccer_ball",
+    "path": "assets/art/emoji/hobbies/soccer_ball.png",
+    "source": "sheet3#3"
+  },
+  {
+    "id": "hobbies/yarn_knitting",
+    "path": "assets/art/emoji/hobbies/yarn_knitting.png",
+    "source": "sheet3#21"
+  },
+  {
+    "id": "home/bed",
+    "path": "assets/art/emoji/home/bed.png",
+    "source": "sheet2#3"
+  },
+  {
+    "id": "home/broom",
+    "path": "assets/art/emoji/home/broom.png",
+    "source": "sheet4#5"
+  },
+  {
+    "id": "home/ladder",
+    "path": "assets/art/emoji/home/ladder.png",
+    "source": "sheet3#13"
+  },
+  {
+    "id": "home/laundry_basket",
+    "path": "assets/art/emoji/home/laundry_basket.png",
+    "source": "sheet3#5"
+  },
+  {
+    "id": "home/mirror",
+    "path": "assets/art/emoji/home/mirror.png",
+    "source": "sheet1#3"
+  },
+  {
+    "id": "hygiene/bathtub",
+    "path": "assets/art/emoji/hygiene/bathtub.png",
+    "source": "sheet1#8"
+  },
+  {
+    "id": "hygiene/lotion_pump",
+    "path": "assets/art/emoji/hygiene/lotion_pump.png",
+    "source": "sheet4#25"
+  },
+  {
+    "id": "hygiene/shower",
+    "path": "assets/art/emoji/hygiene/shower.png",
+    "source": "sheet1#10"
+  },
+  {
+    "id": "hygiene/soap",
+    "path": "assets/art/emoji/hygiene/soap.png",
+    "source": "sheet1#2"
+  },
+  {
+    "id": "misc/flag_in_hole",
+    "path": "assets/art/emoji/misc/flag_in_hole.png",
+    "source": "sheet1#1"
+  },
+  {
+    "id": "misc/gift",
+    "path": "assets/art/emoji/misc/gift.png",
+    "source": "sheet4#10"
+  },
+  {
+    "id": "misc/magnifier",
+    "path": "assets/art/emoji/misc/magnifier.png",
+    "source": "sheet1#7"
+  },
+  {
+    "id": "misc/medal_first",
+    "path": "assets/art/emoji/misc/medal_first.png",
+    "source": "sheet4#2"
+  },
+  {
+    "id": "misc/notepad_pencil",
+    "path": "assets/art/emoji/misc/notepad_pencil.png",
+    "source": "sheet2#24"
+  },
+  {
+    "id": "misc/star",
+    "path": "assets/art/emoji/misc/star.png",
+    "source": "sheet3#17"
+  },
+  {
+    "id": "misc/ticket",
+    "path": "assets/art/emoji/misc/ticket.png",
+    "source": "sheet3#16"
+  },
+  {
+    "id": "nature/flower",
+    "path": "assets/art/emoji/nature/flower.png",
+    "source": "sheet1#19"
+  },
+  {
+    "id": "nature/herb_sprig",
+    "path": "assets/art/emoji/nature/herb_sprig.png",
+    "source": "sheet1#20"
+  },
+  {
+    "id": "nature/landscape",
+    "path": "assets/art/emoji/nature/landscape.png",
+    "source": "sheet2#4"
+  },
+  {
+    "id": "nature/leafy_plant",
+    "path": "assets/art/emoji/nature/leafy_plant.png",
+    "source": "sheet1#12"
+  },
+  {
+    "id": "nature/log",
+    "path": "assets/art/emoji/nature/log.png",
+    "source": "sheet1#18"
+  },
+  {
+    "id": "nature/mushroom",
+    "path": "assets/art/emoji/nature/mushroom.png",
+    "source": "sheet1#17"
+  },
+  {
+    "id": "nature/pumpkin",
+    "path": "assets/art/emoji/nature/pumpkin.png",
+    "source": "sheet1#13"
+  },
+  {
+    "id": "nature/seedling",
+    "path": "assets/art/emoji/nature/seedling.png",
+    "source": "sheet3#14"
+  },
+  {
+    "id": "nav/friends",
+    "path": "assets/art/emoji/nav/friends.png",
+    "source": "sheet1#24"
+  },
+  {
+    "id": "nav/home",
+    "path": "assets/art/emoji/nav/home.png",
+    "source": "sheet1#23"
+  },
+  {
+    "id": "nav/quests",
+    "path": "assets/art/emoji/nav/quests.png",
+    "source": "sheet1#22"
+  },
+  {
+    "id": "nav/shop",
+    "path": "assets/art/emoji/nav/shop.png",
+    "source": "sheet1#11"
+  },
+  {
+    "id": "nav/sparkles",
+    "path": "assets/art/emoji/nav/sparkles.png",
+    "source": "sheet1#25"
+  },
+  {
+    "id": "people/person_raising_hand",
+    "path": "assets/art/emoji/people/person_raising_hand.png",
+    "source": "sheet3#19"
+  },
+  {
+    "id": "tech/bell_off",
+    "path": "assets/art/emoji/tech/bell_off.png",
+    "source": "sheet2#25"
+  },
+  {
+    "id": "tech/keyboard",
+    "path": "assets/art/emoji/tech/keyboard.png",
+    "source": "sheet4#23"
+  },
+  {
+    "id": "tech/phone_off",
+    "path": "assets/art/emoji/tech/phone_off.png",
+    "source": "sheet3#18"
+  },
+  {
+    "id": "tech/smartphone",
+    "path": "assets/art/emoji/tech/smartphone.png",
+    "source": "sheet2#15"
+  }
+]
