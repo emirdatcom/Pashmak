@@ -20,6 +20,11 @@ class MainActivity : FlutterActivity() {
                     else window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     result.success(null)
                 }
+                "totalRamMb" -> {
+                    val info = android.app.ActivityManager.MemoryInfo()
+                    (getSystemService(ACTIVITY_SERVICE) as android.app.ActivityManager).getMemoryInfo(info)
+                    result.success((info.totalMem / (1024 * 1024)).toInt())
+                }
                 // Hides the app preview in Recent Apps and blocks screenshots (settings: hide in recents).
                 "setSecure" -> {
                     val on = call.arguments as? Boolean ?: false

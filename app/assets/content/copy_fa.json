@@ -484,6 +484,13 @@
     "settings.account_backup": "حساب و پشتیبان",
     "restore.summary.habits": "{n} عادت",
     "restore.summary.checkins": "{n} چک‌این",
-    "onboarding.restore_link": "قبلاً حساب داشتم"
+    "onboarding.restore_link": "قبلاً حساب داشتم",
+    "stats.deep.title": "آمار و الگوها",
+    "stats.mood.title": "حال روزهات",
+    "stats.mood.empty": "با چند چک‌این، نمودار حالت اینجا پیدا می‌شه.",
+    "stats.heatmap.title": "عادت‌ها در هر روز",
+    "stats.best_day": "معمولاً {item} حالت بهتره.",
+    "stats.correlation": "روزهایی که «{habit}» رو انجام دادی، حالت معمولاً بهتر بوده.",
+    "stats.insights.more_data": "چند روز دیگه که ثبت کنی، الگوها هم پیدا می‌شن. اینا فقط یه نگاهن، نه تشخیص."
   }
 }

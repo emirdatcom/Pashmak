@@ -17,6 +17,7 @@ class Routes {
   static const shop = '/shop';
   static const closet = '/shop/closet';
   static const stats = '/stats';
+  static const statsDeep = '/stats/deep';
   static String paywall(String trigger) => '/paywall?trigger=$trigger';
   static const settings = '/settings';
   static const subscription = '/settings/subscription';

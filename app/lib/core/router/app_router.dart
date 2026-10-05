@@ -12,6 +12,7 @@ import '../../features/exercises/presentation/exercises_screens.dart';
 import '../../features/habits/presentation/habits_screens.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/onboarding/presentation/onboarding_screen.dart';
+import '../../features/stats/presentation/deep_stats_screen.dart';
 import '../../features/stats/presentation/stats_screen.dart';
 import '../../features/safety/presentation/safety_screen.dart';
 import '../../features/shop/presentation/shop_screens.dart';
@@ -72,7 +73,9 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: Routes.adventure, builder: (_, _) => const AdventureScreen(), routes: [
         GoRoute(path: 'result/:id', builder: (_, s) => AdventureResultScreen(adventureId: s.pathParameters['id']!)),
       ]),
-      GoRoute(path: Routes.stats, builder: (_, _) => const StatsScreen()),
+      GoRoute(path: Routes.stats, builder: (_, _) => const StatsScreen(), routes: [
+        GoRoute(path: 'deep', builder: (_, _) => const DeepStatsScreen()),
+      ]),
       GoRoute(path: '/paywall', builder: (_, s) => PaywallScreen(trigger: s.uri.queryParameters['trigger'] ?? 'settings')),
       GoRoute(path: Routes.trialEnded, builder: (_, _) => const TrialEndedScreen()),
       GoRoute(path: Routes.lockSelect, builder: (_, _) => const LockSelectionScreen()),

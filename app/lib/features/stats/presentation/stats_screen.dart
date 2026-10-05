@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/digits.dart';
 import '../../../core/l10n/jalali_formatter.dart';
 import '../../../core/providers.dart';
+import '../../../core/router/routes.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/error_state.dart';
@@ -71,7 +75,11 @@ class StatsScreen extends ConsumerWidget {
                     onPressed: () async {
                       final ok = await passGate(context, ref, 'stats_deep');
                       if (ok && context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(copy.t('settings.placeholder'))));
+                        if (ref.read(appConfigProvider).feature('stats_deep')) {
+                          unawaited(context.push(Routes.statsDeep));
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(copy.t('settings.placeholder'))));
+                        }
                       }
                     },
                     child: Text(copy.t('stats.deep.cta')),
