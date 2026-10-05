@@ -61,7 +61,7 @@
   },
   "features": {
     "rive_cat": false,
-    "widgets": false,
+    "widgets": true,
     "backup": true,
     "phone_link": true,
     "seasonal_packs": true,

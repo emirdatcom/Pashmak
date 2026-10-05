@@ -40,7 +40,10 @@ void workManagerDispatcher() {
     final container = await openBackgroundContainer();
     if (container == null) return true;
     try {
-      if (task == notifReplanTask) await container.read(notificationSchedulerProvider).replan();
+      if (task == notifReplanTask) {
+        await container.read(notificationSchedulerProvider).replan();
+        await container.read(homeWidgetPublisherProvider).refresh(); // new day: drop yesterday's ticks
+      }
       if (task == outboxFlushTask) {
         if (container.read(entitlementRepositoryProvider) != null) {
           await container.read(monetizationServiceProvider).outbox.runDue();

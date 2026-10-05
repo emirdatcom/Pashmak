@@ -12,6 +12,8 @@ import '../core/safety/distress_detector.dart';
 import '../core/widget_snapshot.dart';
 import '../core/widgets/cat_renderer.dart';
 import '../core/screen_awake.dart';
+import '../core/widgets_home/widget_snapshot.dart';
+import '../core/widgets_home/widget_snapshot_publisher.dart';
 import 'adventure/domain/adventure_service.dart';
 import 'notifications/data/notification_scheduler.dart';
 import 'cat/domain/cat_mood_resolver.dart';
@@ -66,8 +68,25 @@ final notificationSchedulerProvider = Provider<NotificationScheduler>((ref) => N
       },
     ));
 
+/// Kotlin package of the AppWidgetProviders (android/app/src/main/kotlin/.../widget).
+const widgetAndroidPackage = 'ir.example.pashmak_app.widget';
+
+final homeWidgetPublisherProvider = Provider<HomeWidgetPublisher>((ref) => HomeWidgetPublisher(
+      WidgetSnapshotBuilder(
+        ref.watch(databaseProvider),
+        ref.watch(clockProvider),
+        dayStartHour: ref.watch(dayStartHourProvider),
+        habitTitle: (h) => h.templateKey != null ? ref.read(copyProvider).t('habit.template.${h.templateKey}.title') : (h.title ?? ''),
+        streakLabel: (n) => n > 0 ? ref.read(copyProvider).t('streak.continue', {'n': n}) : ref.read(copyProvider).t('home.streak.none'),
+        progressLabel: (d, t) => ref.read(copyProvider).t('home.habits.progress', {'n': d}),
+      ),
+      const HomeWidgetBridge(widgetAndroidPackage),
+      enabled: () => ref.read(appConfigProvider).feature('widgets'),
+    ));
+
 final widgetSnapshotPublisherProvider = Provider<WidgetSnapshotPublisher>((ref) => DataChangedPublisher(() async {
       await ref.read(notificationSchedulerProvider).replan();
+      await ref.read(homeWidgetPublisherProvider).refresh();
     }));
 
 final walletServiceProvider = Provider<WalletService>((ref) =>

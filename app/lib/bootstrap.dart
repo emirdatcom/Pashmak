@@ -31,6 +31,7 @@ import 'core/network/api_client.dart';
 import 'core/notifications/local_notification_service.dart';
 import 'core/background/background_handlers.dart';
 import 'core/providers.dart';
+import 'core/widgets_home/widget_callbacks.dart';
 import 'core/time/clock.dart';
 import 'core/time/local_day.dart';
 import 'features/system/db_error_screen.dart';
@@ -64,6 +65,7 @@ Future<void> _start(Flavor flavor) async {
     runApp(_DbErrorApp(failure: overrides, retry: () => unawaited(_start(flavor))));
     return;
   }
+  unawaited(registerWidgetCallback().catchError((Object e, StackTrace s) => AppLogger.error(e, s, 'widget callback')));
   unawaited(registerBackgroundTasks().catchError((Object e, StackTrace s) => AppLogger.error(e, s, 'register tasks')));
   runApp(ProviderScope(overrides: (overrides as _Ok).overrides, child: const App()));
 }

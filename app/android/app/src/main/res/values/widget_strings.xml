@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Native widget labels. Keep in sync with config-data/content/copy_fa.json (checkin.mood.*, home.checkin_cta). -->
+<resources>
+    <string name="widget_checkin">چک‌این امروز</string>
+    <string name="widget_cat_description">گربه‌ی تو</string>
+    <string name="mood_1">خیلی بد</string>
+    <string name="mood_2">بد</string>
+    <string name="mood_3">معمولی</string>
+    <string name="mood_4">خوب</string>
+    <string name="mood_5">عالی</string>
+</resources>

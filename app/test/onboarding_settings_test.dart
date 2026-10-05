@@ -256,6 +256,7 @@ void main() {
       expect(find.text('هفت روز پریمیوم، رایگان'), findsOneWidget);
       await tester.tap(find.text('بعداً'));
       await settle(tester);
+      await settle(tester); // creating habits also republishes notifications and the widget snapshot
 
       expect(c.read(onboardingCompletedProvider), isTrue);
       final habits = await tester.runAsync(() => c.read(habitServiceProvider).activeHabits());

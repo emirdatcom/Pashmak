@@ -38,6 +38,7 @@ android {
         versionName = flutter.versionName
         manifestPlaceholders["appScheme"] = brandScheme
         resValue("string", "app_name", brandName)
+        resValue("string", "widget_scheme", brandScheme)
     }
 
     flavorDimensions += "market"

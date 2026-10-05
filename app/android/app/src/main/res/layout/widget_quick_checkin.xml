@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layoutDirection="rtl"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:padding="6dp"
+    android:background="@drawable/widget_background">
+
+    <TextView android:id="@+id/mood1" android:layout_width="0dp" android:layout_height="48dp" android:layout_weight="1" android:gravity="center" android:text="😞" android:textSize="26sp" android:contentDescription="@string/mood_1" />
+    <TextView android:id="@+id/mood2" android:layout_width="0dp" android:layout_height="48dp" android:layout_weight="1" android:gravity="center" android:text="🙁" android:textSize="26sp" android:contentDescription="@string/mood_2" />
+    <TextView android:id="@+id/mood3" android:layout_width="0dp" android:layout_height="48dp" android:layout_weight="1" android:gravity="center" android:text="😐" android:textSize="26sp" android:contentDescription="@string/mood_3" />
+    <TextView android:id="@+id/mood4" android:layout_width="0dp" android:layout_height="48dp" android:layout_weight="1" android:gravity="center" android:text="🙂" android:textSize="26sp" android:contentDescription="@string/mood_4" />
+    <TextView android:id="@+id/mood5" android:layout_width="0dp" android:layout_height="48dp" android:layout_weight="1" android:gravity="center" android:text="😄" android:textSize="26sp" android:contentDescription="@string/mood_5" />
+</LinearLayout>
