@@ -47,9 +47,10 @@ void main() {
     h.mock.onGet('/v1/support/messages', (s) => s.reply(200, {'messages': <dynamic>[], 'has_more': false}), queryParameters: {'limit': 50});
     await tester.runAsync(() => seed(h, rows)); // before the screen exists: no concurrent queries
     final assets = realAssets();
-    if (unverifiedHotlines) {
+    if (!unverifiedHotlines) {
+      // The shipped pack keeps verified_at null until the owner confirms the numbers (V9); simulate a confirmed pack.
       const key = 'assets/content/safety.json';
-      assets.files[key] = assets.files[key]!.replaceAll(RegExp(r'"verified_at": "[^"]+"'), '"verified_at": null');
+      assets.files[key] = assets.files[key]!.replaceAll('"verified_at": null', '"verified_at": "2026-10-05T00:00:00Z"');
     }
     final content = ContentRepository(h.db, assets, h.api, appVersion: '1.0.0');
     final config = ConfigRepository(h.db, realAssets(), h.api, h.clock);

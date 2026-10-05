@@ -81,7 +81,7 @@ class _CatProfileState extends ConsumerState<CatProfileScreen> {
       body: SafeArea(
         child: ListView(padding: const EdgeInsets.fromLTRB(16, 12, 16, 24), children: [
           Row(children: [
-            Expanded(child: Text(copy.t('cat.profile.title'), style: const TextStyle(color: DS.textPrimary, fontSize: 24, fontWeight: FontWeight.w800))),
+            Expanded(child: Text(copy.t('cat.profile.title'), style: const TextStyle(color: DS.textPrimary, fontSize: 24, fontWeight: FontWeight.w800, fontFamily: AppText.headline, fontFamilyFallback: AppText.headlineFallback))),
             IconButton(tooltip: copy.t('cat.share'), icon: const Icon(Icons.ios_share, color: DS.textPrimary), onPressed: _share),
             IconButton(tooltip: copy.t('cat.edit'), icon: const Icon(Icons.edit_outlined, color: DS.textPrimary), onPressed: () => context.push(Routes.catEdit)),
           ]),
@@ -90,18 +90,31 @@ class _CatProfileState extends ConsumerState<CatProfileScreen> {
             child: RoundCard(
               color: DS.cardCat,
               child: Column(children: [
-                const SizedBox(height: 200, child: CatView()),
-                Text(copy.t('cat.profile.title'), style: const TextStyle(color: DS.textPrimary, fontSize: 22, fontWeight: FontWeight.w800)),
-                Text('${copy.t('cat.profile.adventures', {'n': count})} · ${copy.t('cat.stage.${stage.name}')}', style: const TextStyle(color: DS.textSecondary)),
+                Row(children: [
+                  Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(color: DS.bgCat.withValues(alpha: 0.5), borderRadius: BorderRadius.circular(24)),
+                    child: const FittedBox(child: SizedBox(width: 200, height: 200, child: CatView())),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text(copy.t('cat.profile.title'), style: const TextStyle(color: DS.textPrimary, fontSize: 22, fontWeight: FontWeight.w800, fontFamily: AppText.headline, fontFamilyFallback: AppText.headlineFallback)),
+                      Text('${copy.t('cat.profile.adventures', {'n': count})} · ${copy.t('cat.stage.${stage.name}')}', style: const TextStyle(color: DS.textSecondary)),
+                    ]),
+                  ),
+                ]),
+                const SizedBox(height: 12),
+                TabPills(
+                  tabs: [for (final t in const ['about', 'details', 'traits']) PillTab(t, copy.t('cat.tab.$t'))],
+                  selected: _tab,
+                  onSelected: (t) => setState(() => _tab = t),
+                ),
               ]),
             ),
           ),
           const SizedBox(height: 12),
-          TabPills(
-            tabs: [for (final t in const ['about', 'details', 'traits']) PillTab(t, copy.t('cat.tab.$t'))],
-            selected: _tab,
-            onSelected: (t) => setState(() => _tab = t),
-          ),
           RoundCard(child: SizedBox(width: double.infinity, child: body)),
           const SizedBox(height: 12),
           RoundCard(

@@ -16,6 +16,7 @@ class ItemTile extends StatelessWidget {
     this.owned = false,
     this.ownedLabel,
     this.semanticLabel,
+    this.onPanel = false,
   });
   final String name;
   final Widget art;
@@ -26,13 +27,16 @@ class ItemTile extends StatelessWidget {
   final String? ownedLabel;
   final String? semanticLabel;
 
+  /// Brown tile on the shop panel (reference look); white text on [DS.shopTile].
+  final bool onPanel;
+
   @override
   Widget build(BuildContext context) => Semantics(
         button: true,
         label: semanticLabel ?? name,
         child: ExcludeSemantics(
           child: Material(
-            color: DS.card,
+            color: onPanel ? DS.shopTile : DS.card,
             borderRadius: BorderRadius.circular(DS.radiusCard),
             child: InkWell(
               borderRadius: BorderRadius.circular(DS.radiusCard),
@@ -41,7 +45,7 @@ class ItemTile extends StatelessWidget {
                 padding: const EdgeInsets.all(10),
                 child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                   Expanded(child: Center(child: art)),
-                  Text(name, maxLines: 2, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center, style: const TextStyle(color: DS.textPrimary, fontSize: 13, fontWeight: FontWeight.w700)),
+                  Text(name, maxLines: 2, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center, style: TextStyle(color: onPanel ? DS.onDark : DS.textPrimary, fontSize: 13, fontWeight: FontWeight.w700)),
                   const SizedBox(height: 6),
                   if (owned)
                     Row(mainAxisSize: MainAxisSize.min, children: [
@@ -55,7 +59,7 @@ class ItemTile extends StatelessWidget {
                     Row(mainAxisSize: MainAxisSize.min, children: [
                       const Icon(Icons.monetization_on, size: 16, color: DS.coin),
                       const SizedBox(width: 4),
-                      Text(toPersianDigits(priceCoins!), style: const TextStyle(color: DS.textPrimary, fontSize: 13, fontWeight: FontWeight.w700)),
+                      Text(toPersianDigits(priceCoins!), style: TextStyle(color: onPanel ? DS.onDark : DS.textPrimary, fontSize: 13, fontWeight: FontWeight.w700)),
                     ]),
                 ]),
               ),

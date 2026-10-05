@@ -120,11 +120,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
     final left = shown.where((h) => !h.done && !h.habit.isLocked).length;
 
     return Scaffold(
-      backgroundColor: DS.cardCat,
+      backgroundColor: DS.bgHomeGround,
       body: ListView(padding: EdgeInsets.zero, children: [
         SceneHeader(
           time: SceneHeader.timeFor(now.hour),
-          height: 330,
+          height: MediaQuery.sizeOf(context).height * 0.45,
           overlay: SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -144,12 +144,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
               ]),
             ),
           ),
-          child: const CatView(),
+          child: const SizedBox(height: 170, child: FittedBox(child: CatView())),
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
           child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-            Text(copy.t(_greetingKey(now.hour)), style: const TextStyle(color: DS.textPrimary, fontSize: 20, fontWeight: FontWeight.w700)),
+            Text(copy.t(_greetingKey(now.hour)), style: const TextStyle(color: DS.textDeep, fontSize: 20, fontWeight: FontWeight.w700)),
             const SizedBox(height: 12),
             if (paused) _PausedCard(),
             const TrialEndingBanner(),
@@ -428,7 +428,7 @@ class _GoalCard extends ConsumerWidget {
                         height: 44,
                         color: done ? DS.neutralButton : DS.primaryGreen,
                         edgeColor: done ? DS.neutralButtonEdge : DS.primaryGreenEdge,
-                        textColor: done ? DS.textPrimary : DS.onDark,
+                        textColor: done ? DS.textPrimary : DS.onPrimary,
                         onPressed: () async {
                           if (done) {
                             await service.undo(h.id);

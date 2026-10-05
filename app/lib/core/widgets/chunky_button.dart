@@ -12,7 +12,7 @@ class ChunkyButton extends StatefulWidget {
     this.icon,
     this.color = DS.primaryGreen,
     this.edgeColor = DS.primaryGreenEdge,
-    this.textColor = DS.onDark,
+    this.textColor = DS.onPrimary,
     this.expand = true,
     this.height = 52,
   });
