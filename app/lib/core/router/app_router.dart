@@ -17,6 +17,7 @@ import '../../features/stats/presentation/stats_screen.dart';
 import '../../features/safety/presentation/safety_screen.dart';
 import '../../features/shop/presentation/shop_screens.dart';
 import '../../features/settings/presentation/settings_screens.dart';
+import '../../features/support/presentation/support_screen.dart';
 import '../../features/system/force_update_screen.dart';
 import '../../features/system/placeholder_screen.dart';
 import '../../features/system/splash_screen.dart';
@@ -90,6 +91,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         GoRoute(path: ':section', builder: (_, s) => ph('settings/${s.pathParameters['section']}')),
       ]),
       GoRoute(path: Routes.safety, builder: (_, _) => const SafetyScreen()),
+      GoRoute(path: Routes.supportBase, builder: (_, s) => SupportScreen(source: s.uri.queryParameters['source'] ?? 'settings')),
     ],
   );
 });

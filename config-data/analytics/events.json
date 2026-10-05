@@ -455,6 +455,48 @@
         }
       },
       "server_side": false
+    },
+    {
+      "name": "support_opened",
+      "props": {
+        "source": {
+          "type": "string",
+          "enum": [
+            "settings",
+            "safety",
+            "purchase_error",
+            "subscription"
+          ]
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "support_message_sent",
+      "props": {
+        "has_device_meta": {
+          "type": "bool"
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "support_reply_received",
+      "props": {
+        "via": {
+          "type": "string",
+          "enum": [
+            "ws",
+            "poll"
+          ]
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "support_conversation_deleted",
+      "props": {},
+      "server_side": false
     }
   ]
 }

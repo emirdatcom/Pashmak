@@ -1,7 +1,7 @@
 import '../../../core/time/local_day.dart';
 
 /// Priority order of docs/50 §3 rule 2 (first = highest).
-const notificationPriority = ['trial', 'habit_reminder', 'cat_returned', 'evening_checkin', 'morning', 'seasonal', 'comeback', 'streak_gentle'];
+const notificationPriority = ['trial', 'support_reply', 'habit_reminder', 'cat_returned', 'evening_checkin', 'morning', 'seasonal', 'comeback', 'streak_gentle'];
 
 class PlanHabit {
   const PlanHabit({required this.id, this.templateKey, this.title, this.reminderMinutes, required this.scheduleType, required this.weekdaysMask, this.isLocked = false, this.doneToday = false});
@@ -90,6 +90,7 @@ class PlanInput {
     this.trial = const PlanTrial(active: false),
     this.log = const [],
     this.seasonal = const [],
+    this.supportReplyAt,
   });
   final DateTime now;
   final int dayStartHour;
@@ -103,6 +104,9 @@ class PlanInput {
   final PlanTrial trial;
   final List<PlanLogEntry> log;
   final List<SeasonalEvent> seasonal;
+
+  /// When a support reply notification should fire (set by the `support_poll` task when it found a new reply).
+  final DateTime? supportReplyAt;
 }
 
 /// A notification the planner wants scheduled. Text is resolved later from the copy keys.
@@ -198,6 +202,12 @@ List<PlanItem> planNotifications(PlanInput i) {
     }
   }
 
+  final reply = i.supportReplyAt;
+  if (s.on('support_reply') && reply != null) {
+    // Generic text only (no message content); follows quiet hours and the daily cap like everything else.
+    cands.add(PlanItem(type: 'support_reply', ref: '', fireAt: reply, titleKey: 'notif.support_reply.title', bodyKey: 'notif.support_reply', route: '/support'));
+  }
+
   if (s.on('seasonal')) {
     for (final e in i.seasonal) {
       cands.add(PlanItem(type: 'seasonal', ref: e.id, fireAt: e.at, titleKey: 'notif.seasonal.title', bodyKey: e.copyKey, route: '/home'));
@@ -250,6 +260,10 @@ List<PlanItem> _reduceIgnored(List<PlanItem> items, PlanInput i) {
   final out = <PlanItem>[];
   final lastAllowed = <String, LocalDay>{};
   for (final it in items) {
+    if (it.type == 'support_reply') {
+      out.add(it); // a reply from a person is never throttled as "ignored"
+      continue;
+    }
     final key = '${it.type}|${it.type == 'habit_reminder' ? it.ref : ''}';
     final history = i.log.where((l) => l.type == it.type && (it.type != 'habit_reminder' || l.ref == it.ref) && l.scheduledFor.isBefore(i.now.subtract(const Duration(hours: 2)))).toList()
       ..sort((a, b) => b.scheduledFor.compareTo(a.scheduledFor));

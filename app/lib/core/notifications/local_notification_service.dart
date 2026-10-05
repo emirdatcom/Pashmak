@@ -12,13 +12,14 @@ class NotificationChannels {
   const NotificationChannels({required this.names, required this.descriptions});
   final Map<String, String> names;
   final Map<String, String> descriptions;
-  static const ids = ['daily', 'reminders', 'cat', 'account'];
+  static const ids = ['daily', 'reminders', 'cat', 'account', 'support'];
 
   /// Which Android channel a notification type uses.
   static String forType(String type) => switch (type) {
         'habit_reminder' => 'reminders',
         'cat_returned' => 'cat',
         'trial' => 'account',
+        'support_reply' => 'support',
         _ => 'daily',
       };
 }

@@ -177,4 +177,34 @@ void main() {
     expect(ofType(p, 'morning'), isEmpty);
     expect(p.every((x) => x.fireAt.isAfter(d(5, 10, 0))), isTrue);
   });
+
+  group('support_reply (no push service, D-9)', () {
+    test('a pending reply becomes one generic local notification that opens the chat', () {
+      final p = plan(PlanInput(now: now, settings: settings(), supportReplyAt: d(5, 12, 0)));
+      final r = ofType(p, 'support_reply').single;
+      expect((r.route, r.titleKey, r.bodyKey), ('/support', 'notif.support_reply.title', 'notif.support_reply'));
+      expect(r.vars, isEmpty, reason: 'the message text never goes into a notification');
+      expect(ofType(plan(PlanInput(now: now, settings: settings())), 'support_reply'), isEmpty);
+    });
+
+    test('quiet hours move it to the morning; a disabled type is skipped', () {
+      final r = ofType(plan(PlanInput(now: now, settings: settings(), supportReplyAt: d(5, 23, 0))), 'support_reply').single;
+      expect((r.fireAt.day, r.fireAt.hour), (6, 8));
+      final off = settings(enabled: {for (final t in notificationPriority) t: t != 'support_reply'});
+      expect(ofType(plan(PlanInput(now: now, settings: off, supportReplyAt: d(5, 12, 0))), 'support_reply'), isEmpty);
+    });
+
+    test('priority: right after the trial reminder, above habit reminders, and it is never throttled as ignored', () {
+      expect(notificationPriority.take(3).toList(), ['trial', 'support_reply', 'habit_reminder']);
+      final habits = [
+        for (final k in ['water', 'walk', 'sleep']) PlanHabit(id: k, templateKey: k, reminderMinutes: 600 + k.length, scheduleType: 'daily', weekdaysMask: 127),
+      ];
+      final p = plan(PlanInput(now: now, settings: settings(max: 3), habits: habits, supportReplyAt: d(5, 12, 0)));
+      final today = p.where((x) => x.fireAt.day == 5).map((x) => x.type).toList();
+      expect(today, contains('support_reply'), reason: 'the reply survives the daily cap');
+      // 6 ignored support notifications in the log do not suppress the next one
+      final log = [for (var i = 1; i <= 6; i++) PlanLogEntry(type: 'support_reply', scheduledFor: d(5).subtract(Duration(days: i)))];
+      expect(ofType(plan(PlanInput(now: now, settings: settings(), supportReplyAt: d(5, 12, 0), log: log)), 'support_reply'), hasLength(1));
+    });
+  });
 }

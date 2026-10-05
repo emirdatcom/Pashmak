@@ -156,7 +156,8 @@
       "streak_gentle": true,
       "comeback": true,
       "trial": true,
-      "seasonal": true
+      "seasonal": true,
+      "support_reply": true
     }
   },
   "safety": {

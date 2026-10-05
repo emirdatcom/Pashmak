@@ -73,6 +73,9 @@ class ApiClient {
     h.next(e);
   }
 
+  /// A currently valid access token (refreshing/registering when needed), e.g. for the WebSocket auth frame.
+  Future<String> accessToken() async => (await _validTokens()).access;
+
   Future<Tokens> _validTokens() async {
     final t = await _tokens.read();
     if (t != null && t.accessExpiresAt.isAfter(_clock.now().add(const Duration(seconds: 30)))) return t;

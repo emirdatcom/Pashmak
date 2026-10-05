@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/analytics/analytics_event.dart';
 import '../../../core/l10n/digits.dart';
@@ -19,6 +18,7 @@ import '../../core_loop_providers.dart';
 import '../../notifications/data/notification_scheduler.dart';
 import '../../onboarding/domain/onboarding_service.dart';
 import '../../onboarding/presentation/onboarding_screen.dart';
+import '../../support/support_providers.dart';
 import '../settings_providers.dart';
 
 /// Settings home (docs/20 §4): notifications, my day, theme, subscription, your data, help, about, contact.
@@ -30,9 +30,7 @@ class SettingsScreen extends ConsumerWidget {
     final dayStart = ref.watch(dayStartHourProvider);
     final theme = ref.watch(themeModeProvider);
     final catName = ref.watch(catNameProvider);
-    final contact = (ref.watch(contentRepositoryProvider).bundledEntries('brand')['support_contact'] as Map?) ?? const {};
-    final email = (contact['email'] as String?) ?? '';
-    final channel = (contact['channel_url'] as String?) ?? '';
+    final unread = ref.watch(supportUnreadCountProvider).value ?? 0;
     ListTile tile(IconData icon, String title, VoidCallback? onTap, {String? subtitle}) => ListTile(
           leading: Icon(icon),
           title: Text(title),
@@ -53,15 +51,15 @@ class SettingsScreen extends ConsumerWidget {
         tile(Icons.lock_outline, copy.t('settings.privacy.title'), () => context.push('${Routes.settings}/privacy')),
         tile(Icons.favorite_border, copy.t('help.title'), () => context.push(Routes.safety)),
         tile(Icons.info_outline, copy.t('settings.about'), () => context.push('${Routes.settings}/about')),
-        tile(Icons.mail_outline, copy.t('settings.contact'), (email.isEmpty && channel.isEmpty) ? null : () => _contact(email, channel),
-            subtitle: (email.isEmpty && channel.isEmpty) ? copy.t('settings.contact.none') : null),
+        if (ref.watch(supportEnabledProvider))
+          ListTile(
+            leading: Badge(isLabelVisible: unread > 0, label: Text('$unread'), child: const Icon(Icons.chat_bubble_outline)),
+            title: Text(copy.t('support.entry')),
+            trailing: const Icon(Icons.chevron_left),
+            onTap: () => context.push(Routes.support()),
+          ),
       ]),
     );
-  }
-
-  Future<void> _contact(String email, String channel) async {
-    final uri = email.isNotEmpty ? Uri(scheme: 'mailto', path: email) : Uri.parse(channel);
-    await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 
   Future<void> _pickDayStart(BuildContext context, WidgetRef ref) async {

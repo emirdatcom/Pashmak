@@ -4,10 +4,11 @@ import '../../core/outbox/outbox_worker.dart';
 import '../../core/providers.dart';
 import '../core_loop_providers.dart';
 import '../settings/settings_providers.dart';
+import '../support/support_providers.dart';
 import 'domain/monetization_service.dart';
 
 /// Trial, purchase and restore flows plus their durable outbox. Needs the bootstrapped entitlement repository.
-final monetizationServiceProvider = Provider<MonetizationService>((ref) {
+final Provider<MonetizationService> monetizationServiceProvider = Provider<MonetizationService>((ref) {
   final repo = ref.watch(entitlementRepositoryProvider);
   if (repo == null) throw StateError('entitlement repository not bootstrapped');
   return MonetizationService(
@@ -19,7 +20,7 @@ final monetizationServiceProvider = Provider<MonetizationService>((ref) {
     analytics: ref.watch(analyticsProvider),
     clock: ref.watch(clockProvider),
     config: () => ref.read(appConfigProvider),
-    extraHandlers: ref.watch(dataServiceProvider).handlers,
+    extraHandlers: {...ref.watch(dataServiceProvider).handlers, ...ref.watch(supportRepositoryProvider).handlers},
   );
 });
 

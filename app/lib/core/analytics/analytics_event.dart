@@ -35,7 +35,11 @@ enum AnalyticsEvent {
   restoreCompletedBackup('restore_completed_backup', {}),
   phoneLinked('phone_linked', {'merged'}),
   statsViewed('stats_viewed', {'range'}),
-  seasonalItemPurchased('seasonal_item_purchased', {'seasonal_key'});
+  seasonalItemPurchased('seasonal_item_purchased', {'seasonal_key'}),
+  supportOpened('support_opened', {'source'}),
+  supportMessageSent('support_message_sent', {'has_device_meta'}),
+  supportReplyReceived('support_reply_received', {'via'}),
+  supportConversationDeleted('support_conversation_deleted', {});
 
   const AnalyticsEvent(this.wireName, this.allowedProps);
   final String wireName;

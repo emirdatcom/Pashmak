@@ -34,6 +34,7 @@ const defaultNotifTypes = {
   'comeback': true,
   'trial': true,
   'seasonal': true,
+  'support_reply': true,
 };
 
 int parseHHmm(String s) {
@@ -104,6 +105,11 @@ class NotificationScheduler {
   }
 
   static List<SeasonalEvent> _none() => const [];
+
+  static DateTime? _ms(String? v) {
+    final n = int.tryParse(v ?? '');
+    return n == null ? null : DateTime.fromMillisecondsSinceEpoch(n);
+  }
   final List<SeasonalEvent> Function() _seasonal;
 
   Future<PlanInput> buildInput() async {
@@ -151,6 +157,7 @@ class NotificationScheduler {
       trial: PlanTrial(active: trialActive, startedAt: trialStart == null ? null : DateTime.fromMillisecondsSinceEpoch(trialStart), purchased: purchased),
       log: log,
       seasonal: _seasonal(),
+      supportReplyAt: _ms(await _db.meta('support_reply_at')),
     );
   }
 

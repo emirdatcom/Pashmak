@@ -8,8 +8,7 @@
     "app_name": "پشمک",
     "cat_default_name": "ملوس",
     "support_contact": {
-      "email": "",
-      "channel_url": ""
+      "type": "in_app_chat"
     },
     "name_blocklist": [
       "کثافت",

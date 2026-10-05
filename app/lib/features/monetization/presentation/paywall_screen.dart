@@ -10,8 +10,10 @@ import '../../../core/entitlement/paywall_policy.dart';
 import '../../../core/l10n/digits.dart';
 import '../../../core/payments/payment_gateway.dart';
 import '../../../core/providers.dart';
+import '../../../core/router/routes.dart';
 import '../../../core/theme/tokens.dart';
 import '../domain/monetization_service.dart';
+import '../../support/support_providers.dart';
 import '../monetization_providers.dart';
 
 /// Thousands separated, Persian digits.
@@ -180,6 +182,8 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
           for (final p in plans) planTile(p),
           if (variantB) ...benefits,
           if (_message != null) Padding(padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm), child: Text(_message!, textAlign: TextAlign.center)),
+          if (_message == copy.t('paywall.error.purchase') && ref.watch(supportEnabledProvider))
+            TextButton(onPressed: () => context.push(Routes.support(source: 'purchase_error')), child: Text(copy.t('support.purchase_help'))),
           const SizedBox(height: AppSpacing.sm),
           if (canTrial) ...[
             FilledButton(onPressed: _busy ? null : _trial, child: Text(copy.t('paywall.trial_cta'))),

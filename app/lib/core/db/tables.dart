@@ -204,3 +204,18 @@ class ContentCache extends Table {
   @override
   Set<Column> get primaryKey => {packKey};
 }
+
+/// Local copy of the support chat (the server is the source of truth, so this table is NOT in the backup).
+/// `status`: sending | sent | read | failed. `id` is the server id, or the local client id while sending.
+class SupportMessagesCache extends Table {
+  TextColumn get id => text()();
+  TextColumn get clientMsgId => text().nullable()();
+  TextColumn get sender => text()(); // user | operator | system
+  TextColumn get body => text()();
+  IntColumn get createdAt => integer()();
+  TextColumn get status => text()();
+  IntColumn get readAt => integer().nullable()();
+  TextColumn get operatorName => text().nullable()();
+  @override
+  Set<Column> get primaryKey => {id};
+}

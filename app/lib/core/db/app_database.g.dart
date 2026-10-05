@@ -7409,6 +7409,530 @@ class ContentCacheCompanion extends UpdateCompanion<ContentCacheData> {
   }
 }
 
+class $SupportMessagesCacheTable extends SupportMessagesCache
+    with TableInfo<$SupportMessagesCacheTable, SupportMessagesCacheData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SupportMessagesCacheTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _clientMsgIdMeta = const VerificationMeta(
+    'clientMsgId',
+  );
+  @override
+  late final GeneratedColumn<String> clientMsgId = GeneratedColumn<String>(
+    'client_msg_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _senderMeta = const VerificationMeta('sender');
+  @override
+  late final GeneratedColumn<String> sender = GeneratedColumn<String>(
+    'sender',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _bodyMeta = const VerificationMeta('body');
+  @override
+  late final GeneratedColumn<String> body = GeneratedColumn<String>(
+    'body',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _readAtMeta = const VerificationMeta('readAt');
+  @override
+  late final GeneratedColumn<int> readAt = GeneratedColumn<int>(
+    'read_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _operatorNameMeta = const VerificationMeta(
+    'operatorName',
+  );
+  @override
+  late final GeneratedColumn<String> operatorName = GeneratedColumn<String>(
+    'operator_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    clientMsgId,
+    sender,
+    body,
+    createdAt,
+    status,
+    readAt,
+    operatorName,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'support_messages_cache';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SupportMessagesCacheData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('client_msg_id')) {
+      context.handle(
+        _clientMsgIdMeta,
+        clientMsgId.isAcceptableOrUnknown(
+          data['client_msg_id']!,
+          _clientMsgIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('sender')) {
+      context.handle(
+        _senderMeta,
+        sender.isAcceptableOrUnknown(data['sender']!, _senderMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_senderMeta);
+    }
+    if (data.containsKey('body')) {
+      context.handle(
+        _bodyMeta,
+        body.isAcceptableOrUnknown(data['body']!, _bodyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_bodyMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
+    if (data.containsKey('read_at')) {
+      context.handle(
+        _readAtMeta,
+        readAt.isAcceptableOrUnknown(data['read_at']!, _readAtMeta),
+      );
+    }
+    if (data.containsKey('operator_name')) {
+      context.handle(
+        _operatorNameMeta,
+        operatorName.isAcceptableOrUnknown(
+          data['operator_name']!,
+          _operatorNameMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  SupportMessagesCacheData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SupportMessagesCacheData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      clientMsgId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}client_msg_id'],
+      ),
+      sender: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sender'],
+      )!,
+      body: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}body'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      readAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}read_at'],
+      ),
+      operatorName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}operator_name'],
+      ),
+    );
+  }
+
+  @override
+  $SupportMessagesCacheTable createAlias(String alias) {
+    return $SupportMessagesCacheTable(attachedDatabase, alias);
+  }
+}
+
+class SupportMessagesCacheData extends DataClass
+    implements Insertable<SupportMessagesCacheData> {
+  final String id;
+  final String? clientMsgId;
+  final String sender;
+  final String body;
+  final int createdAt;
+  final String status;
+  final int? readAt;
+  final String? operatorName;
+  const SupportMessagesCacheData({
+    required this.id,
+    this.clientMsgId,
+    required this.sender,
+    required this.body,
+    required this.createdAt,
+    required this.status,
+    this.readAt,
+    this.operatorName,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    if (!nullToAbsent || clientMsgId != null) {
+      map['client_msg_id'] = Variable<String>(clientMsgId);
+    }
+    map['sender'] = Variable<String>(sender);
+    map['body'] = Variable<String>(body);
+    map['created_at'] = Variable<int>(createdAt);
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || readAt != null) {
+      map['read_at'] = Variable<int>(readAt);
+    }
+    if (!nullToAbsent || operatorName != null) {
+      map['operator_name'] = Variable<String>(operatorName);
+    }
+    return map;
+  }
+
+  SupportMessagesCacheCompanion toCompanion(bool nullToAbsent) {
+    return SupportMessagesCacheCompanion(
+      id: Value(id),
+      clientMsgId: clientMsgId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(clientMsgId),
+      sender: Value(sender),
+      body: Value(body),
+      createdAt: Value(createdAt),
+      status: Value(status),
+      readAt: readAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(readAt),
+      operatorName: operatorName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(operatorName),
+    );
+  }
+
+  factory SupportMessagesCacheData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SupportMessagesCacheData(
+      id: serializer.fromJson<String>(json['id']),
+      clientMsgId: serializer.fromJson<String?>(json['clientMsgId']),
+      sender: serializer.fromJson<String>(json['sender']),
+      body: serializer.fromJson<String>(json['body']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      status: serializer.fromJson<String>(json['status']),
+      readAt: serializer.fromJson<int?>(json['readAt']),
+      operatorName: serializer.fromJson<String?>(json['operatorName']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'clientMsgId': serializer.toJson<String?>(clientMsgId),
+      'sender': serializer.toJson<String>(sender),
+      'body': serializer.toJson<String>(body),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'status': serializer.toJson<String>(status),
+      'readAt': serializer.toJson<int?>(readAt),
+      'operatorName': serializer.toJson<String?>(operatorName),
+    };
+  }
+
+  SupportMessagesCacheData copyWith({
+    String? id,
+    Value<String?> clientMsgId = const Value.absent(),
+    String? sender,
+    String? body,
+    int? createdAt,
+    String? status,
+    Value<int?> readAt = const Value.absent(),
+    Value<String?> operatorName = const Value.absent(),
+  }) => SupportMessagesCacheData(
+    id: id ?? this.id,
+    clientMsgId: clientMsgId.present ? clientMsgId.value : this.clientMsgId,
+    sender: sender ?? this.sender,
+    body: body ?? this.body,
+    createdAt: createdAt ?? this.createdAt,
+    status: status ?? this.status,
+    readAt: readAt.present ? readAt.value : this.readAt,
+    operatorName: operatorName.present ? operatorName.value : this.operatorName,
+  );
+  SupportMessagesCacheData copyWithCompanion(
+    SupportMessagesCacheCompanion data,
+  ) {
+    return SupportMessagesCacheData(
+      id: data.id.present ? data.id.value : this.id,
+      clientMsgId: data.clientMsgId.present
+          ? data.clientMsgId.value
+          : this.clientMsgId,
+      sender: data.sender.present ? data.sender.value : this.sender,
+      body: data.body.present ? data.body.value : this.body,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      status: data.status.present ? data.status.value : this.status,
+      readAt: data.readAt.present ? data.readAt.value : this.readAt,
+      operatorName: data.operatorName.present
+          ? data.operatorName.value
+          : this.operatorName,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SupportMessagesCacheData(')
+          ..write('id: $id, ')
+          ..write('clientMsgId: $clientMsgId, ')
+          ..write('sender: $sender, ')
+          ..write('body: $body, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('status: $status, ')
+          ..write('readAt: $readAt, ')
+          ..write('operatorName: $operatorName')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    clientMsgId,
+    sender,
+    body,
+    createdAt,
+    status,
+    readAt,
+    operatorName,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SupportMessagesCacheData &&
+          other.id == this.id &&
+          other.clientMsgId == this.clientMsgId &&
+          other.sender == this.sender &&
+          other.body == this.body &&
+          other.createdAt == this.createdAt &&
+          other.status == this.status &&
+          other.readAt == this.readAt &&
+          other.operatorName == this.operatorName);
+}
+
+class SupportMessagesCacheCompanion
+    extends UpdateCompanion<SupportMessagesCacheData> {
+  final Value<String> id;
+  final Value<String?> clientMsgId;
+  final Value<String> sender;
+  final Value<String> body;
+  final Value<int> createdAt;
+  final Value<String> status;
+  final Value<int?> readAt;
+  final Value<String?> operatorName;
+  final Value<int> rowid;
+  const SupportMessagesCacheCompanion({
+    this.id = const Value.absent(),
+    this.clientMsgId = const Value.absent(),
+    this.sender = const Value.absent(),
+    this.body = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.status = const Value.absent(),
+    this.readAt = const Value.absent(),
+    this.operatorName = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SupportMessagesCacheCompanion.insert({
+    required String id,
+    this.clientMsgId = const Value.absent(),
+    required String sender,
+    required String body,
+    required int createdAt,
+    required String status,
+    this.readAt = const Value.absent(),
+    this.operatorName = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       sender = Value(sender),
+       body = Value(body),
+       createdAt = Value(createdAt),
+       status = Value(status);
+  static Insertable<SupportMessagesCacheData> custom({
+    Expression<String>? id,
+    Expression<String>? clientMsgId,
+    Expression<String>? sender,
+    Expression<String>? body,
+    Expression<int>? createdAt,
+    Expression<String>? status,
+    Expression<int>? readAt,
+    Expression<String>? operatorName,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (clientMsgId != null) 'client_msg_id': clientMsgId,
+      if (sender != null) 'sender': sender,
+      if (body != null) 'body': body,
+      if (createdAt != null) 'created_at': createdAt,
+      if (status != null) 'status': status,
+      if (readAt != null) 'read_at': readAt,
+      if (operatorName != null) 'operator_name': operatorName,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SupportMessagesCacheCompanion copyWith({
+    Value<String>? id,
+    Value<String?>? clientMsgId,
+    Value<String>? sender,
+    Value<String>? body,
+    Value<int>? createdAt,
+    Value<String>? status,
+    Value<int?>? readAt,
+    Value<String?>? operatorName,
+    Value<int>? rowid,
+  }) {
+    return SupportMessagesCacheCompanion(
+      id: id ?? this.id,
+      clientMsgId: clientMsgId ?? this.clientMsgId,
+      sender: sender ?? this.sender,
+      body: body ?? this.body,
+      createdAt: createdAt ?? this.createdAt,
+      status: status ?? this.status,
+      readAt: readAt ?? this.readAt,
+      operatorName: operatorName ?? this.operatorName,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (clientMsgId.present) {
+      map['client_msg_id'] = Variable<String>(clientMsgId.value);
+    }
+    if (sender.present) {
+      map['sender'] = Variable<String>(sender.value);
+    }
+    if (body.present) {
+      map['body'] = Variable<String>(body.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (readAt.present) {
+      map['read_at'] = Variable<int>(readAt.value);
+    }
+    if (operatorName.present) {
+      map['operator_name'] = Variable<String>(operatorName.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SupportMessagesCacheCompanion(')
+          ..write('id: $id, ')
+          ..write('clientMsgId: $clientMsgId, ')
+          ..write('sender: $sender, ')
+          ..write('body: $body, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('status: $status, ')
+          ..write('readAt: $readAt, ')
+          ..write('operatorName: $operatorName, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -7435,6 +7959,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $OutboxTable outbox = $OutboxTable(this);
   late final $AnalyticsQueueTable analyticsQueue = $AnalyticsQueueTable(this);
   late final $ContentCacheTable contentCache = $ContentCacheTable(this);
+  late final $SupportMessagesCacheTable supportMessagesCache =
+      $SupportMessagesCacheTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -7457,6 +7983,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     outbox,
     analyticsQueue,
     contentCache,
+    supportMessagesCache,
   ];
 }
 
@@ -11687,6 +12214,295 @@ typedef $$ContentCacheTableProcessedTableManager =
       ContentCacheData,
       PrefetchHooks Function()
     >;
+typedef $$SupportMessagesCacheTableCreateCompanionBuilder =
+    SupportMessagesCacheCompanion Function({
+      required String id,
+      Value<String?> clientMsgId,
+      required String sender,
+      required String body,
+      required int createdAt,
+      required String status,
+      Value<int?> readAt,
+      Value<String?> operatorName,
+      Value<int> rowid,
+    });
+typedef $$SupportMessagesCacheTableUpdateCompanionBuilder =
+    SupportMessagesCacheCompanion Function({
+      Value<String> id,
+      Value<String?> clientMsgId,
+      Value<String> sender,
+      Value<String> body,
+      Value<int> createdAt,
+      Value<String> status,
+      Value<int?> readAt,
+      Value<String?> operatorName,
+      Value<int> rowid,
+    });
+
+class $$SupportMessagesCacheTableFilterComposer
+    extends Composer<_$AppDatabase, $SupportMessagesCacheTable> {
+  $$SupportMessagesCacheTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get clientMsgId => $composableBuilder(
+    column: $table.clientMsgId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sender => $composableBuilder(
+    column: $table.sender,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get body => $composableBuilder(
+    column: $table.body,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get readAt => $composableBuilder(
+    column: $table.readAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get operatorName => $composableBuilder(
+    column: $table.operatorName,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$SupportMessagesCacheTableOrderingComposer
+    extends Composer<_$AppDatabase, $SupportMessagesCacheTable> {
+  $$SupportMessagesCacheTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get clientMsgId => $composableBuilder(
+    column: $table.clientMsgId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get sender => $composableBuilder(
+    column: $table.sender,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get body => $composableBuilder(
+    column: $table.body,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get readAt => $composableBuilder(
+    column: $table.readAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get operatorName => $composableBuilder(
+    column: $table.operatorName,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$SupportMessagesCacheTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SupportMessagesCacheTable> {
+  $$SupportMessagesCacheTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get clientMsgId => $composableBuilder(
+    column: $table.clientMsgId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get sender =>
+      $composableBuilder(column: $table.sender, builder: (column) => column);
+
+  GeneratedColumn<String> get body =>
+      $composableBuilder(column: $table.body, builder: (column) => column);
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<int> get readAt =>
+      $composableBuilder(column: $table.readAt, builder: (column) => column);
+
+  GeneratedColumn<String> get operatorName => $composableBuilder(
+    column: $table.operatorName,
+    builder: (column) => column,
+  );
+}
+
+class $$SupportMessagesCacheTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SupportMessagesCacheTable,
+          SupportMessagesCacheData,
+          $$SupportMessagesCacheTableFilterComposer,
+          $$SupportMessagesCacheTableOrderingComposer,
+          $$SupportMessagesCacheTableAnnotationComposer,
+          $$SupportMessagesCacheTableCreateCompanionBuilder,
+          $$SupportMessagesCacheTableUpdateCompanionBuilder,
+          (
+            SupportMessagesCacheData,
+            BaseReferences<
+              _$AppDatabase,
+              $SupportMessagesCacheTable,
+              SupportMessagesCacheData
+            >,
+          ),
+          SupportMessagesCacheData,
+          PrefetchHooks Function()
+        > {
+  $$SupportMessagesCacheTableTableManager(
+    _$AppDatabase db,
+    $SupportMessagesCacheTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SupportMessagesCacheTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SupportMessagesCacheTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$SupportMessagesCacheTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String?> clientMsgId = const Value.absent(),
+                Value<String> sender = const Value.absent(),
+                Value<String> body = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<int?> readAt = const Value.absent(),
+                Value<String?> operatorName = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SupportMessagesCacheCompanion(
+                id: id,
+                clientMsgId: clientMsgId,
+                sender: sender,
+                body: body,
+                createdAt: createdAt,
+                status: status,
+                readAt: readAt,
+                operatorName: operatorName,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                Value<String?> clientMsgId = const Value.absent(),
+                required String sender,
+                required String body,
+                required int createdAt,
+                required String status,
+                Value<int?> readAt = const Value.absent(),
+                Value<String?> operatorName = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SupportMessagesCacheCompanion.insert(
+                id: id,
+                clientMsgId: clientMsgId,
+                sender: sender,
+                body: body,
+                createdAt: createdAt,
+                status: status,
+                readAt: readAt,
+                operatorName: operatorName,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<
+                    $SupportMessagesCacheTable,
+                    SupportMessagesCacheData
+                  >(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $SupportMessagesCacheTable,
+                    SupportMessagesCacheData
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$SupportMessagesCacheTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SupportMessagesCacheTable,
+      SupportMessagesCacheData,
+      $$SupportMessagesCacheTableFilterComposer,
+      $$SupportMessagesCacheTableOrderingComposer,
+      $$SupportMessagesCacheTableAnnotationComposer,
+      $$SupportMessagesCacheTableCreateCompanionBuilder,
+      $$SupportMessagesCacheTableUpdateCompanionBuilder,
+      (
+        SupportMessagesCacheData,
+        BaseReferences<
+          _$AppDatabase,
+          $SupportMessagesCacheTable,
+          SupportMessagesCacheData
+        >,
+      ),
+      SupportMessagesCacheData,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -11725,4 +12541,6 @@ class $AppDatabaseManager {
       $$AnalyticsQueueTableTableManager(_db, _db.analyticsQueue);
   $$ContentCacheTableTableManager get contentCache =>
       $$ContentCacheTableTableManager(_db, _db.contentCache);
+  $$SupportMessagesCacheTableTableManager get supportMessagesCache =>
+      $$SupportMessagesCacheTableTableManager(_db, _db.supportMessagesCache);
 }

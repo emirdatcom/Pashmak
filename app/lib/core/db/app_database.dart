@@ -23,12 +23,13 @@ part 'app_database.g.dart';
   Outbox,
   AnalyticsQueue,
   ContentCache,
+  SupportMessagesCache,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -39,7 +40,11 @@ class AppDatabase extends _$AppDatabase {
         },
         // v1 has no upgrades. From v2 on use stepByStep(...) generated from drift_schemas/ (docs/30 §11);
         // never ship a destructive migration without an export.
-        onUpgrade: (m, from, to) async => throw StateError('No migration from $from to $to'),
+        onUpgrade: (m, from, to) async {
+          // v1 → v2 (prompt 21): the support chat cache. Additive only, nothing is rewritten.
+          if (from < 2) await m.createTable(supportMessagesCache);
+          if (to > 2) throw StateError('No migration from $from to $to');
+        },
       );
 
   /// Deletes every row of every table and re-seeds the singleton rows: the app then behaves like a fresh install.

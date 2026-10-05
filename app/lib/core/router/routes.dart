@@ -24,5 +24,7 @@ class Routes {
   static const trialEnded = '/trial-ended';
   static const lockSelect = '/lock-select';
   static const safety = '/safety';
+  static String support({String source = 'settings'}) => '/support?source=$source';
+  static const supportBase = '/support';
   static const update = '/update';
 }

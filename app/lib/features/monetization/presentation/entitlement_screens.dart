@@ -10,6 +10,7 @@ import '../../../core/router/routes.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../core/time/local_day.dart';
 import '../../core_loop_providers.dart';
+import '../../support/support_providers.dart';
 
 String _date(DateTime d) => toPersianDigits(JalaliFormatter.date(LocalDay.fromDate(d)));
 
@@ -142,6 +143,7 @@ class SubscriptionScreen extends ConsumerWidget {
           Text(text, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: AppSpacing.lg),
           FilledButton(onPressed: () => context.push(Routes.paywall('settings')), child: Text(copy.t('sub.upgrade'))),
+          if (ref.watch(supportEnabledProvider)) TextButton(onPressed: () => context.push(Routes.support(source: 'subscription')), child: Text(copy.t('support.purchase_help'))),
         ]),
       ),
     );
