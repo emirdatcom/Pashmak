@@ -18,6 +18,12 @@ class UserSettings extends Table {
 class Habits extends Table {
   TextColumn get id => text()();
   TextColumn get templateKey => text().nullable()();
+  // prompt 22 (schema v3): goal-library fields. `goalKey` supersedes `templateKey` (kept for old data).
+  TextColumn get goalKey => text().nullable()();
+  TextColumn get areaKey => text().nullable()();
+  TextColumn get timeOfDay => text().withDefault(const Constant('any'))(); // morning | afternoon | evening | any
+  TextColumn get repeatType => text().withDefault(const Constant('daily'))(); // daily | weekly | once
+  TextColumn get dueDay => text().nullable()(); // local_day, for `once`
   TextColumn get title => text().nullable()();
   TextColumn get icon => text().withDefault(const Constant('check'))();
   TextColumn get scheduleType => text().withDefault(const Constant('daily'))();
@@ -203,4 +209,63 @@ class ContentCache extends Table {
   TextColumn get payload => text()();
   @override
   Set<Column> get primaryKey => {packKey};
+}
+
+/// Local copy of the support chat (the server is the source of truth, so this table is NOT in the backup).
+/// `status`: sending | sent | read | failed. `id` is the server id, or the local client id while sending.
+class SupportMessagesCache extends Table {
+  TextColumn get id => text()();
+  TextColumn get clientMsgId => text().nullable()();
+  TextColumn get sender => text()(); // user | operator | system
+  TextColumn get body => text()();
+  IntColumn get createdAt => integer()();
+  TextColumn get status => text()();
+  IntColumn get readAt => integer().nullable()();
+  TextColumn get operatorName => text().nullable()();
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// Answers of the onboarding questionnaire (local only, docs/22 §5).
+class OnboardingAnswers extends Table {
+  TextColumn get key => text()();
+  TextColumn get value => text()();
+  @override
+  Set<Column> get primaryKey => {key};
+}
+
+/// Cat discoveries found on adventures (collection screen).
+class DiscoveriesFound extends Table {
+  TextColumn get discoveryKey => text()();
+  IntColumn get foundAt => integer()();
+  @override
+  Set<Column> get primaryKey => {discoveryKey};
+}
+
+/// Special (one-off) quests: only the claim is stored; progress is derived from local data.
+class QuestProgress extends Table {
+  TextColumn get questKey => text()();
+  IntColumn get claimedAt => integer().nullable()();
+  @override
+  Set<Column> get primaryKey => {questKey};
+}
+
+/// Today's daily quests: the chosen keys and which were claimed (JSON arrays).
+class QuestDailyState extends Table {
+  TextColumn get localDay => text()();
+  TextColumn get questKeys => text()();
+  TextColumn get claimed => text().withDefault(const Constant('[]'))();
+  TextColumn get reflectionAnswer => text().nullable()(); // local only
+  @override
+  Set<Column> get primaryKey => {localDay};
+}
+
+/// The rotating shop stock of a day (docs/60).
+class ShopRotation extends Table {
+  TextColumn get localDay => text()();
+  TextColumn get shop => text()(); // outfit | furniture
+  IntColumn get refreshCount => integer().withDefault(const Constant(0))();
+  TextColumn get itemKeys => text()(); // JSON array
+  @override
+  Set<Column> get primaryKey => {localDay, shop};
 }

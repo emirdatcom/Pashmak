@@ -4,7 +4,7 @@ WORKDIR /src/backend
 COPY backend/go.mod backend/go.sum ./
 RUN go mod download
 COPY backend/ ./
-RUN for c in api migrate worker admin-cli content-lint; do \
+RUN for c in api migrate worker admin-cli content-lint alert-relay; do \
       CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /out/$c ./cmd/$c || exit 1; done
 
 FROM gcr.io/distroless/static-debian12:nonroot

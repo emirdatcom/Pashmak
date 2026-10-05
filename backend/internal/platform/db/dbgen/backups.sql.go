@@ -25,7 +25,7 @@ func (q *Queries) DeleteBackup(ctx context.Context, userID uuid.UUID) (int64, er
 }
 
 const getBackup = `-- name: GetBackup :one
-SELECT user_id, storage, blob_ref, blob, size_bytes, schema_version, sha256, kdf_params, updated_at FROM backups WHERE user_id = $1
+SELECT user_id, blob, size_bytes, schema_version, sha256, kdf_params, updated_at FROM backups WHERE user_id = $1
 `
 
 func (q *Queries) GetBackup(ctx context.Context, userID uuid.UUID) (Backup, error) {
@@ -33,8 +33,6 @@ func (q *Queries) GetBackup(ctx context.Context, userID uuid.UUID) (Backup, erro
 	var i Backup
 	err := row.Scan(
 		&i.UserID,
-		&i.Storage,
-		&i.BlobRef,
 		&i.Blob,
 		&i.SizeBytes,
 		&i.SchemaVersion,
@@ -46,17 +44,15 @@ func (q *Queries) GetBackup(ctx context.Context, userID uuid.UUID) (Backup, erro
 }
 
 const upsertBackup = `-- name: UpsertBackup :exec
-INSERT INTO backups (user_id, storage, blob_ref, blob, size_bytes, schema_version, sha256, kdf_params, updated_at)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-ON CONFLICT (user_id) DO UPDATE SET storage = EXCLUDED.storage, blob_ref = EXCLUDED.blob_ref, blob = EXCLUDED.blob,
+INSERT INTO backups (user_id, blob, size_bytes, schema_version, sha256, kdf_params, updated_at)
+VALUES ($1, $2, $3, $4, $5, $6, $7)
+ON CONFLICT (user_id) DO UPDATE SET blob = EXCLUDED.blob,
   size_bytes = EXCLUDED.size_bytes, schema_version = EXCLUDED.schema_version, sha256 = EXCLUDED.sha256,
   kdf_params = EXCLUDED.kdf_params, updated_at = EXCLUDED.updated_at
 `
 
 type UpsertBackupParams struct {
 	UserID        uuid.UUID
-	Storage       string
-	BlobRef       string
 	Blob          []byte
 	SizeBytes     int32
 	SchemaVersion int32
@@ -68,8 +64,6 @@ type UpsertBackupParams struct {
 func (q *Queries) UpsertBackup(ctx context.Context, arg UpsertBackupParams) error {
 	_, err := q.db.Exec(ctx, upsertBackup,
 		arg.UserID,
-		arg.Storage,
-		arg.BlobRef,
 		arg.Blob,
 		arg.SizeBytes,
 		arg.SchemaVersion,

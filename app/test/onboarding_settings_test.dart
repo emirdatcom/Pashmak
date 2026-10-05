@@ -17,6 +17,7 @@ import 'package:pashmak_app/core/theme/app_theme.dart';
 import 'package:pashmak_app/core/time/local_day.dart';
 import 'package:pashmak_app/features/checkin/presentation/checkin_screen.dart';
 import 'package:pashmak_app/features/core_loop_providers.dart';
+import 'package:pashmak_app/features/goals/domain/goal_recommender.dart';
 import 'package:pashmak_app/features/habits/domain/habit_service.dart';
 import 'package:pashmak_app/features/home/presentation/home_screen.dart';
 import 'package:pashmak_app/features/onboarding/domain/onboarding_service.dart';
@@ -51,26 +52,31 @@ void main() {
     late OnboardingService svc;
     setUp(() {
       l = Loop(t0);
-      svc = OnboardingService(l.db, l.habits, l.analytics, defaultCatName: 'ملوس');
+      svc = OnboardingService(l.db, l.habits, l.analytics, l.clock, defaultCatName: 'ملوس');
     });
 
     test('progress survives a restart; install is tracked once', () async {
       expect(await svc.currentStep(), 1);
       await svc.setStep(3);
-      expect(await OnboardingService(l.db, l.habits, l.analytics, defaultCatName: 'ملوس').currentStep(), 3);
+      expect(await OnboardingService(l.db, l.habits, l.analytics, l.clock, defaultCatName: 'ملوس').currentStep(), 3);
       await svc.trackInstallOnce();
       await svc.trackInstallOnce();
       final installs = await (l.db.select(l.db.analyticsQueue)..where((e) => e.name.equals('app_installed'))).get();
       expect(installs, hasLength(1));
     });
 
-    test('complete creates at most three template habits and marks onboarding done', () async {
-      final n = await svc.complete(habits: {'water': 600, 'sleep': null, 'walk': null, 'medicine': null}, notifPermission: true, catNameChanged: false);
+    test('complete creates the planned goals and marks onboarding done; analytics has counts only', () async {
+      final lib = (jsonDecode(realAssets().files['assets/content/goal_library.json']!)['entries'] as List).cast<Map<String, dynamic>>().map(GoalDef.fromJson).toList();
+      final goals = [for (final k in ['food_water_glass', 'sleep_window_open', 'move_walk_alley']) PlannedGoal(lib.firstWhere((g) => g.key == k), 'morning')];
+      final n = await svc.complete(goals: goals, notifPermission: true, catNameChanged: false, profile: const OnboardingProfile(energyLevel: 1), replacedCount: 1);
       expect(n, 3);
-      expect((await l.habits.activeHabits()).map((h) => h.templateKey), ['water', 'sleep', 'walk']);
+      expect((await l.habits.activeHabits()).map((h) => h.goalKey), ['food_water_glass', 'sleep_window_open', 'move_walk_alley']);
       expect(await l.db.meta('onboarding_completed'), 'true');
       final ev = (await (l.db.select(l.db.analyticsQueue)..where((e) => e.name.equals('onboarding_completed'))).getSingle()).props;
       expect(jsonDecode(ev), {'habits_selected_count': 3, 'notif_permission': 'granted', 'cat_name_changed': false});
+      final acc = (await (l.db.select(l.db.analyticsQueue)..where((e) => e.name.equals('goal_recommended_accepted'))).getSingle()).props;
+      expect(jsonDecode(acc), {'accepted_count': 3, 'replaced_count': 1});
+      expect((await l.db.select(l.db.analyticsQueue).get()).map((e) => e.props).join(), isNot(contains('energy_level')));
     });
 
     test('the default name is stored as empty; a custom one is kept', () async {
@@ -204,7 +210,7 @@ void main() {
         GoRoute(path: Routes.habitNew, builder: (_, _) => const SizedBox()),
         GoRoute(path: Routes.adventure, builder: (_, _) => const SizedBox()),
         GoRoute(path: Routes.safety, builder: (_, _) => const SizedBox()),
-        GoRoute(path: '/habits/:id', builder: (_, _) => const SizedBox()),
+        GoRoute(path: '/goals/:id', builder: (_, _) => const SizedBox()),
       ]);
       await tester.pumpWidget(UncontrolledProviderScope(
         container: container,
@@ -230,42 +236,59 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
     }
 
-    testWidgets('onboarding: four steps end on home with the chosen habits and cat name', (tester) async {
+    testWidgets('onboarding: the 11 steps end on home with suggested goals and the cat name', (tester) async {
       final (c, h) = await boot(tester, initial: '/onboarding/1');
       await settle(tester);
       expect(find.text('سلام! من ملوسام'), findsOneWidget);
       expect(find.textContaining('جای درمان'), findsOneWidget, reason: 'non-medical disclaimer on step 1');
       await tester.tap(find.text('بعدی'));
       await settle(tester);
-
+      await tester.enterText(find.byType(TextField), 'سارا');
+      await tester.tap(find.text('بعدی'));
+      await settle(tester);
+      await tester.tap(find.text('خیلی خسته')); // energy
+      await tester.tap(find.text('بعدی'));
+      await settle(tester);
+      await tester.tap(find.text('خواب').first); // areas
+      await tester.tap(find.text('آرامش').first);
+      await tester.tap(find.text('بعدی'));
+      await settle(tester);
+      await tester.tap(find.text('بعدی')); // answers (skipped questions use defaults)
+      await settle(tester);
+      await tester.tap(find.text('بعدی')); // chronotype
+      await settle(tester);
+      await tester.tap(find.text('بعدی')); // time → builds the plan
+      await settle(tester);
+      expect(find.text('سبد باز شد!'), findsOneWidget);
       await tester.enterText(find.byType(TextField), 'پشمک');
       await tester.tap(find.text('بعدی'));
       await settle(tester);
       expect(c.read(catNameProvider), 'پشمک');
-
-      await tester.tap(find.text('آب خوردن'));
-      await settle(tester);
-      await tester.tap(find.text('خواب').first);
-      await settle(tester);
+      expect(find.text('یکی دیگه پیشنهاد بده'), findsNWidgets(3));
       await tester.tap(find.text('بعدی'));
       await settle(tester);
-
       expect(find.text('یادآوری‌های مهربون'), findsOneWidget);
       await tester.tap(find.text('بعداً'));
+      await settle(tester);
+      await tester.tap(find.text('بعدی'));
       await settle(tester);
       expect(find.text('هفت روز پریمیوم، رایگان'), findsOneWidget);
       await tester.tap(find.text('بعداً'));
       await settle(tester);
-      await settle(tester); // creating habits also republishes notifications and the widget snapshot
-
+      await settle(tester);
+      for (var i = 0; i < 6 && !c.read(onboardingCompletedProvider); i++) {
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 500)));
+        await tester.pump(const Duration(milliseconds: 300));
+      }
       expect(c.read(onboardingCompletedProvider), isTrue);
       final habits = await tester.runAsync(() => c.read(habitServiceProvider).activeHabits());
-      expect(habits!.map((x) => x.templateKey).toSet(), {'water', 'sleep'});
-      expect(await tester.runAsync(() => h.db.meta('onboarding_completed')), 'true');
+      expect(habits!.length, 3);
+      expect([for (final x in habits) '${x.goalKey}/${x.areaKey}'], isNot(contains('null')));
+      expect(await tester.runAsync(() => h.db.meta('user_name')), 'سارا');
     });
 
-    testWidgets('onboarding: a blocked or empty name is refused kindly; at most three habits', (tester) async {
-      final (_, _) = await boot(tester, initial: '/onboarding/2');
+    testWidgets('onboarding: a blocked or empty cat name is refused kindly', (tester) async {
+      await boot(tester, initial: '/onboarding/8');
       await settle(tester);
       await tester.enterText(find.byType(TextField), 'احمق');
       await tester.tap(find.text('بعدی'));
@@ -280,7 +303,10 @@ void main() {
     testWidgets('onboarding resumes where a killed app stopped', (tester) async {
       await boot(tester, initial: '/onboarding/1', seed: (db) => db.setMeta('onboarding_step', '3'));
       await settle(tester);
-      expect(find.text('از کجا شروع کنیم؟'), findsOneWidget);
+      await settle(tester);
+      await settle(tester);
+      await settle(tester);
+      expect(find.text('این روزها حالت کلی‌ات چطوره؟'), findsOneWidget);
     });
 
     for (final scale in [1.0, 1.3]) {
@@ -296,8 +322,8 @@ void main() {
       });
     }
 
-    testWidgets('onboarding steps 1-4 fit at text scale 1.3', (tester) async {
-      for (final step in [1, 2, 3, 4]) {
+    testWidgets('onboarding steps 1-11 fit at text scale 1.3', (tester) async {
+      for (final step in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]) {
         await boot(tester, scale: 1.3, initial: '/onboarding/$step');
         await settle(tester);
         expect(tester.takeException(), isNull, reason: 'step $step');
@@ -330,14 +356,10 @@ void main() {
       expect(await tester.runAsync(() => h.db.select(h.db.habits).get()), isEmpty);
     });
 
-    testWidgets('theme and day-start are saved', (tester) async {
+    testWidgets('day-start is saved and moves "today"', (tester) async {
       final (c, h) = await boot(tester, home: const SettingsScreen());
       await settle(tester);
-      await tester.runAsync(() async {
-        await c.read(themeModeProvider.notifier).save(ThemeMode.dark);
-        await c.read(dayStartHourProvider.notifier).save(5);
-      });
-      expect(await tester.runAsync(() => h.db.setting('theme_mode')), 'dark');
+      await tester.runAsync(() => c.read(dayStartHourProvider.notifier).save(5));
       expect(await tester.runAsync(() => h.db.setting('day_start_hour')), '5');
       expect(c.read(todayProvider).value, LocalDay.of(t0, dayStartHour: 5).value);
     });

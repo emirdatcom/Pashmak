@@ -9,7 +9,13 @@ import '../../features/account/phone_screens.dart';
 import '../../features/backup/presentation/backup_screens.dart';
 import '../../features/checkin/presentation/checkin_screen.dart';
 import '../../features/exercises/presentation/exercises_screens.dart';
-import '../../features/habits/presentation/habits_screens.dart';
+import '../../features/bag/presentation/bag_screen.dart';
+import '../../features/cat/presentation/cat_profile_screen.dart';
+import '../../features/discoveries/presentation/discoveries_screen.dart';
+import '../../features/goals/presentation/goal_screens.dart';
+import '../../features/menu/presentation/menu_screens.dart';
+import '../../features/quests/presentation/quests_screen.dart';
+import '../../features/shell/app_shell.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/onboarding/presentation/onboarding_screen.dart';
 import '../../features/stats/presentation/deep_stats_screen.dart';
@@ -17,11 +23,11 @@ import '../../features/stats/presentation/stats_screen.dart';
 import '../../features/safety/presentation/safety_screen.dart';
 import '../../features/shop/presentation/shop_screens.dart';
 import '../../features/settings/presentation/settings_screens.dart';
+import '../../features/support/presentation/support_screen.dart';
 import '../../features/system/force_update_screen.dart';
 import '../../features/system/placeholder_screen.dart';
 import '../../features/system/splash_screen.dart';
 import '../providers.dart';
-import '../util/version.dart';
 import 'redirect.dart';
 import 'routes.dart';
 
@@ -52,23 +58,38 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/onboarding/:step', builder: (_, s) => OnboardingScreen(step: int.tryParse(s.pathParameters['step'] ?? '') ?? 1)),
       GoRoute(path: Routes.update, builder: (_, _) => const ForceUpdateScreen()),
       ShellRoute(
-        builder: (context, state, child) => _TabShell(location: state.uri.path, child: child),
+        builder: (context, state, child) => AppShell(location: state.uri.path, child: child),
         routes: [
           GoRoute(path: Routes.home, builder: (_, _) => const HomeScreen()),
-          GoRoute(path: Routes.habits, builder: (_, _) => const HabitsScreen(), routes: [
-            GoRoute(path: 'new', builder: (_, _) => const HabitEditorScreen()),
-            GoRoute(path: ':id', builder: (_, s) => HabitDetailScreen(habitId: s.pathParameters['id']!), routes: [
-              GoRoute(path: 'edit', builder: (_, s) => HabitEditorScreen(habitId: s.pathParameters['id'])),
-            ]),
-          ]),
-          GoRoute(path: Routes.exercises, builder: (_, _) => const ExercisesScreen(), routes: [
-            GoRoute(path: ':id/run', builder: (_, s) => ExerciseRunScreen(exerciseKey: s.pathParameters['id']!)),
+          GoRoute(path: Routes.quests, builder: (_, _) => const QuestsScreen(), routes: [
+            GoRoute(path: 'reflect', builder: (_, _) => const ReflectScreen()),
           ]),
           GoRoute(path: Routes.shop, builder: (_, _) => const ShopScreen(), routes: [
-            GoRoute(path: 'closet', builder: (_, _) => const ClosetScreen()),
+            GoRoute(path: 'outfit', builder: (_, _) => const ShopDetailScreen(shop: 'outfit')),
+            GoRoute(path: 'furniture', builder: (_, _) => const ShopDetailScreen(shop: 'furniture')),
+          ]),
+          GoRoute(path: Routes.bag, builder: (_, _) => const BagScreen()),
+          GoRoute(path: Routes.cat, builder: (_, _) => const CatProfileScreen(), routes: [
+            GoRoute(path: 'discoveries', builder: (_, _) => const DiscoveriesScreen()),
+            GoRoute(path: 'edit', builder: (_, _) => const CatEditScreen()),
           ]),
         ],
       ),
+      GoRoute(path: Routes.menu, builder: (_, _) => const MenuScreen(), routes: [
+        GoRoute(path: 'areas', builder: (_, _) => const AreasScreen(), routes: [
+          GoRoute(path: 'retake', builder: (_, _) => const RetakeScreen()),
+        ]),
+        GoRoute(path: 'history', builder: (_, _) => const HistoryScreen()),
+      ]),
+      GoRoute(path: Routes.goals, builder: (_, _) => const GoalsScreen(), routes: [
+        GoRoute(path: 'new', builder: (_, _) => const GoalEditorScreen()),
+        GoRoute(path: ':id', builder: (_, s) => GoalDetailScreen(goalId: s.pathParameters['id']!), routes: [
+          GoRoute(path: 'edit', builder: (_, s) => GoalEditorScreen(goalId: s.pathParameters['id'])),
+        ]),
+      ]),
+      GoRoute(path: Routes.exercises, builder: (_, s) => ExercisesScreen(initialTab: s.uri.queryParameters['tab']), routes: [
+        GoRoute(path: ':id/run', builder: (_, s) => ExerciseRunScreen(exerciseKey: s.pathParameters['id']!)),
+      ]),
       GoRoute(path: Routes.checkin, builder: (_, _) => const CheckinScreen()),
       GoRoute(path: Routes.adventure, builder: (_, _) => const AdventureScreen(), routes: [
         GoRoute(path: 'result/:id', builder: (_, s) => AdventureResultScreen(adventureId: s.pathParameters['id']!)),
@@ -87,44 +108,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         GoRoute(path: 'privacy', builder: (_, _) => const PrivacyScreen()),
         GoRoute(path: 'about', builder: (_, _) => const AboutScreen()),
         GoRoute(path: 'subscription', builder: (_, _) => const SubscriptionScreen()),
+        GoRoute(path: 'help', builder: (_, _) => const HelpScreen()),
         GoRoute(path: ':section', builder: (_, s) => ph('settings/${s.pathParameters['section']}')),
       ]),
       GoRoute(path: Routes.safety, builder: (_, _) => const SafetyScreen()),
+      GoRoute(path: Routes.supportBase, builder: (_, s) => SupportScreen(source: s.uri.queryParameters['source'] ?? 'settings')),
     ],
   );
 });
-
-class _TabShell extends ConsumerWidget {
-  const _TabShell({required this.location, required this.child});
-  final String location;
-  final Widget child;
-
-  static const _tabs = [Routes.home, Routes.habits, Routes.exercises, Routes.shop];
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final copy = ref.watch(copyProvider);
-    final config = ref.watch(appConfigProvider);
-    final app = ref.watch(appVersionProvider);
-    final showSoft = !ref.watch(softUpdateDismissedProvider) && config.recommendedVersion.isNotEmpty && _older(app, config.recommendedVersion);
-    final index = _tabs.indexWhere(location.startsWith).clamp(0, _tabs.length - 1);
-    return Scaffold(
-      body: Column(children: [
-        if (showSoft) const SoftUpdateBanner(),
-        Expanded(child: child),
-      ]),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: index,
-        onDestinationSelected: (i) => context.go(_tabs[i]),
-        destinations: [
-          NavigationDestination(icon: const Icon(Icons.home_outlined), label: copy.t('nav.home')),
-          NavigationDestination(icon: const Icon(Icons.check_circle_outline), label: copy.t('nav.habits')),
-          NavigationDestination(icon: const Icon(Icons.self_improvement), label: copy.t('nav.exercises')),
-          NavigationDestination(icon: const Icon(Icons.storefront_outlined), label: copy.t('nav.shop')),
-        ],
-      ),
-    );
-  }
-
-  bool _older(String a, String b) => a != b && compareVersions(a, b) < 0;
-}

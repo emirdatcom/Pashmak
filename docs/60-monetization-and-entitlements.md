@@ -118,3 +118,6 @@ sequenceDiagram
 ## ۹. خرید درون‌برنامه‌ای مکمل (سکه)
 - محصولات `coins_*` ← سرور `coins_granted` برمی‌گرداند ← کلاینت `wallet_ledger(reason=iap_coins, ref_id=purchase_id)`.
 - سقف قیمت پایین؛ هیچ آیتم فروشگاهی «فقط با پول واقعی» در MVP (هر آیتم با سکه فعالیت قابل‌دسترسی است، جز `premium_only`).
+
+## فروشگاه چرخشی (پرامپت 22)
+موجودی روزانه ۶ آیتم با seed=`hash(install_id+local_day)`؛ تازه‌سازی پولی `shop.refresh_cost`؛ فروش با `shop.sell_ratio`؛ آیتم equipped قابل فروش نیست. آیتم‌های پریمیوم با `PremiumBadge` و همان `PremiumGate` موجود.

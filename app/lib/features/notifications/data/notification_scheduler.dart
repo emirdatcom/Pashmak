@@ -1,3 +1,4 @@
+import '../../goals/domain/goal_title.dart';
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
@@ -34,6 +35,7 @@ const defaultNotifTypes = {
   'comeback': true,
   'trial': true,
   'seasonal': true,
+  'support_reply': true,
 };
 
 int parseHHmm(String s) {
@@ -104,6 +106,11 @@ class NotificationScheduler {
   }
 
   static List<SeasonalEvent> _none() => const [];
+
+  static DateTime? _ms(String? v) {
+    final n = int.tryParse(v ?? '');
+    return n == null ? null : DateTime.fromMillisecondsSinceEpoch(n);
+  }
   final List<SeasonalEvent> Function() _seasonal;
 
   Future<PlanInput> buildInput() async {
@@ -114,7 +121,7 @@ class NotificationScheduler {
     final done = {for (final l in doneRows) if (l.count >= 1) l.habitId};
     final habits = [
       for (final h in habitRows)
-        PlanHabit(id: h.id, templateKey: h.templateKey, title: h.title, reminderMinutes: h.reminderMinutes, scheduleType: h.scheduleType, weekdaysMask: h.weekdaysMask, isLocked: h.isLocked, doneToday: done.contains(h.id)),
+        PlanHabit(id: h.id, templateKey: h.goalKey ?? h.templateKey, title: h.goalKey == null ? h.title : goalTitle(_copy(), h.goalKey, null), repeatType: h.repeatType, dueDay: h.dueDay, reminderMinutes: h.reminderMinutes, scheduleType: h.scheduleType, weekdaysMask: h.weekdaysMask, isLocked: h.isLocked, doneToday: done.contains(h.id)),
     ];
     final adv = await (_db.select(_db.adventures)..where((a) => a.status.equals('active'))).getSingleOrNull();
     final checkedIn = (await (_db.select(_db.checkins)..where((c) => c.localDay.equals(today.value) & c.deletedAt.isNull())).get()).isNotEmpty;
@@ -151,6 +158,8 @@ class NotificationScheduler {
       trial: PlanTrial(active: trialActive, startedAt: trialStart == null ? null : DateTime.fromMillisecondsSinceEpoch(trialStart), purchased: purchased),
       log: log,
       seasonal: _seasonal(),
+      supportReplyAt: _ms(await _db.meta('support_reply_at')),
+      paused: await _db.setting('pause_mode') == 'true',
     );
   }
 
@@ -163,7 +172,9 @@ class NotificationScheduler {
       final exact = await _db.setting(NotifSettingKeys.exactAlarms) == 'true';
       final resolved = <ResolvedNotification>[];
       for (final p in plan) {
-        if (!copy.has(p.bodyKey)) {
+        // Goal-library goals have no per-goal reminder text: fall back to the generic one.
+        final bodyKey = copy.has(p.bodyKey) ? p.bodyKey : (p.type == 'habit_reminder' ? 'notif.habit_reminder.generic' : p.bodyKey);
+        if (!copy.has(bodyKey)) {
           AppLogger.warn('notification copy missing: ${p.bodyKey}');
           continue;
         }
@@ -174,7 +185,7 @@ class NotificationScheduler {
           ref: p.ref,
           fireAt: p.fireAt,
           title: copy.has(p.titleKey) ? copy.t(p.titleKey) : '',
-          body: copy.t(p.bodyKey, p.vars),
+          body: copy.t(bodyKey, p.vars),
           route: p.route,
           exact: exact && p.type == 'habit_reminder',
           actionLabel: p.type == 'habit_reminder' && copy.has('notif.action.done') ? copy.t('notif.action.done') : null,

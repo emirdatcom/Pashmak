@@ -7,10 +7,14 @@ import 'package:pashmak_app/core/safety/distress_detector.dart';
 import 'package:pashmak_app/core/time/clock.dart';
 import 'package:pashmak_app/core/time/local_day.dart';
 import 'package:pashmak_app/core/widget_snapshot.dart';
+import 'package:pashmak_app/features/cat/domain/cat_growth.dart';
 import 'package:pashmak_app/features/adventure/domain/adventure_service.dart';
 import 'package:pashmak_app/features/checkin/domain/checkin_service.dart';
 import 'package:pashmak_app/features/exercises/domain/exercise_service.dart';
 import 'package:pashmak_app/features/habits/domain/habit_service.dart';
+import 'package:pashmak_app/features/quests/domain/quest_engine.dart';
+import 'package:pashmak_app/features/quests/domain/quest_service.dart';
+import 'package:pashmak_app/features/settings/domain/pause_service.dart';
 import 'package:pashmak_app/features/shop/domain/shop_service.dart';
 import 'package:pashmak_app/features/safety/domain/safety_service.dart';
 import 'package:pashmak_app/features/streak/domain/streak_service.dart';
@@ -34,7 +38,7 @@ class Loop {
     streak = StreakService(db, freezesPerMonth: () => config.streakFreezesPerMonth);
     safety = SafetyService(db, clock, cooldownHours: () => config.safetyCardCooldownHours);
     habits = HabitService(db, clock, wallet, streak, analytics, const NoopWidgetSnapshotPublisher(),
-        energyPerHabit: () => config.energyPerHabit,
+        energyPerGoal: () => config.energyPerGoal,
         freeActiveHabits: () => config.freeActiveHabits,
         freeCustomHabits: () => config.freeCustomHabits,
         today: today);
@@ -50,7 +54,11 @@ class Loop {
         configs: () => config.adventureLocations,
         adventuresPack: () => adventuresPack,
         shopItems: () => shopPack,
-        freeLocations: () => config.freeAdventureLocations);
+        freeLocations: () => config.freeAdventureLocations,
+        dailyEnergyTarget: () => config.dailyEnergyTarget,
+        discoveries: () => (jsonDecode(assets['assets/content/discoveries.json']!)['entries'] as List).cast<Map<String, dynamic>>(),
+        growth: () => CatGrowth(young: config.growthYoung, adult: config.growthAdult),
+        today: () => today().value);
     exercisePack = (jsonDecode(assets['assets/content/exercises.json']!)['entries'] as List).cast<Map<String, dynamic>>();
     exercises = ExerciseService(db, clock, wallet, streak, analytics, const NoopWidgetSnapshotPublisher(),
         today: today,
@@ -58,8 +66,26 @@ class Loop {
         rewardsPerDay: () => config.exerciseRewardsPerDay,
         freeExercises: () => config.freeExercises);
     shop = ShopService(db, clock, wallet, analytics, const NoopWidgetSnapshotPublisher(),
-        items: () => [for (final j in shopPack.cast<Map<String, dynamic>>()) ShopItem.fromJson(j)]);
+        items: () => [for (final j in shopPack.cast<Map<String, dynamic>>()) ShopItem.fromJson(j)],
+        today: () => today().value,
+        installId: () async => 'install-1',
+        rotationSize: () => config.shopRotationSize,
+        refreshCost: () => config.shopRefreshCost,
+        sellRatio: () => config.shopSellRatio);
+    List<QuestDef> pack(String k) => (jsonDecode(assets['assets/content/$k.json']!)['entries'] as List).cast<Map<String, dynamic>>().map(QuestDef.fromJson).toList();
+    quests = QuestService(db, clock, wallet, analytics, const NoopWidgetSnapshotPublisher(),
+        today: () => today().value,
+        dayStart: () => DateTime(today().year, today().month, today().day, dayStartHour),
+        dailyPool: () => pack('quests_daily'),
+        specialPool: () => pack('quests_special'),
+        dailyCount: () => config.questsDailyCount,
+        dailyRewardCoins: () => config.questsDailyRewardCoins,
+        seed: () async => 99);
+    pause = PauseService(db, clock, streak, analytics, const NoopWidgetSnapshotPublisher(), today: today);
   }
+
+  late final QuestService quests;
+  late final PauseService pause;
 
   late final ExerciseService exercises;
   late final ShopService shop;

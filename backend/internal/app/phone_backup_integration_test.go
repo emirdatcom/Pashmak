@@ -197,14 +197,14 @@ func TestBackupPutGetDeleteAndLimits(t *testing.T) {
 		t.Fatalf("rows=%d", n)
 	}
 	// Too large: 413 BACKUP_TOO_LARGE (checked from Content-Length before reading).
-	big := bytes.Repeat([]byte{1}, 10<<20+1)
+	big := bytes.Repeat([]byte{1}, 5<<20+1)
 	if st, m := put(e, u, big, "3", sum(big), kdfOK); st != 413 || errCode(m) != "BACKUP_TOO_LARGE" {
 		t.Fatalf("too large: %d %v", st, m)
 	}
-	// Exactly 10 MB is fine.
-	limit := bytes.Repeat([]byte{2}, 10<<20)
+	// Exactly 5 MB (the default BACKUP_MAX_BYTES) is fine.
+	limit := bytes.Repeat([]byte{2}, 5<<20)
 	if st, m := put(e, u, limit, "3", sum(limit), kdfOK); st != 200 {
-		t.Fatalf("10MB: %d %v", st, m)
+		t.Fatalf("5MB: %d %v", st, m)
 	}
 	// DELETE is idempotent.
 	for i := 0; i < 2; i++ {

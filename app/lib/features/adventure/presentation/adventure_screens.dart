@@ -5,13 +5,12 @@ import 'package:go_router/go_router.dart';
 import '../../../core/providers.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/theme/tokens.dart';
+import '../../../core/widgets/widgets.dart';
 import '../../cat/presentation/cat_view.dart';
 import '../../core_loop_providers.dart';
-import '../../home/presentation/home_screen.dart' show passGate;
-import '../../wallet/presentation/wallet_bar.dart';
 import '../domain/adventure_service.dart';
 
-/// One screen, three states: pick a place, in progress (countdown), returned (claim).
+/// The automatic adventure: waiting for the energy bar, away (countdown) or back (claim). There is no place picker.
 class AdventureScreen extends ConsumerWidget {
   const AdventureScreen({super.key});
   @override
@@ -20,72 +19,50 @@ class AdventureScreen extends ConsumerWidget {
     ref.watch(tickProvider);
     final adv = ref.watch(currentAdventureProvider).value;
     final now = ref.watch(clockProvider).now();
+    final target = ref.watch(appConfigProvider).dailyEnergyTarget;
+    final energy = ref.watch(walletProvider).value?.energy ?? 0;
+    final Widget body;
+    if (adv == null) {
+      body = Column(children: [
+        Text(copy.t('adventure.screen.idle_title'), textAlign: TextAlign.center, style: const TextStyle(color: DS.textPrimary, fontSize: 20, fontWeight: FontWeight.w700)),
+        const SizedBox(height: 8),
+        Text(copy.t('adventure.screen.idle_body'), textAlign: TextAlign.center, style: const TextStyle(color: DS.textPrimary)),
+        const SizedBox(height: 16),
+        ProgressPill(value: energy, max: target),
+      ]);
+    } else if (adv.status == 'returned' || now.millisecondsSinceEpoch >= adv.endsAt) {
+      body = Column(children: [
+        Text(copy.t('adventure.returned'), textAlign: TextAlign.center, style: const TextStyle(color: DS.textPrimary, fontSize: 20, fontWeight: FontWeight.w700)),
+        const SizedBox(height: 16),
+        ChunkyButton(
+          label: copy.t('adventure.claim'),
+          onPressed: () async {
+            await ref.read(adventureServiceProvider).claim(adv.id);
+            if (context.mounted) context.pushReplacement(Routes.adventureResult(adv.id));
+          },
+        ),
+      ]);
+    } else {
+      final mins = DateTime.fromMillisecondsSinceEpoch(adv.endsAt).difference(now).inMinutes + 1;
+      body = Column(children: [
+        Text(copy.t('adventure.away', {'place': copy.t('adventure.location.${adv.locationKey}.name')}), textAlign: TextAlign.center, style: const TextStyle(color: DS.textPrimary, fontSize: 20, fontWeight: FontWeight.w700)),
+        const SizedBox(height: 8),
+        Text(copy.t('adventure.eta', {'n': mins}), style: const TextStyle(color: DS.textPrimary)),
+      ]);
+    }
     return Scaffold(
-      appBar: AppBar(title: Text(copy.t('adventure.title'))),
-      body: ListView(padding: const EdgeInsets.all(AppSpacing.md), children: [
+      backgroundColor: DS.cardCat,
+      appBar: AppBar(title: Text(copy.t('adventure.title')), backgroundColor: DS.cardCat),
+      body: ListView(padding: const EdgeInsets.all(16), children: [
         const Center(child: CatView()),
-        const SizedBox(height: AppSpacing.md),
-        const WalletBar(),
-        const SizedBox(height: AppSpacing.md),
-        if (adv == null) ..._picker(context, ref) else if (adv.status == 'returned' || now.millisecondsSinceEpoch >= adv.endsAt) ..._returned(context, ref, adv.id) else ..._active(context, ref, adv.locationKey, adv.endsAt, now),
+        const SizedBox(height: 16),
+        RoundCard(child: body),
       ]),
     );
   }
-
-  List<Widget> _picker(BuildContext context, WidgetRef ref) {
-    final copy = ref.watch(copyProvider);
-    final svc = ref.watch(adventureServiceProvider);
-    return [
-      Text(copy.t('adventure.pick'), style: Theme.of(context).textTheme.titleMedium),
-      for (final o in svc.options())
-        Card(
-          child: ListTile(
-            title: Text(copy.t(o.nameKey)),
-            subtitle: Text('${copy.t('adventure.cost', {'n': o.config.energyCost})} · ${copy.t('adventure.duration', {'n': o.config.durationMinutes})}'),
-            trailing: o.premium && !ref.watch(premiumProvider) ? Chip(label: Text(copy.t('shop.premium_only'))) : const Icon(Icons.chevron_left),
-            onTap: () async {
-              if (o.premium && !ref.read(premiumProvider)) {
-                await passGate(context, ref, 'premium_location');
-                return;
-              }
-              final r = await svc.start(o.locationKey, isPremium: ref.read(premiumProvider));
-              if (!context.mounted) return;
-              if (r.status == StartStatus.notEnoughEnergy) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(copy.t('adventure.not_enough_energy'))));
-              }
-            },
-          ),
-        ),
-    ];
-  }
-
-  List<Widget> _active(BuildContext context, WidgetRef ref, String location, int endsAt, DateTime now) {
-    final copy = ref.watch(copyProvider);
-    final mins = DateTime.fromMillisecondsSinceEpoch(endsAt).difference(now).inMinutes + 1;
-    return [
-      Text(copy.t('adventure.away', {'place': copy.t('adventure.location.$location.name')}), textAlign: TextAlign.center, style: Theme.of(context).textTheme.titleLarge),
-      const SizedBox(height: AppSpacing.sm),
-      Text(copy.t('adventure.eta', {'n': mins}), textAlign: TextAlign.center),
-    ];
-  }
-
-  List<Widget> _returned(BuildContext context, WidgetRef ref, String id) {
-    final copy = ref.watch(copyProvider);
-    return [
-      Text(copy.t('adventure.returned'), textAlign: TextAlign.center, style: Theme.of(context).textTheme.titleLarge),
-      const SizedBox(height: AppSpacing.md),
-      FilledButton(
-        onPressed: () async {
-          await ref.read(adventureServiceProvider).claim(id);
-          if (context.mounted) context.pushReplacement(Routes.adventureResult(id));
-        },
-        child: Text(copy.t('adventure.claim')),
-      ),
-    ];
-  }
 }
 
-/// Story, coins and item of a claimed adventure.
+/// Story, coins, item, the new discovery and growth of a claimed adventure.
 class AdventureResultScreen extends ConsumerWidget {
   const AdventureResultScreen({super.key, required this.adventureId});
   final String adventureId;
@@ -94,27 +71,39 @@ class AdventureResultScreen extends ConsumerWidget {
     final copy = ref.watch(copyProvider);
     final db = ref.watch(databaseProvider);
     return FutureBuilder(
-      future: (db.select(db.adventures)..where((a) => a.id.equals(adventureId))).getSingleOrNull(),
+      future: Future.wait([(db.select(db.adventures)..where((a) => a.id.equals(adventureId))).getSingleOrNull(), adventureExtras(db, adventureId)]),
       builder: (context, snap) {
-        final a = snap.data;
+        final a = snap.data?[0] as dynamic;
+        final extras = snap.data?[1] as ({String? discovery, String? stageUp})?;
         return Scaffold(
-          appBar: AppBar(title: Text(copy.t('adventure.result.title'))),
+          backgroundColor: DS.cardCat,
+          appBar: AppBar(title: Text(copy.t('adventure.result.title')), backgroundColor: DS.cardCat),
           body: a == null
               ? const SizedBox.shrink()
-              : Padding(
-                  padding: const EdgeInsets.all(AppSpacing.lg),
-                  child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                    if (a.storyKey != null) Text(copy.t('adventure.story.${a.locationKey}.${a.storyKey!.split('_').last}'), textAlign: TextAlign.center, style: Theme.of(context).textTheme.titleMedium),
-                    const SizedBox(height: AppSpacing.md),
-                    Text(copy.t('adventure.result.coins', {'n': a.rewardCoins}), textAlign: TextAlign.center),
-                    if (a.rewardItemKey != null) Text(copy.t('adventure.result.item', {'item': copy.t('shop.item.${a.rewardItemKey}.name')}), textAlign: TextAlign.center),
-                    const SizedBox(height: AppSpacing.lg),
-                    FilledButton(onPressed: () => context.go(Routes.home), child: Text(copy.t('common.done'))),
-                  ]),
-                ),
+              : ListView(padding: const EdgeInsets.all(AppSpacing.lg), children: [
+                  RoundCard(
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                      if (a.storyKey != null) Text(copy.t('adventure.story.${a.locationKey}.${(a.storyKey as String).split('_').last}'), textAlign: TextAlign.center, style: const TextStyle(color: DS.textPrimary, fontWeight: FontWeight.w700, fontSize: 17)),
+                      const SizedBox(height: AppSpacing.md),
+                      Text(copy.t('adventure.result.coins', {'n': a.rewardCoins}), textAlign: TextAlign.center, style: const TextStyle(color: DS.textPrimary)),
+                      if (a.rewardItemKey != null) Text(copy.t('adventure.result.item', {'item': copy.t('shop.item.${a.rewardItemKey}.name')}), textAlign: TextAlign.center, style: const TextStyle(color: DS.textPrimary)),
+                      if (extras?.discovery != null) ...[
+                        const SizedBox(height: 8),
+                        Text(copy.t('adventure.result.discovery', {'item': copy.t('discovery.${extras!.discovery}.name')}), textAlign: TextAlign.center, style: const TextStyle(color: DS.doneText, fontWeight: FontWeight.w700)),
+                        TextButton(onPressed: () => context.push(Routes.discoveries), child: Text(copy.t('adventure.result.collection'))),
+                      ],
+                      if (extras?.stageUp != null) ...[
+                        const SizedBox(height: 8),
+                        Text(copy.t('adventure.result.stage_up'), textAlign: TextAlign.center, style: const TextStyle(color: DS.textPrimary, fontWeight: FontWeight.w700, fontSize: 18)),
+                        Text(copy.t('adventure.result.stage.${extras!.stageUp}'), textAlign: TextAlign.center, style: const TextStyle(color: DS.textSecondary)),
+                      ],
+                    ]),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  ChunkyButton(onPressed: () => context.go(Routes.home), label: copy.t('common.done')),
+                ]),
         );
       },
     );
   }
 }
-

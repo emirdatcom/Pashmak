@@ -57,10 +57,13 @@
             "enum": [
               "collar",
               "hat",
+              "glasses",
+              "scarf",
               "background",
               "room_table",
               "room_floor",
-              "room_wall"
+              "room_wall",
+              "room_shelf"
             ]
           },
           "price_coins": {
@@ -72,6 +75,9 @@
           },
           "asset": {
             "type": "string"
+          },
+          "always_available": {
+            "type": "boolean"
           }
         }
       }

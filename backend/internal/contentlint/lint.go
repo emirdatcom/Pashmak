@@ -38,10 +38,10 @@ var (
 	exemptPrefixes = []string{"disclaimer.", "safety.", "help.", "legal."}
 	canonicalIDs   = map[string][]string{
 		"habit_templates": {"water", "sleep", "short_break", "walk", "healthy_food", "medicine", "loved_ones"},
-		"exercises":       {"breathing_basic", "gratitude", "guided_journal", "muscle_relax", "afternoon_tea"},
+		"exercises":       {"breathing_basic", "gratitude", "guided_journal", "muscle_relax", "afternoon_tea", "breathing_square", "breathing_478", "breathing_evening_tea", "breathing_before_sleep", "breathing_morning", "breathing_energy", "breathing_long_exhale"},
 	}
 	// *_key fields that are identifiers, not references into copy_fa.
-	idFields           = map[string]bool{"location_key": true, "story_key": true, "item_key": true, "pack_key": true, "seasonal_key": true}
+	idFields           = map[string]bool{"location_key": true, "story_key": true, "item_key": true, "pack_key": true, "seasonal_key": true, "area_key": true}
 	canonicalLocations = []string{"alley", "rooftop", "courtyard", "bazaar", "garden"}
 )
 

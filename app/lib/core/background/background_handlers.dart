@@ -6,6 +6,8 @@ import '../../bootstrap.dart' show openBackgroundContainer;
 import '../../features/backup/backup_providers.dart';
 import '../../features/core_loop_providers.dart';
 import '../../features/monetization/monetization_providers.dart';
+import '../../features/support/support_providers.dart';
+import 'support_poll_task.dart';
 import '../providers.dart';
 import '../logger.dart';
 
@@ -50,6 +52,22 @@ void workManagerDispatcher() {
           await container.read(entitlementRepositoryProvider)!.refresh();
         }
         await container.read(analyticsFlusherProvider).flush();
+      }
+      if (task == supportPollTask) {
+        final repo = container.read(supportRepositoryProvider);
+        if (container.read(appConfigProvider).supportEnabled) {
+          final fresh = await repo.pollForReplies();
+          if (fresh) {
+            // generic local notification (no message text); the planner applies quiet hours and the daily cap
+            await container.read(databaseProvider).setMeta('support_reply_at', '${container.read(clockProvider).now().add(const Duration(seconds: 5)).millisecondsSinceEpoch}');
+            await container.read(notificationSchedulerProvider).replan();
+          }
+          final last = await repo.lastUserMessageAt();
+          if (last != null) {
+            final next = container.read(supportPollScheduleProvider).nextDelay(lastUserMessageAt: last, now: container.read(clockProvider).now());
+            if (next != null) await scheduleSupportPoll(next);
+          }
+        }
       }
       if (task == backupDailyTask) {
         // unmetered (Wi-Fi/ethernet) → always; metered → only a small snapshot (docs/30 §10).

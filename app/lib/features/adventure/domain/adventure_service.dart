@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:drift/drift.dart';
@@ -10,6 +11,7 @@ import '../../../core/content/copy_resolver.dart';
 import '../../../core/db/app_database.dart';
 import '../../../core/time/clock.dart';
 import '../../../core/widget_snapshot.dart';
+import '../../cat/domain/cat_growth.dart';
 import '../../wallet/domain/wallet_service.dart';
 
 enum StartStatus { started, premiumRequired, notEnoughEnergy, alreadyActive, unknownLocation }
@@ -21,10 +23,12 @@ class StartResult {
 }
 
 class ClaimResult {
-  const ClaimResult({required this.coins, this.itemKey, this.storyKey});
+  const ClaimResult({required this.coins, this.itemKey, this.storyKey, this.discoveryKey, this.stageUp});
   final int coins;
   final String? itemKey;
   final String? storyKey;
+  final String? discoveryKey; // a new entry of the discoveries collection
+  final CatStage? stageUp; // set when this adventure made the cat grow
 }
 
 /// A location the user can pick: content (names, stories) + config numbers.
@@ -55,6 +59,10 @@ class AdventureService {
     required this.adventuresPack,
     required this.shopItems,
     required this.freeLocations,
+    required this.dailyEnergyTarget,
+    required this.discoveries,
+    required this.growth,
+    required this.today,
   });
 
   final AppDatabase _db;
@@ -66,8 +74,13 @@ class AdventureService {
   final Map<String, dynamic> Function() adventuresPack; // pack `adventures` entries
   final List<dynamic> Function() shopItems; // pack `shop_items` entries
   final List<String> Function() freeLocations;
+  final int Function() dailyEnergyTarget; // `adventure.daily_energy_target`
+  final List<Map<String, dynamic>> Function() discoveries; // pack `discoveries` entries
+  final CatGrowth Function() growth;
+  final String Function() today; // LocalDay.value
 
   static const _kLastSeen = 'last_seen_wall_ms';
+  static const _kLastStartDay = 'adventure_last_start_day';
 
   /// Mild clock-rollback protection (docs/30 §4): time never moves backwards for adventures.
   Future<DateTime> effectiveNow() async {
@@ -110,7 +123,7 @@ class AdventureService {
         ..limit(1))
       .watchSingleOrNull();
 
-  Future<StartResult> start(String locationKey, {required bool isPremium}) async {
+  Future<StartResult> start(String locationKey, {required bool isPremium, int? energyCost}) async {
     final opt = options().where((o) => o.locationKey == locationKey).firstOrNull;
     if (opt == null) return const StartResult(StartStatus.unknownLocation);
     if (opt.premium && !isPremium) return const StartResult(StartStatus.premiumRequired);
@@ -121,11 +134,11 @@ class AdventureService {
     final loc = (adventuresPack()['locations'] as List).cast<Map<String, dynamic>>().firstWhere((l) => l['location_key'] == locationKey);
     final reward = computeReward(id, opt.config, (loc['stories'] as List).cast<Map<String, dynamic>>(), (loc['possible_items'] as List).cast<String>(), owned);
     final ok = await _db.transaction(() async {
-      if (!await _wallet.spend(Currency.energy, opt.config.energyCost, 'adventure_start', id)) return false;
+      if (!await _wallet.spend(Currency.energy, energyCost ?? opt.config.energyCost, 'adventure_start', id)) return false;
       await _db.into(_db.adventures).insert(AdventuresCompanion.insert(
             id: id,
             locationKey: locationKey,
-            energyCost: opt.config.energyCost,
+            energyCost: energyCost ?? opt.config.energyCost,
             startedAt: started.millisecondsSinceEpoch,
             endsAt: started.add(Duration(minutes: opt.config.durationMinutes)).millisecondsSinceEpoch,
             rewardCoins: Value(reward.coins),
@@ -135,9 +148,32 @@ class AdventureService {
       return true;
     });
     if (!ok) return const StartResult(StartStatus.notEnoughEnergy);
+    await _db.setMeta(_kLastStartDay, today());
     await _analytics.track(AnalyticsEvent.adventureStarted, {'location_key': locationKey, 'duration_minutes': opt.config.durationMinutes});
     await _publisher.refresh();
     return StartResult(StartStatus.started, adventure: await (_db.select(_db.adventures)..where((a) => a.id.equals(id))).getSingle());
+  }
+
+  /// Locations the user may be sent to, in config order (premium ones only for premium users).
+  List<AdventureOption> rotationPool({required bool isPremium}) => [for (final o in options()) if (isPremium || !o.premium) o];
+
+  /// Daily energy bar (docs/22 §9): progress of today's energy toward `adventure.daily_energy_target`.
+  /// Returns null when an adventure already started today (the bar then shows the carried-over reserve).
+  Future<bool> startedToday() async => await _db.meta(_kLastStartDay) == today();
+
+  /// When the energy balance reaches the daily target, today's adventure starts by itself (at most one a day,
+  /// none while another is active/unclaimed). The location rotates through the unlocked ones. Returns the result
+  /// when it started, else null.
+  Future<StartResult?> maybeAutoStart({required bool isPremium}) async {
+    if (await startedToday()) return null;
+    final target = dailyEnergyTarget();
+    if ((await _wallet.balance()).energy < target) return null;
+    if (await current() != null) return null;
+    final pool = rotationPool(isPremium: isPremium);
+    if (pool.isEmpty) return null;
+    final count = (await _db.select(_db.adventures).get()).length;
+    final r = await start(pool[count % pool.length].locationKey, isPremium: isPremium, energyCost: target);
+    return r.status == StartStatus.started ? r : null;
   }
 
   /// Deterministic reward for an adventure id. Same id ⇒ same result, on every device and run.
@@ -163,6 +199,7 @@ class AdventureService {
 
   Future<ClaimResult?> claim(String adventureId) async {
     await current(); // promote returned
+    final before = await _claimedCount();
     final res = await _db.transaction(() async {
       final a = await (_db.select(_db.adventures)..where((x) => x.id.equals(adventureId))).getSingleOrNull();
       if (a == null || a.status != 'returned') return null;
@@ -173,13 +210,45 @@ class AdventureService {
         await _db.into(_db.inventory).insert(InventoryCompanion.insert(itemKey: item, acquiredAt: _clock.now().millisecondsSinceEpoch, source: 'adventure', slot: slot), mode: InsertMode.insertOrIgnore);
       }
       await (_db.update(_db.adventures)..where((x) => x.id.equals(a.id))).write(AdventuresCompanion(status: const Value('claimed'), claimedAt: Value(_clock.now().millisecondsSinceEpoch)));
-      return ClaimResult(coins: a.rewardCoins, itemKey: item, storyKey: a.storyKey);
+      final found = await _discover(a.id);
+      return ClaimResult(coins: a.rewardCoins, itemKey: item, storyKey: a.storyKey, discoveryKey: found);
     });
     if (res != null) {
       final a = await (_db.select(_db.adventures)..where((x) => x.id.equals(adventureId))).getSingle();
+      final up = growth().upgrade(before, before + 1);
+      if (up != null) await _analytics.track(AnalyticsEvent.catStageUp, {'stage': up.name});
+      final foundKey = res.discoveryKey;
+      if (foundKey != null) {
+        final cat = discoveries().firstWhere((d) => d['key'] == foundKey, orElse: () => const {'category': 'unknown'})['category'];
+        await _analytics.track(AnalyticsEvent.discoveryFound, {'category': '$cat'});
+      }
       await _analytics.track(AnalyticsEvent.adventureClaimed, {'location_key': a.locationKey, 'coins': res.coins, 'got_item': res.itemKey != null});
       await _publisher.refresh();
+      final out = ClaimResult(coins: res.coins, itemKey: res.itemKey, storyKey: res.storyKey, discoveryKey: res.discoveryKey, stageUp: up);
+      await _db.setMeta('adventure_result:$adventureId', jsonEncode({'discovery': out.discoveryKey, 'stage_up': out.stageUp?.name}));
+      return out;
     }
     return res;
   }
+
+  Future<int> _claimedCount() async => (await (_db.select(_db.adventures)..where((a) => a.status.equals('claimed'))).get()).length;
+
+  /// A not-yet-found discovery picked deterministically from the adventure id (same id ⇒ same pick for the same
+  /// collection state). Null when the collection is complete. Runs inside the claim transaction.
+  Future<String?> _discover(String adventureId) async {
+    final found = (await _db.select(_db.discoveriesFound).get()).map((r) => r.discoveryKey).toSet();
+    final left = [for (final d in discoveries()) if (!found.contains(d['key'])) d['key'] as String]..sort();
+    if (left.isEmpty) return null;
+    final key = left[CopyResolver.hash('discovery:$adventureId') % left.length];
+    await _db.into(_db.discoveriesFound).insert(DiscoveriesFoundCompanion.insert(discoveryKey: key, foundAt: _clock.now().millisecondsSinceEpoch), mode: InsertMode.insertOrIgnore);
+    return key;
+  }
+}
+
+/// What a claimed adventure brought beyond coins/items (kept so the result screen can be reopened).
+Future<({String? discovery, String? stageUp})> adventureExtras(AppDatabase db, String adventureId) async {
+  final raw = await db.meta('adventure_result:$adventureId');
+  if (raw == null) return (discovery: null, stageUp: null);
+  final m = jsonDecode(raw) as Map<String, dynamic>;
+  return (discovery: m['discovery'] as String?, stageUp: m['stage_up'] as String?);
 }

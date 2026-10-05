@@ -20,6 +20,7 @@ class MainActivity : FlutterActivity() {
                     else window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     result.success(null)
                 }
+                "deviceInfo" -> result.success(mapOf("os_version" to android.os.Build.VERSION.RELEASE, "model" to android.os.Build.MODEL))
                 "totalRamMb" -> {
                     val info = android.app.ActivityManager.MemoryInfo()
                     (getSystemService(ACTIVITY_SERVICE) as android.app.ActivityManager).getMemoryInfo(info)

@@ -51,15 +51,11 @@
           "type": "object",
           "additionalProperties": false,
           "required": [
-            "email",
-            "channel_url"
+            "type"
           ],
           "properties": {
-            "email": {
-              "type": "string"
-            },
-            "channel_url": {
-              "type": "string"
+            "type": {
+              "const": "in_app_chat"
             }
           }
         },

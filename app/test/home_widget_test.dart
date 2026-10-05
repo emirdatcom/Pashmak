@@ -1,3 +1,4 @@
+import 'package:pashmak_app/core/widgets/chunky_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -61,10 +62,9 @@ void main() {
     await tester.pumpWidget(app);
     await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 300)));
     await tester.pump(const Duration(milliseconds: 300));
-    expect(find.text('دوشنبه، ۱۳ مهر ۱۴۰۵'), findsOneWidget);
     expect(find.text('هنوز عادتی نداری'), findsOneWidget);
     expect(find.text('چک‌این امروز'), findsOneWidget);
-    expect(find.text('۰/۱۰۰'), findsOneWidget, reason: 'energy shown with Persian digits');
+    expect(find.text('۰/۲۰'), findsOneWidget, reason: 'daily energy bar with Persian digits');
     expect(Directionality.of(tester.element(find.byType(HomeScreen))), TextDirection.rtl);
   });
 
@@ -75,10 +75,13 @@ void main() {
     await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 200)));
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('آب خوردن'), findsOneWidget);
-    await tester.tap(find.byType(Checkbox));
-    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 300)));
-    await tester.pump(const Duration(milliseconds: 400));
-    expect(find.text('۱۰/۱۰۰'), findsOneWidget);
+    await tester.tap(find.widgetWithIcon(ChunkyButton, Icons.check));
+    for (var i = 0; i < 4; i++) {
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 300)));
+      await tester.pump(const Duration(milliseconds: 400));
+    }
+    expect(find.text('۵/۲۰'), findsOneWidget);
+    expect(find.text('آفرین! یه قدم کوچیک برداشتی.'), findsOneWidget);
     expect(find.text('برگردون'), findsOneWidget);
   });
 

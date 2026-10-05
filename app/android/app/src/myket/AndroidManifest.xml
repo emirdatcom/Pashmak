@@ -1,0 +1,7 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Myket billing only. [نیاز به راستی‌آزمایی] V3/V4: permission and package name from Myket docs. -->
+    <uses-permission android:name="ir.mservices.market.BILLING" />
+    <queries>
+        <package android:name="ir.mservices.market" />
+    </queries>
+</manifest>

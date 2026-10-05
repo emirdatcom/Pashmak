@@ -13,6 +13,7 @@
 ## ۲. قواعد عمومی جداول محلی
 - PK: `id TEXT` UUIDv7 تولید روی دستگاه.
 - زمان‌ها: `INTEGER` epoch ms UTC. روز: `local_day TEXT` `YYYY-MM-DD` (گرگوری، محاسبه با `day_start_hour` و timezone دستگاه).
+- چت پشتیبانی (D-2): جداول `support_*` فقط روی سرور؛ کلاینت یک کش محلی دارد (drift schema v2، جدول پیام‌های پشتیبانی) و صف outbox برای ارسال idempotent با `client_msg_id`.
 - حذف نرم برای داده‌ی کاربر: `deleted_at` (برای backup و undo).
 - هر جدول کاربر: `created_at`, `updated_at`.
 - `schema_version` در `PRAGMA user_version` (drift).
@@ -125,3 +126,10 @@ flowchart LR
 | روز | `LocalDay` | — (API هیچ فیلد `local_day` رد و بدل نمی‌کند؛ روز فقط مفهوم محلی است) |
 | market | `enum Market {bazaar, myket}` | `"bazaar"`/`"myket"` |
 | entitlement | `"premium"` | `"premium"` |
+
+## تغییرات پرامپت 22
+- مهاجرت drift v3: `habits` + `area_key, time_of_day, repeat_type (daily|weekly|once), due_day, goal_key` (داده‌ی `template_key` به `goal_key` کپی می‌شود؛ ستون قدیمی می‌ماند)؛ جدول‌های جدید `onboarding_answers(key,value)`، `discoveries_found(discovery_key, found_at)`، `quest_progress(quest_key, progress, claimed_at)`، `quest_daily_state(local_day, quest_keys JSON, claimed JSON)`، `shop_rotation(local_day, refresh_count, item_keys JSON)`.
+- `user_settings`: `pause_mode`, `paused_since`. `app_meta`: `user_name`, `cat_stage`, `cat_fur`, `cat_trait`.
+- ledger reasonهای جدید: `quest_reward`, `shop_refresh`, `item_sell`.
+- اقتصاد: `economy.energy_per_goal` (5) جایگزین `energy_per_habit`؛ `adventure.daily_energy_target` (20): با پرشدن نوار، ماجراجویی روز خودکار شروع می‌شود (حداکثر یکی در روز؛ انرژی اضافه تا `economy.energy_cap` ذخیره می‌شود).
+- رشد: `growth.thresholds` (young=7، adult=30 ماجراجویی). حالت استراحت: streak فریز (بدون مصرف freeze)، فقط نوتیف `trial`، بدون مأموریت روزانه.

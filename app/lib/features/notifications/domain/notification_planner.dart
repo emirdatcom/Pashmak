@@ -1,10 +1,10 @@
 import '../../../core/time/local_day.dart';
 
 /// Priority order of docs/50 §3 rule 2 (first = highest).
-const notificationPriority = ['trial', 'habit_reminder', 'cat_returned', 'evening_checkin', 'morning', 'seasonal', 'comeback', 'streak_gentle'];
+const notificationPriority = ['trial', 'support_reply', 'habit_reminder', 'cat_returned', 'evening_checkin', 'morning', 'seasonal', 'comeback', 'streak_gentle'];
 
 class PlanHabit {
-  const PlanHabit({required this.id, this.templateKey, this.title, this.reminderMinutes, required this.scheduleType, required this.weekdaysMask, this.isLocked = false, this.doneToday = false});
+  const PlanHabit({required this.id, this.templateKey, this.title, this.reminderMinutes, required this.scheduleType, required this.weekdaysMask, this.isLocked = false, this.doneToday = false, this.repeatType = 'daily', this.dueDay});
   final String id;
   final String? templateKey;
   final String? title;
@@ -13,6 +13,8 @@ class PlanHabit {
   final int weekdaysMask; // bit0 = Saturday
   final bool isLocked;
   final bool doneToday;
+  final String repeatType; // daily | weekly | once
+  final String? dueDay; // local_day of a `once` goal
 }
 
 class PlanAdventure {
@@ -90,6 +92,8 @@ class PlanInput {
     this.trial = const PlanTrial(active: false),
     this.log = const [],
     this.seasonal = const [],
+    this.supportReplyAt,
+    this.paused = false,
   });
   final DateTime now;
   final int dayStartHour;
@@ -103,6 +107,12 @@ class PlanInput {
   final PlanTrial trial;
   final List<PlanLogEntry> log;
   final List<SeasonalEvent> seasonal;
+
+  /// When a support reply notification should fire (set by the `support_poll` task when it found a new reply).
+  final DateTime? supportReplyAt;
+
+  /// Rest mode (prompt 22): nothing is planned except the trial reminders.
+  final bool paused;
 }
 
 /// A notification the planner wants scheduled. Text is resolved later from the copy keys.
@@ -147,7 +157,9 @@ List<PlanItem> planNotifications(PlanInput i) {
     if (s.on('habit_reminder')) {
       for (final h in i.habits) {
         if (h.reminderMinutes == null || h.isLocked) continue;
-        final scheduled = h.scheduleType == 'daily' || (h.weekdaysMask >> d.weekdayIndex) & 1 == 1;
+        final scheduled = h.repeatType == 'once'
+            ? h.dueDay == d.value
+            : (h.scheduleType == 'daily' || (h.weekdaysMask >> d.weekdayIndex) & 1 == 1);
         if (!scheduled || (isToday && h.doneToday)) continue;
         final tk = h.templateKey;
         cands.add(PlanItem(
@@ -157,7 +169,7 @@ List<PlanItem> planNotifications(PlanInput i) {
           titleKey: 'notif.habit_reminder.title',
           bodyKey: tk != null ? 'notif.habit_reminder.$tk' : 'notif.habit_reminder.generic',
           vars: {'habit': h.title ?? tk ?? ''},
-          route: '/habits/${h.id}',
+          route: '/goals/${h.id}',
         ));
       }
     }
@@ -198,11 +210,20 @@ List<PlanItem> planNotifications(PlanInput i) {
     }
   }
 
+  final reply = i.supportReplyAt;
+  if (s.on('support_reply') && reply != null) {
+    // Generic text only (no message content); follows quiet hours and the daily cap like everything else.
+    cands.add(PlanItem(type: 'support_reply', ref: '', fireAt: reply, titleKey: 'notif.support_reply.title', bodyKey: 'notif.support_reply', route: '/support'));
+  }
+
   if (s.on('seasonal')) {
     for (final e in i.seasonal) {
       cands.add(PlanItem(type: 'seasonal', ref: e.id, fireAt: e.at, titleKey: 'notif.seasonal.title', bodyKey: e.copyKey, route: '/home'));
     }
   }
+
+  // Rest mode keeps only the trial reminders (a purchase deadline the user must not miss silently).
+  if (i.paused) cands.removeWhere((c) => c.type != 'trial');
 
   // 1. quiet hours: move to the end of the quiet window; the cat's return is dropped instead.
   final moved = <PlanItem>[];
@@ -250,6 +271,10 @@ List<PlanItem> _reduceIgnored(List<PlanItem> items, PlanInput i) {
   final out = <PlanItem>[];
   final lastAllowed = <String, LocalDay>{};
   for (final it in items) {
+    if (it.type == 'support_reply') {
+      out.add(it); // a reply from a person is never throttled as "ignored"
+      continue;
+    }
     final key = '${it.type}|${it.type == 'habit_reminder' ? it.ref : ''}';
     final history = i.log.where((l) => l.type == it.type && (it.type != 'habit_reminder' || l.ref == it.ref) && l.scheduledFor.isBefore(i.now.subtract(const Duration(hours: 2)))).toList()
       ..sort((a, b) => b.scheduledFor.compareTo(a.scheduledFor));

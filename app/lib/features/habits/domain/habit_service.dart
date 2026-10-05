@@ -37,8 +37,28 @@ extension HabitGateTrigger on HabitGate {
 }
 
 class HabitDraft {
-  const HabitDraft({this.templateKey, this.title, this.icon = 'check', this.scheduleType = 'daily', this.weekdaysMask = 127, this.targetPerDay = 1, this.reminderMinutes});
+  const HabitDraft({
+    this.templateKey,
+    this.title,
+    this.icon = 'check',
+    this.scheduleType = 'daily',
+    this.weekdaysMask = 127,
+    this.targetPerDay = 1,
+    this.reminderMinutes,
+    this.areaKey,
+    this.timeOfDay = 'any',
+    this.repeatType = 'daily',
+    this.dueDay,
+    this.source = 'custom',
+  });
+
+  /// Goal-library key (kept under the old name; stored in both `template_key` and `goal_key`).
   final String? templateKey;
+  final String? areaKey;
+  final String timeOfDay; // morning | afternoon | evening | any
+  final String repeatType; // daily | weekly | once
+  final String? dueDay; // local_day for `once`
+  final String source; // suggested | tab | custom (analytics)
   final String? title;
   final String icon;
   final String scheduleType; // daily | weekly
@@ -57,7 +77,7 @@ class HabitService {
     this._streak,
     this._analytics,
     this._publisher, {
-    required this.energyPerHabit,
+    required this.energyPerGoal,
     required this.freeActiveHabits,
     required this.freeCustomHabits,
     required this.today,
@@ -69,7 +89,7 @@ class HabitService {
   final StreakService _streak;
   final AnalyticsService _analytics;
   final WidgetSnapshotPublisher _publisher;
-  final int Function() energyPerHabit;
+  final int Function() energyPerGoal;
   final int Function() freeActiveHabits;
   final int Function() freeCustomHabits;
   final LocalDay Function() today;
@@ -116,6 +136,11 @@ class HabitService {
     await _db.into(_db.habits).insert(HabitsCompanion.insert(
           id: id,
           templateKey: Value(d.templateKey),
+          goalKey: Value(d.templateKey),
+          areaKey: Value(d.areaKey),
+          timeOfDay: Value(d.timeOfDay),
+          repeatType: Value(d.repeatType),
+          dueDay: Value(d.dueDay),
           title: Value(d.title),
           icon: Value(d.icon),
           scheduleType: Value(d.scheduleType),
@@ -128,7 +153,7 @@ class HabitService {
           updatedAt: now,
         ));
     final tk = d.templateKey ?? 'custom';
-    await _analytics.track(AnalyticsEvent.habitCreated, {'template_key': tk, 'has_reminder': d.reminderMinutes != null});
+    await _analytics.track(AnalyticsEvent.goalCreated, {'source': d.source, 'area_key': d.areaKey ?? 'none'});
     if (first) await _analytics.track(AnalyticsEvent.firstHabitCreated, {'template_key': tk});
     await _publisher.refresh();
     return id;
@@ -142,6 +167,10 @@ class HabitService {
       weekdaysMask: Value(d.weekdaysMask),
       targetPerDay: Value(d.targetPerDay),
       reminderMinutes: Value(d.reminderMinutes),
+      areaKey: Value(d.areaKey),
+      timeOfDay: Value(d.timeOfDay),
+      repeatType: Value(d.repeatType),
+      dueDay: Value(d.dueDay),
       updatedAt: Value(_now()),
     ));
     await _publisher.refresh();
@@ -166,7 +195,7 @@ class HabitService {
   /// Habits scheduled on [day] (Saturday-first `weekdays_mask`), with progress. Locked habits are shown
   /// read-only by the UI (`habit.isLocked`).
   static bool scheduledOn(Habit h, LocalDay day) =>
-      h.scheduleType == 'daily' || (h.weekdaysMask >> day.weekdayIndex) & 1 == 1;
+      h.repeatType == 'once' ? h.dueDay == day.value : (h.scheduleType == 'daily' || (h.weekdaysMask >> day.weekdayIndex) & 1 == 1);
 
   Stream<List<TodayHabit>> watchToday() {
     final day = today();
@@ -201,7 +230,7 @@ class HabitService {
         await (_db.update(_db.habitLogs)..where((l) => l.id.equals(logId))).write(HabitLogsCompanion(
             count: Value(log.deletedAt != null ? 1 : log.count + 1), deletedAt: const Value(null), completedAt: Value(now), updatedAt: Value(now)));
       }
-      var granted = await _wallet.grant(Currency.energy, energyPerHabit(), 'habit_done', logId) ?? 0;
+      var granted = await _wallet.grant(Currency.energy, energyPerGoal(), 'habit_done', logId) ?? 0;
       if (granted == 0 && log != null && log.deletedAt != null) {
         // Re-completing after an undo that really took the energy back: grant once more (net effect
         // stays one reward, so there is nothing to farm). If the undo kept the energy, nothing is granted.
@@ -209,12 +238,12 @@ class HabitService {
         final reversed = orig == null
             ? null
             : await (_db.select(_db.walletLedger)..where((t) => t.reason.equals('adjust') & t.refId.equals('undo:${orig.id}'))).getSingleOrNull();
-        if (reversed != null) granted = await _wallet.grant(Currency.energy, energyPerHabit(), 'habit_done', '$logId:redo') ?? 0;
+        if (reversed != null) granted = await _wallet.grant(Currency.energy, energyPerGoal(), 'habit_done', '$logId:redo') ?? 0;
       }
       return CompleteResult(CompleteStatus.completed, energyGranted: granted, logId: logId);
     });
     final streak = await _streak.recordActivity(day);
-    await _analytics.track(AnalyticsEvent.habitCompleted, {'template_key': habit.templateKey ?? 'custom', 'source': source});
+    await _analytics.track(AnalyticsEvent.goalCompleted, {'goal_key': habit.goalKey ?? habit.templateKey ?? 'custom', 'source': source});
     if (streak.changed) {
       await _analytics.track(AnalyticsEvent.streakUpdated, {'current': streak.snapshot.current, 'freeze_used': streak.freezeUsed});
     }

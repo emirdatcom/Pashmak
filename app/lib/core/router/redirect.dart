@@ -13,6 +13,10 @@ String? appRedirect({
   required String minSupportedVersion,
 }) {
   if (location.startsWith(Routes.safety)) return null;
+  // Old links (scheduled notifications, widgets) keep working: /habits/... → /goals/...
+  if (location == Routes.legacyHabits || location.startsWith('${Routes.legacyHabits}/')) {
+    return Routes.goals + location.substring(Routes.legacyHabits.length);
+  }
   // A new phone restores its account before onboarding (phone link → backup restore).
   final restoring = location == '${Routes.settings}/phone' || location == '${Routes.settings}/restore';
   final needsUpdate = compareVersions(appVersion, minSupportedVersion) < 0;

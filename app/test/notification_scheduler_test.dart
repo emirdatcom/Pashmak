@@ -43,14 +43,14 @@ void main() {
     final todayReminder = out.firstWhere((n) => n.type == 'habit_reminder' && n.fireAt.day == 5);
     expect(todayReminder.body, contains('ورزش'));
     expect(todayReminder.actionLabel, 'انجام شد');
-    expect(todayReminder.route, '/habits/$id');
+    expect(todayReminder.route, '/goals/$id');
     await t.l.habits.complete(id, source: 'notification');
     out = await t.sched.replan();
     expect(out.where((n) => n.type == 'habit_reminder' && n.fireAt.day == 5), isEmpty);
     expect(out.where((n) => n.type == 'habit_reminder' && n.fireAt.day == 6).length, 1);
     final log = await t.l.db.select(t.l.db.habitLogs).getSingle();
     expect(log.source, 'notification');
-    expect((await t.l.wallet.balance()).energy, 10, reason: 'the quick action earns energy like a normal tick');
+    expect((await t.l.wallet.balance()).energy, 5, reason: 'the quick action earns energy like a normal tick');
   });
 
   test('the remote kill switch and the user switches remove types; streak_gentle is opt-in', () async {

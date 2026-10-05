@@ -103,6 +103,21 @@ func actorFrom(ctx context.Context) string {
 	return a
 }
 
+// IPGuard is the IP-allowlist half of guard (the operator panel adds its own session auth on top).
+func (s *Service) IPGuard() httpx.Middleware {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ip := httpx.ClientIP(r)
+			if !s.ipAllowed(ip) {
+				slog.WarnContext(r.Context(), "operator panel access denied", "reason", "ip", "ip", ip)
+				httpx.WriteError(w, r, httpx.CodeForbidden, "forbidden")
+				return
+			}
+			next.ServeHTTP(w, r)
+		})
+	}
+}
+
 // guard checks IP allowlist then Basic Auth.
 func (s *Service) guard() httpx.Middleware {
 	return func(next http.Handler) http.Handler {

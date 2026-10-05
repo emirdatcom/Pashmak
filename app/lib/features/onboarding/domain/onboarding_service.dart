@@ -4,7 +4,11 @@ import '../../../core/analytics/analytics_event.dart';
 import '../../../core/analytics/analytics_service.dart';
 import '../../../core/db/app_database.dart';
 import '../../../core/l10n/digits.dart';
+import '../../../core/time/clock.dart';
+import '../../../core/widgets/cat_renderer.dart';
+import '../../goals/domain/goal_recommender.dart';
 import '../../habits/domain/habit_service.dart';
+import 'onboarding_answers.dart';
 
 enum NameCheck { ok, empty, tooLong, blocked }
 
@@ -21,20 +25,32 @@ NameCheck checkCatName(String raw, Iterable<String> blocklist) {
   return NameCheck.ok;
 }
 
-/// Persists onboarding progress so a killed app resumes at the same step (docs/20 §4).
+/// A goal of the plan preview with its resolved time of day.
+class PlannedGoal {
+  const PlannedGoal(this.def, this.timeOfDay);
+  final GoalDef def;
+  final String timeOfDay;
+}
+
+/// Snake-case key of a fur option (copy keys `onboarding.fur.*`).
+String furKey(CatFur f) => switch (f) { CatFur.orangeCream => 'orange_cream', CatFur.smokeGray => 'smoke_gray', CatFur.tricolor => 'tricolor' };
+
+/// Persists onboarding progress so a killed app resumes at the same step (docs/20 §4, docs/22 §5).
 class OnboardingService {
-  OnboardingService(this._db, this._habits, this._analytics, {required this.defaultCatName});
+  OnboardingService(this._db, this._habits, this._analytics, this._clock, {required this.defaultCatName}) : answers = OnboardingAnswers(_db);
 
   final AppDatabase _db;
   final HabitService _habits;
   final AnalyticsService _analytics;
+  final Clock _clock;
   final String defaultCatName;
+  final OnboardingAnswers answers;
 
-  static const maxHabits = 3;
+  static const totalSteps = 11;
   static const _kStep = 'onboarding_step';
 
-  Future<int> currentStep() async => (int.tryParse(await _db.meta(_kStep) ?? '') ?? 1).clamp(1, 4);
-  Future<void> setStep(int step) => _db.setMeta(_kStep, '${step.clamp(1, 4)}');
+  Future<int> currentStep() async => (int.tryParse(await _db.meta(_kStep) ?? '') ?? 1).clamp(1, totalSteps);
+  Future<void> setStep(int step) => _db.setMeta(_kStep, '${step.clamp(1, totalSteps)}');
 
   /// First run only.
   Future<void> trackInstallOnce() async {
@@ -50,26 +66,48 @@ class OnboardingService {
 
   Future<String> savedCatName() async => await _db.meta('cat_name') ?? '';
 
-  /// Step 3 selection, kept so a restart keeps the choice.
-  Future<void> saveSelection(Map<String, int?> reminderByTemplate) => _db.setMeta('onboarding_habits', reminderByTemplate.entries.map((e) => '${e.key}:${e.value ?? ''}').join(','));
+  Future<void> saveUserName(String raw) => _db.setMeta('user_name', raw.trim());
 
-  Future<Map<String, int?>> loadSelection() async {
-    final raw = await _db.meta('onboarding_habits') ?? '';
-    return {
-      for (final part in raw.split(',').where((s) => s.isNotEmpty)) part.split(':').first: int.tryParse(part.split(':').length > 1 ? part.split(':')[1] : ''),
-    };
+  Future<void> saveCatLook({required CatFur fur, required String trait}) async {
+    await _db.setMeta('cat_fur', fur.name);
+    await _db.setMeta('cat_trait', trait);
   }
 
-  /// Creates the chosen habits (≤ 3, template-based so they are inside the free limit) and finishes onboarding.
-  /// Returns the number of habits created.
-  Future<int> complete({required Map<String, int?> habits, required bool notifPermission, required bool catNameChanged}) async {
+  /// The plan preview selection (goal keys in order), kept so a restart keeps the choice.
+  Future<void> saveGoalSelection(List<String> keys) => _db.setMeta('onboarding_goals', keys.join(','));
+
+  Future<List<String>> loadGoalSelection() async => (await _db.meta('onboarding_goals') ?? '').split(',').where((s) => s.isNotEmpty).toList();
+
+  /// How many goals the preview should offer: free users are capped by the free limit (docs/22 §7).
+  int recommendCount({required bool premiumOrTrial, required int free, required int trial, required int freeActiveLimit}) =>
+      premiumOrTrial ? trial : (free < freeActiveLimit ? free : freeActiveLimit);
+
+  /// Creates the chosen goals and finishes onboarding. Returns the number of goals created.
+  Future<int> complete({
+    required List<PlannedGoal> goals,
+    required bool notifPermission,
+    required bool catNameChanged,
+    required OnboardingProfile profile,
+    int replacedCount = 0,
+  }) async {
     var n = 0;
-    for (final e in habits.entries.take(maxHabits)) {
-      await _habits.create(HabitDraft(templateKey: e.key, reminderMinutes: e.value));
+    for (final g in goals) {
+      await _habits.create(HabitDraft(
+        templateKey: g.def.key,
+        icon: g.def.icon,
+        areaKey: g.def.areaKey,
+        timeOfDay: g.timeOfDay,
+        repeatType: g.def.repeatType == 'once' ? 'daily' : g.def.repeatType,
+        scheduleType: g.def.repeatType == 'weekly' ? 'weekly' : 'daily',
+        weekdaysMask: g.def.weekdaysMask,
+        source: 'suggested',
+      ));
       n++;
     }
     await _db.setMeta('onboarding_completed', 'true');
-    await _db.setMeta('onboarding_habits', '');
+    await _db.setMeta('onboarding_goals', '');
+    await _db.setMeta('cat_arrived_at', '${_clock.now().millisecondsSinceEpoch}');
+    unawaited(_analytics.track(AnalyticsEvent.goalRecommendedAccepted, {'accepted_count': n, 'replaced_count': replacedCount}));
     unawaited(_analytics.track(AnalyticsEvent.onboardingCompleted, {
       'habits_selected_count': n,
       'notif_permission': notifPermission ? 'granted' : 'denied',
@@ -77,4 +115,8 @@ class OnboardingService {
     }));
     return n;
   }
+
+  /// Counts and area keys only: never the answers or the energy level (docs/22 §5).
+  Future<void> trackAreas(List<String> areas) =>
+      _analytics.track(AnalyticsEvent.onboardingAreasSelected, {'areas_count': areas.length, 'area_keys': areas.join(',')});
 }

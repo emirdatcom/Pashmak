@@ -6,10 +6,31 @@ class Routes {
   static String onboardingStep(int n) => '/onboarding/$n';
   static const home = '/home';
   static const checkin = '/checkin';
-  static const habits = '/habits';
-  static const habitNew = '/habits/new';
-  static String habit(String id) => '/habits/$id';
-  static String habitEdit(String id) => '/habits/$id/edit';
+  // Goals (formerly habits). `/habits/*` still works through a redirect (old notification/widget links).
+  static const goals = '/goals';
+  static const goalNew = '/goals/new';
+  static String goal(String id) => '/goals/$id';
+  static String goalEdit(String id) => '/goals/$id/edit';
+  static const legacyHabits = '/habits';
+  // Compatibility aliases for older call sites.
+  static const habits = goals;
+  static const habitNew = goalNew;
+  static String habit(String id) => goal(id);
+  static String habitEdit(String id) => goalEdit(id);
+  static const quests = '/quests';
+  static const questReflect = '/quests/reflect';
+  static const bag = '/bag';
+  static const cat = '/cat';
+  static const discoveries = '/cat/discoveries';
+  static const catEdit = '/cat/edit';
+  static const menu = '/menu';
+  static const areas = '/menu/areas';
+  static const retake = '/menu/areas/retake';
+  static const history = '/menu/history';
+  static const shopOutfit = '/shop/outfit';
+  static const shopFurniture = '/shop/furniture';
+  static const restMode = '/settings/rest';
+  static String exercisesTab(String tab) => '/exercises?tab=$tab';
   static const exercises = '/exercises';
   static String exerciseRun(String id) => '/exercises/$id/run';
   static const adventure = '/adventure';
@@ -24,5 +45,7 @@ class Routes {
   static const trialEnded = '/trial-ended';
   static const lockSelect = '/lock-select';
   static const safety = '/safety';
+  static String support({String source = 'settings'}) => '/support?source=$source';
+  static const supportBase = '/support';
   static const update = '/update';
 }

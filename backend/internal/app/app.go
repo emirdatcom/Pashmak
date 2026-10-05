@@ -14,6 +14,8 @@ import (
 	"github.com/emirdatcom/pashmak/backend/internal/modules/content"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/entitlement"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/remoteconfig"
+	"github.com/emirdatcom/pashmak/backend/internal/modules/support"
+	"github.com/emirdatcom/pashmak/backend/internal/modules/support/operatorpanel"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/user"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/clock"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/httpx"
@@ -23,14 +25,15 @@ import (
 // MaxBodyBytes is the default request body limit (docs/10 §12).
 const MaxBodyBytes = 256 * 1024
 
-// MaxBackupBytes is the body limit of PUT /v1/backup (docs/10 §6.1).
-const MaxBackupBytes = 10 << 20
-
-func bodyLimit(r *http.Request) (int64, httpx.Code) {
-	if r.Method == http.MethodPut && r.URL.Path == "/v1/backup" {
-		return MaxBackupBytes, httpx.CodeBackupTooLarge
+// bodyLimitFor returns the per-route body limit; backupMax is the effective BACKUP_MAX_BYTES
+// (default 5 MB, docs/10 §6.1), which also bounds PUT /v1/backup.
+func bodyLimitFor(backupMax int64) func(r *http.Request) (int64, httpx.Code) {
+	return func(r *http.Request) (int64, httpx.Code) {
+		if r.Method == http.MethodPut && r.URL.Path == "/v1/backup" {
+			return backupMax, httpx.CodeBackupTooLarge
+		}
+		return MaxBodyBytes, httpx.CodePayloadTooLarge
 	}
-	return MaxBodyBytes, httpx.CodePayloadTooLarge
 }
 
 // Pinger checks database liveness.
@@ -54,6 +57,8 @@ type Deps struct {
 	Admin        *admin.Service
 	Phone        *auth.PhoneService // nil unless an SMS provider is configured
 	Backup       *backup.Service
+	Support      *support.Service
+	SupportPanel *operatorpanel.Panel
 }
 
 // Handler builds the router with the global middleware chain:
@@ -97,6 +102,9 @@ func Handler(d Deps) (*httpx.Router, http.Handler) {
 		if d.Backup != nil {
 			backup.Register(r, d.Backup, requireAuth, d.Clock)
 		}
+		if d.Support != nil {
+			support.Register(r, d.Support, requireAuth, d.Auth, d.Clock)
+		}
 	}
 	if d.Content != nil {
 		content.Register(r, d.Content)
@@ -104,10 +112,20 @@ func Handler(d Deps) (*httpx.Router, http.Handler) {
 	if d.Admin != nil {
 		admin.Register(r, d.Admin)
 	}
+	if d.SupportPanel != nil {
+		d.SupportPanel.Register(r)
+	}
 	// Generous global per-IP limit; stricter per-route limits are added by modules.
 	global := httpx.NewRateLimiter(d.Clock, 120, 6000)
 	h := httpx.Chain(r,
 		httpx.RequestID(), httpx.Recover(), httpx.Logging(), httpx.Metrics(d.Metrics),
-		httpx.BodyLimitFunc(bodyLimit), httpx.RateLimit(global))
+		httpx.BodyLimitFunc(bodyLimitFor(backupLimit(d))), httpx.RateLimit(global))
 	return r, h
+}
+
+func backupLimit(d Deps) int64 {
+	if d.Backup != nil {
+		return int64(d.Backup.MaxBytes())
+	}
+	return int64(backup.DefaultMaxBytes)
 }

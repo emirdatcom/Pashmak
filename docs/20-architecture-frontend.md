@@ -169,3 +169,16 @@ abstract PaymentGateway {
 | DB | drift in-memory (`NativeDatabase.memory()`) | DAOها، migration (`drift_dev` schema dumps + `SchemaVerifier`) |
 | Widget | `flutter_test` + golden (فونت فارسی بارگذاری‌شده) | صفحات کلیدی RTL |
 | Integration | `integration_test` با `FakeGateway` و سرور mock | آنبوردینگ ← عادت ← ماجراجویی ← خرید |
+
+
+## چت پشتیبانی (پرامپت 21)
+`features/support`: `SupportSocket` (WebSocket با فریم auth)، fallback HTTP cursor، `support_poll` در WorkManager (خودزمان‌بندی)، outbox با backoff؛ متن‌ها فقط با `copy.t()`. SDK بازار/مایکت جدا و با `app/tool/check_sdk_separation.sh` در CI اعمال می‌شود (D-7).
+
+## بازطراحی تجربه (پرامپت 22)
+- ناوبری و tokenها: `docs/design-system.md`. نوار ۵ تبه با `StatefulShellRoute` (home, quests, shop, bag, cat)؛ `/menu`، `/goals/*`، `/cat/discoveries`، `/shop/outfit|furniture`، `/exercises?tab=` ، `/quests/reflect`.
+- منطق خالص (با `Clock` و seed تزریقی): `GoalRecommender`، `QuestEngine`، `ShopRotation`، `CatGrowth` در `domain/` هر feature.
+- `CatRenderer` پارامتر `stage` می‌گیرد؛ جای `RiveCatRenderer` حفظ شده.
+- چک CI: `input/reference/` نباید در `pubspec.yaml` assets باشد.
+
+### مسیرها پس از پرامپت 22
+`/home` `/quests` (`/quests/reflect`) `/shop` (`/shop/outfit|furniture`) `/bag` `/cat` (`/cat/discoveries`, `/cat/edit`) داخل `AppShell`؛ بیرون از شل: `/menu` (`/menu/areas`, `/menu/areas/retake`, `/menu/history`)، `/goals` (`/new`, `/:id`, `/:id/edit`)، `/exercises?tab=`، `/settings/help`، `/onboarding/1..11`. `/habits/*` به `/goals/*` redirect می‌شود.

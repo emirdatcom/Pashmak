@@ -1,0 +1,209 @@
+{
+  "pack_key": "discoveries",
+  "version": 1,
+  "pack_schema_version": 1,
+  "locale": "fa",
+  "min_app_version": "1.0.0",
+  "entries": [
+    {
+      "key": "barberry",
+      "name_key": "discovery.barberry.name",
+      "category": "food"
+    },
+    {
+      "key": "saffron",
+      "name_key": "discovery.saffron.name",
+      "category": "food"
+    },
+    {
+      "key": "dates",
+      "name_key": "discovery.dates.name",
+      "category": "food"
+    },
+    {
+      "key": "pomegranate",
+      "name_key": "discovery.pomegranate.name",
+      "category": "food"
+    },
+    {
+      "key": "flatbread",
+      "name_key": "discovery.flatbread.name",
+      "category": "food"
+    },
+    {
+      "key": "rose_jam",
+      "name_key": "discovery.rose_jam.name",
+      "category": "food"
+    },
+    {
+      "key": "mulberry",
+      "name_key": "discovery.mulberry.name",
+      "category": "food"
+    },
+    {
+      "key": "pistachio",
+      "name_key": "discovery.pistachio.name",
+      "category": "food"
+    },
+    {
+      "key": "geranium",
+      "name_key": "discovery.geranium.name",
+      "category": "plant"
+    },
+    {
+      "key": "mint",
+      "name_key": "discovery.mint.name",
+      "category": "plant"
+    },
+    {
+      "key": "plane_leaf",
+      "name_key": "discovery.plane_leaf.name",
+      "category": "plant"
+    },
+    {
+      "key": "jasmine",
+      "name_key": "discovery.jasmine.name",
+      "category": "plant"
+    },
+    {
+      "key": "basil",
+      "name_key": "discovery.basil.name",
+      "category": "plant"
+    },
+    {
+      "key": "cypress",
+      "name_key": "discovery.cypress.name",
+      "category": "plant"
+    },
+    {
+      "key": "violet",
+      "name_key": "discovery.violet.name",
+      "category": "plant"
+    },
+    {
+      "key": "ivy",
+      "name_key": "discovery.ivy.name",
+      "category": "plant"
+    },
+    {
+      "key": "brass_bowl",
+      "name_key": "discovery.brass_bowl.name",
+      "category": "antique"
+    },
+    {
+      "key": "old_key",
+      "name_key": "discovery.old_key.name",
+      "category": "antique"
+    },
+    {
+      "key": "tea_tray",
+      "name_key": "discovery.tea_tray.name",
+      "category": "antique"
+    },
+    {
+      "key": "worn_rug",
+      "name_key": "discovery.worn_rug.name",
+      "category": "antique"
+    },
+    {
+      "key": "copper_kettle",
+      "name_key": "discovery.copper_kettle.name",
+      "category": "antique"
+    },
+    {
+      "key": "glass_marble",
+      "name_key": "discovery.glass_marble.name",
+      "category": "antique"
+    },
+    {
+      "key": "inkwell",
+      "name_key": "discovery.inkwell.name",
+      "category": "antique"
+    },
+    {
+      "key": "lantern",
+      "name_key": "discovery.lantern.name",
+      "category": "antique"
+    },
+    {
+      "key": "fountain_sound",
+      "name_key": "discovery.fountain_sound.name",
+      "category": "sound"
+    },
+    {
+      "key": "call_vendor",
+      "name_key": "discovery.call_vendor.name",
+      "category": "sound"
+    },
+    {
+      "key": "rain_roof",
+      "name_key": "discovery.rain_roof.name",
+      "category": "sound"
+    },
+    {
+      "key": "birds_dawn",
+      "name_key": "discovery.birds_dawn.name",
+      "category": "sound"
+    },
+    {
+      "key": "tea_pour",
+      "name_key": "discovery.tea_pour.name",
+      "category": "sound"
+    },
+    {
+      "key": "wind_leaves",
+      "name_key": "discovery.wind_leaves.name",
+      "category": "sound"
+    },
+    {
+      "key": "far_music",
+      "name_key": "discovery.far_music.name",
+      "category": "sound"
+    },
+    {
+      "key": "clock_tick",
+      "name_key": "discovery.clock_tick.name",
+      "category": "sound"
+    },
+    {
+      "key": "crescent",
+      "name_key": "discovery.crescent.name",
+      "category": "sky"
+    },
+    {
+      "key": "red_sunset",
+      "name_key": "discovery.red_sunset.name",
+      "category": "sky"
+    },
+    {
+      "key": "shooting_star",
+      "name_key": "discovery.shooting_star.name",
+      "category": "sky"
+    },
+    {
+      "key": "pigeon_flock",
+      "name_key": "discovery.pigeon_flock.name",
+      "category": "sky"
+    },
+    {
+      "key": "soft_cloud",
+      "name_key": "discovery.soft_cloud.name",
+      "category": "sky"
+    },
+    {
+      "key": "night_stars",
+      "name_key": "discovery.night_stars.name",
+      "category": "sky"
+    },
+    {
+      "key": "rainbow_small",
+      "name_key": "discovery.rainbow_small.name",
+      "category": "sky"
+    },
+    {
+      "key": "morning_mist",
+      "name_key": "discovery.morning_mist.name",
+      "category": "sky"
+    }
+  ]
+}

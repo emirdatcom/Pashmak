@@ -1,0 +1,81 @@
+{
+  "pack_key": "quests_special",
+  "version": 1,
+  "pack_schema_version": 1,
+  "locale": "fa",
+  "min_app_version": "1.0.0",
+  "entries": [
+    {
+      "key": "grow_young",
+      "title_key": "quest.special.grow_young.title",
+      "hint_key": "quest.special.grow_young.hint",
+      "metric": "adventures_count",
+      "target": 7,
+      "reward_coins": 60,
+      "route": "/home"
+    },
+    {
+      "key": "first_outfit",
+      "title_key": "quest.special.first_outfit.title",
+      "hint_key": "quest.special.first_outfit.hint",
+      "metric": "owned_outfit",
+      "target": 1,
+      "reward_coins": 30,
+      "route": "/shop/outfit"
+    },
+    {
+      "key": "first_furniture",
+      "title_key": "quest.special.first_furniture.title",
+      "hint_key": "quest.special.first_furniture.hint",
+      "metric": "owned_furniture",
+      "target": 1,
+      "reward_coins": 30,
+      "route": "/shop/furniture"
+    },
+    {
+      "key": "visit_two",
+      "title_key": "quest.special.visit_two.title",
+      "hint_key": "quest.special.visit_two.hint",
+      "metric": "locations_visited",
+      "target": 2,
+      "reward_coins": 40,
+      "route": "/home"
+    },
+    {
+      "key": "three_days",
+      "title_key": "quest.special.three_days.title",
+      "hint_key": "quest.special.three_days.hint",
+      "metric": "streak_days",
+      "target": 3,
+      "reward_coins": 30,
+      "route": "/home"
+    },
+    {
+      "key": "first_discovery",
+      "title_key": "quest.special.first_discovery.title",
+      "hint_key": "quest.special.first_discovery.hint",
+      "metric": "discoveries_count",
+      "target": 1,
+      "reward_coins": 30,
+      "route": "/cat/discoveries"
+    },
+    {
+      "key": "grow_adult",
+      "title_key": "quest.special.grow_adult.title",
+      "hint_key": "quest.special.grow_adult.hint",
+      "metric": "adventures_count",
+      "target": 30,
+      "reward_coins": 150,
+      "route": "/home"
+    },
+    {
+      "key": "ten_goals",
+      "title_key": "quest.special.ten_goals.title",
+      "hint_key": "quest.special.ten_goals.hint",
+      "metric": "goals_done_total",
+      "target": 10,
+      "reward_coins": 40,
+      "route": "/home"
+    }
+  ]
+}

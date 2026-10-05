@@ -35,7 +35,21 @@ enum AnalyticsEvent {
   restoreCompletedBackup('restore_completed_backup', {}),
   phoneLinked('phone_linked', {'merged'}),
   statsViewed('stats_viewed', {'range'}),
-  seasonalItemPurchased('seasonal_item_purchased', {'seasonal_key'});
+  seasonalItemPurchased('seasonal_item_purchased', {'seasonal_key'}),
+  supportOpened('support_opened', {'source'}),
+  supportMessageSent('support_message_sent', {'has_device_meta'}),
+  supportReplyReceived('support_reply_received', {'via'}),
+  supportConversationDeleted('support_conversation_deleted', {}),
+  onboardingAreasSelected('onboarding_areas_selected', {'area_keys', 'areas_count'}),
+  goalRecommendedAccepted('goal_recommended_accepted', {'accepted_count', 'replaced_count'}),
+  goalCreated('goal_created', {'area_key', 'source'}),
+  goalCompleted('goal_completed', {'goal_key', 'source'}),
+  questClaimed('quest_claimed', {'kind', 'quest_key'}),
+  discoveryFound('discovery_found', {'category'}),
+  catStageUp('cat_stage_up', {'stage'}),
+  shopRefreshed('shop_refreshed', {'paid'}),
+  itemSold('item_sold', {'item_key'}),
+  pauseModeToggled('pause_mode_toggled', {'on'});
 
   const AnalyticsEvent(this.wireName, this.allowedProps);
   final String wireName;

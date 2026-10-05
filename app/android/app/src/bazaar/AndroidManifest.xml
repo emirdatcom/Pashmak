@@ -1,0 +1,7 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Cafe Bazaar billing only (Poolakey). [نیاز به راستی‌آزمایی] V2/V4: permission and package name from Poolakey docs. -->
+    <uses-permission android:name="com.farsitel.bazaar.permission.PAY_THIRD_PARTY" />
+    <queries>
+        <package android:name="com.farsitel.bazaar" />
+    </queries>
+</manifest>

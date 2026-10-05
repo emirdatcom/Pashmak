@@ -21,8 +21,6 @@ type AdminAudit struct {
 
 type Backup struct {
 	UserID        uuid.UUID
-	Storage       string
-	BlobRef       string
 	Blob          []byte
 	SizeBytes     int32
 	SchemaVersion int32
@@ -115,6 +113,15 @@ type Experiment struct {
 	UpdatedAt time.Time
 }
 
+type OperatorSession struct {
+	ID         uuid.UUID
+	OperatorID uuid.UUID
+	TokenHash  string
+	ExpiresAt  time.Time
+	RevokedAt  *time.Time
+	CreatedAt  time.Time
+}
+
 type OtpChallenge struct {
 	ID         uuid.UUID
 	UserID     uuid.UUID
@@ -164,6 +171,50 @@ type RefreshToken struct {
 	ExpiresAt time.Time
 	RevokedAt *time.Time
 	CreatedAt time.Time
+}
+
+type SupportCannedReply struct {
+	ID     uuid.UUID
+	Key    string
+	Title  string
+	Body   string
+	Active bool
+}
+
+type SupportConversation struct {
+	ID                 uuid.UUID
+	UserID             uuid.UUID
+	Status             string
+	AssignedOperatorID uuid.NullUUID
+	LastMessageAt      time.Time
+	AwaitingSince      *time.Time
+	UserUnreadCount    int32
+	OperatorUnread     int32
+	DeviceMeta         []byte
+	CreatedAt          time.Time
+	ClosedAt           *time.Time
+}
+
+type SupportMessage struct {
+	ID             uuid.UUID
+	ConversationID uuid.UUID
+	Sender         string
+	OperatorID     uuid.NullUUID
+	ClientMsgID    uuid.NullUUID
+	BodyEnc        []byte
+	CreatedAt      time.Time
+	ReadAt         *time.Time
+}
+
+type SupportOperator struct {
+	ID           uuid.UUID
+	Username     string
+	PasswordHash string
+	DisplayName  string
+	Role         string
+	Active       bool
+	CreatedAt    time.Time
+	LastLoginAt  *time.Time
 }
 
 type Trial struct {

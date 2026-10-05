@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>پنل پشتیبانی</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <section id="login" class="card narrow hidden">
+    <h1>ورود اپراتور</h1>
+    <form id="login-form" autocomplete="off">
+      <label>نام کاربری <input id="username" required></label>
+      <label>رمز عبور <input id="password" type="password" required></label>
+      <button type="submit">ورود</button>
+      <p id="login-error" class="error"></p>
+    </form>
+  </section>
+
+  <main id="app" class="hidden">
+    <header>
+      <strong id="who"></strong>
+      <span id="hours" class="badge"></span>
+      <span id="live" class="badge off">قطع</span>
+      <button id="logout" class="link">خروج</button>
+    </header>
+    <div class="layout">
+      <aside>
+        <div class="filters">
+          <button data-status="" class="active">همه</button>
+          <button data-status="open">منتظر پاسخ</button>
+          <button data-status="waiting_user">منتظر کاربر</button>
+          <button data-status="closed">بسته</button>
+        </div>
+        <ul id="queue"></ul>
+      </aside>
+      <section id="conversation" class="hidden">
+        <div class="conv-head">
+          <span id="conv-title"></span>
+          <span id="conv-status" class="badge"></span>
+          <button id="assign" class="link">به نام من</button>
+          <button id="close" class="link">بستن گفتگو</button>
+        </div>
+        <div id="facts" class="facts"></div>
+        <div id="messages" class="messages"></div>
+        <form id="reply-form">
+          <select id="canned"><option value="">پاسخ آماده…</option></select>
+          <textarea id="reply" rows="3" maxlength="2000" placeholder="پاسخ…"></textarea>
+          <button type="submit">ارسال</button>
+        </form>
+        <details id="admin-box" class="hidden">
+          <summary>اعطای دوره‌ی رایگان (فقط مدیر)</summary>
+          <form id="grant-form">
+            <label>روز <input id="grant-days" type="number" min="1" max="365" value="7"></label>
+            <label>دلیل <input id="grant-reason" required></label>
+            <button type="submit">اعطا</button>
+          </form>
+        </details>
+      </section>
+      <p id="empty" class="muted">یک گفتگو را انتخاب کن.</p>
+    </div>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

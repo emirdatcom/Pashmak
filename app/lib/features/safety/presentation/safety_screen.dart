@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/analytics/analytics_event.dart';
 import '../../../core/l10n/digits.dart';
 import '../../../core/providers.dart';
+import '../../../core/router/routes.dart';
 import '../../../core/theme/tokens.dart';
+import '../../support/support_providers.dart';
 
 /// Kind help page. Always reachable, never gated, no paywall, no reason tracking (docs/80 §5).
 /// Hotline numbers are shown only when the pack marks them `verified_at` (open question V9).
@@ -48,6 +51,16 @@ class _SafetyScreenState extends ConsumerState<SafetyScreen> {
               ),
             ),
         const SizedBox(height: AppSpacing.lg),
+        if (ref.watch(supportEnabledProvider)) ...[
+          OutlinedButton.icon(
+            icon: const Icon(Icons.chat_bubble_outline),
+            onPressed: () => context.push(Routes.support(source: 'safety')),
+            label: Text(copy.t('safety.support_cta')),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(copy.t('safety.support_note'), style: Theme.of(context).textTheme.bodySmall),
+          const SizedBox(height: AppSpacing.lg),
+        ],
         Text(copy.t('disclaimer.not_medical'), style: Theme.of(context).textTheme.bodyMedium),
       ]),
     );

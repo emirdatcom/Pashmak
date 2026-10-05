@@ -1,3 +1,4 @@
+import '../../goals/domain/goal_title.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +11,7 @@ import '../../../core/router/routes.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../core/time/local_day.dart';
 import '../../core_loop_providers.dart';
+import '../../support/support_providers.dart';
 
 String _date(DateTime d) => toPersianDigits(JalaliFormatter.date(LocalDay.fromDate(d)));
 
@@ -86,7 +88,7 @@ class _LockSelectionState extends ConsumerState<LockSelectionScreen> {
                   for (final h in _habits)
                     CheckboxListTile(
                       value: _keep.contains(h.id),
-                      title: Text(h.templateKey != null ? copy.t('habit.template.${h.templateKey}.title') : (h.title ?? '')),
+                      title: Text(goalTitle(copy, h.goalKey ?? h.templateKey, h.title)),
                       onChanged: (v) => setState(() {
                         if (v == true) {
                           if (_keep.length < max) _keep.add(h.id);
@@ -142,6 +144,7 @@ class SubscriptionScreen extends ConsumerWidget {
           Text(text, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: AppSpacing.lg),
           FilledButton(onPressed: () => context.push(Routes.paywall('settings')), child: Text(copy.t('sub.upgrade'))),
+          if (ref.watch(supportEnabledProvider)) TextButton(onPressed: () => context.push(Routes.support(source: 'subscription')), child: Text(copy.t('support.purchase_help'))),
         ]),
       ),
     );

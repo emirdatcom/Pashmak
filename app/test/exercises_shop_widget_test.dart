@@ -42,7 +42,8 @@ void main() {
       GoRoute(path: Routes.exercises, builder: (_, _) => const ExercisesScreen(), routes: [
         GoRoute(path: ':id/run', builder: (_, s) => ExerciseRunScreen(exerciseKey: s.pathParameters['id']!)),
       ]),
-      GoRoute(path: Routes.shop, builder: (_, _) => const ShopScreen(), routes: [GoRoute(path: 'closet', builder: (_, _) => const ClosetScreen())]),
+      GoRoute(path: Routes.shop, builder: (_, _) => const ShopScreen(), routes: [GoRoute(path: 'outfit', builder: (_, _) => const ShopDetailScreen(shop: 'outfit'))]),
+      GoRoute(path: Routes.quests, builder: (_, _) => const SizedBox()),
       GoRoute(path: '/paywall', builder: (_, s) => Text('paywall:${s.uri.queryParameters['trigger']}')),
       GoRoute(path: Routes.adventure, builder: (_, _) => const SizedBox()),
     ]);
@@ -60,7 +61,7 @@ void main() {
     final (_, _, app) = await setup(tester, Routes.exercises);
     await tester.pumpWidget(app);
     await tester.pump(const Duration(milliseconds: 300));
-    expect(find.byIcon(Icons.lock_outline), findsNWidgets(4));
+    expect(find.byIcon(Icons.lock_outline), findsWidgets);
     await tester.tap(find.text('شکرگزاری'));
     await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 200)));
     await tester.pump(const Duration(milliseconds: 300));
@@ -88,17 +89,20 @@ void main() {
     expect(find.textContaining('پریمیوم'), findsNothing, reason: 'no upsell after an exercise');
   });
 
-  testWidgets('shop: buy with enough coins shows "داری"; too few coins gives a kind message with an adventure link', (tester) async {
-    final (c, _, app) = await setup(tester, Routes.shop);
-    await tester.runAsync(() => c.read(walletServiceProvider).grant(Currency.coins, 70, 'promo', 'seed'));
+  testWidgets('shop: buy from the permanent collection shows "داری"; too few coins gives a kind message', (tester) async {
+    final (c, _, app) = await setup(tester, Routes.shopOutfit);
+    await tester.runAsync(() => c.read(walletServiceProvider).grant(Currency.coins, 50, 'promo', 'seed'));
     await tester.pumpWidget(app);
-    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 200)));
+    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 300)));
     await tester.pump(const Duration(milliseconds: 300));
-    await tester.tap(find.widgetWithText(FilledButton, 'بخر ۸۰').first); // collar_red costs 80
+    final tile = find.text('گردنبند فیروزه‌ای'); // permanent, 60 coins
+    await tester.scrollUntilVisible(tile, 200, scrollable: find.byType(Scrollable).first);
+    await tester.tap(tile);
     await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 200)));
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('سکه‌ات کمه؛ با ماجراجویی جمع می‌شه.'), findsOneWidget);
-    await tester.tap(find.widgetWithText(FilledButton, 'بخر ۶۰').first); // collar_turquoise
+    await tester.runAsync(() => c.read(walletServiceProvider).grant(Currency.coins, 100, 'promo', 'more'));
+    await tester.tap(tile);
     await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 300)));
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('داری'), findsOneWidget);

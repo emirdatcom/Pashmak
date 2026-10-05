@@ -32,6 +32,16 @@ List<ExercisePhase> expandSteps(List<Map<String, dynamic>> steps) {
   return out;
 }
 
+/// Rescales the repeat counts of the (single) repeated group so the whole exercise lasts about [targetSeconds].
+/// Exercises without a repeated group are returned unchanged. At least one cycle is kept.
+List<Map<String, dynamic>> scaleRepeats(List<Map<String, dynamic>> steps, int targetSeconds) {
+  final cycle = steps.where((s) => ((s['repeat'] as int?) ?? 1) > 1).fold<int>(0, (a, s) => a + (s['seconds'] as int));
+  if (cycle == 0) return steps;
+  final fixed = steps.where((s) => ((s['repeat'] as int?) ?? 1) <= 1).fold<int>(0, (a, s) => a + (s['seconds'] as int));
+  final repeats = ((targetSeconds - fixed) / cycle).round().clamp(1, 1000);
+  return [for (final s in steps) ((s['repeat'] as int?) ?? 1) > 1 ? {...s, 'repeat': repeats} : s];
+}
+
 class RunnerSnapshot {
   const RunnerSnapshot({required this.phaseIndex, required this.remainingInPhase, required this.elapsedSeconds, required this.finished});
   final int phaseIndex;

@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "quests_special pack",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "pack_key",
+    "version",
+    "pack_schema_version",
+    "locale",
+    "min_app_version",
+    "entries"
+  ],
+  "properties": {
+    "pack_key": {
+      "const": "quests_special"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "pack_schema_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "locale": {
+      "const": "fa"
+    },
+    "min_app_version": {
+      "type": "string",
+      "pattern": "^[0-9]+(\\.[0-9]+){0,2}$"
+    },
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "key",
+          "title_key",
+          "hint_key",
+          "metric",
+          "target",
+          "reward_coins",
+          "route"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]{1,64}$"
+          },
+          "title_key": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+(\\.[a-z0-9_]+)+$"
+          },
+          "hint_key": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+(\\.[a-z0-9_]+)+$"
+          },
+          "metric": {
+            "enum": [
+              "adventures_count",
+              "owned_outfit",
+              "owned_furniture",
+              "locations_visited",
+              "streak_days",
+              "discoveries_count",
+              "goals_done_total"
+            ]
+          },
+          "target": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "reward_coins": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "route": {
+            "type": "string",
+            "pattern": "^/[a-z0-9/_-]*$"
+          }
+        }
+      }
+    }
+  }
+}

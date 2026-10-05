@@ -17,6 +17,8 @@
 | 14 | `14-frontend-monetization.md` | MVP | 11، (سرور: 03) | 12، 13 |
 | 15 | `15-frontend-onboarding-polish.md` | MVP | 11–14 | — |
 | 16 | `16-frontend-phase2.md` (backup، اتصال شماره، آمار عمیق، فصلی، Rive) | فاز ۲ | 15، 05 | — |
+| 22 | `22-finch-style-ux-onboarding-goals.md` (بازطراحی تجربه: تم، ۵ تب، آنبوردینگ ۱۱ گام، اهداف، مأموریت، فروشگاه چرخشی) | MVP/۲ | 11–16، 21 | — |
+| 21 | `21-decisions-alignment-and-support-chat.md` (تصمیم‌های D-1..D-9 و چت پشتیبانی) | MVP/۲ | 05، 16 | — |
 | 20 | `20-integration-and-release.md` | MVP (و تکرار در هر فاز) | همه MVP | — |
 | 21 | `21-decisions-alignment-and-support-chat.md` (تصمیم‌های قطعی مالک + چت پشتیبانی) | قبل از انتشار | 01–20 | — |
 | 22 | `22-finch-style-ux-onboarding-goals.md` (بازطراحی به سبک مرجع، پرسش‌نامه، کتابخانه اهداف، مأموریت‌ها) | قبل از انتشار | 10–16 (21 اختیاری) | 21 |
@@ -99,3 +101,5 @@ docs/  prompts/  input/
 10. trigger پی‌وال `premium_item` (آیتم `premium_only` فروشگاه، پرامپت 12) به `paywall.triggers` سند ۶۰ §۳ و فهرست triggerهای پرامپت 14 اضافه شد.
 11. الگوریتم canonical JSON برای امضای `EntitlementState` در سند ۱۰ §۶.۲ مستند شد تا 03 (Go) و 14 (Dart) یک تعریف واحد داشته باشند؛ fixture مشترک در 20.
 12. رویدادهای فاز ۲ (`backup_enabled`, `backup_completed`, `restore_completed_backup`, `phone_linked`, `stats_viewed`, `seasonal_item_purchased`) عمداً فقط در پرامپت 16 تعریف شده‌اند و اجرای 16 موظف است ابتدا آن‌ها را به سند ۷۰ و `events.json` اضافه کند.
+13. پرامپت 21: تصمیم‌های نهایی مالک (D-1..D-9) اعمال شد: Kavenegar→sms.ir، حذف S3 و تلگرام/بله، پشتیبانی=چت درون‌برنامه‌ای، جداسازی SDK بازار/مایکت با چک CI؛ اسناد 00، 10، 20، 30، 40، 50، 70، 80، runbook، store-listing و open-questions به‌روز شدند.
+14. پرامپت 22: بازطراحی تجربه پیاده شد؛ `habit_*`→`goal_*` (رویدادها)، packهای `goal_library, quests_daily, quests_special, discoveries, reflection_prompts`، کلیدهای config جدید، مهاجرت drift v3؛ اسناد 00، 20، 30، 40، 50، 60، 70، `design-system.md`، `art-brief.md` و open-questions به‌روز شدند.

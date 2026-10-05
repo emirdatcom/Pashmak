@@ -59,6 +59,7 @@ func run() error {
 		{Name: "create_partitions", Interval: jobspkg.PartitionsInterval, Run: jobspkg.CreatePartitions(svc.Analytics)},
 		{Name: "rollup_daily", Interval: jobspkg.RollupInterval, Run: jobspkg.RollupDaily(svc.Analytics)},
 		{Name: "prune_events", Interval: jobspkg.PruneInterval, Run: jobspkg.PruneEvents(svc.Analytics)},
+		{Name: "prune_support", Interval: jobspkg.SupportPruneInterval, Run: jobspkg.PruneSupport(svc.Support)},
 	}
 	slog.Info("worker started", "jobs", len(jobs))
 	for _, j := range jobs {

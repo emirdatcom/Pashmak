@@ -32,7 +32,20 @@
 | D9 | همگام‌سازی = **Backup/Restore اسنپ‌شات رمزنگاری‌شده سمت کلاینت (E2E)** در فاز ۲؛ نه sync رکوردبه‌رکورد | تک‌دستگاهی غالب است؛ ساده و امن | CRDT/sync دوطرفه | بدون multi-device هم‌زمان |
 | D10 | آنالیتیکس **خودمیزبان** (جدول partitioned در Postgres) با batch ingest | قانون «بدون سرویس خارجی»، حریم خصوصی | Firebase/Metrix | مقیاس > ۱۰M رویداد/روز ← ClickHouse در آینده |
 | D11 | تقویم: **شمسی**، روز کاربر از `day_start_hour` (پیش‌فرض ۴ صبح) با timezone `Asia/Tehran` | عادت‌های شبانه به روز درست بخورند | نیمه‌شب سخت | — |
-| D12 | استقرار: یک VPS ایرانی، Docker Compose (Caddy + api + Postgres)، بکاپ روزانه به object storage ایرانی | سادگی | Kubernetes | SPOF ← RTO هدف ۴ ساعت، اپ آفلاین تحمل می‌کند |
+| D12 | استقرار: یک VPS ایرانی، Docker Compose (Caddy + api + Postgres)، بکاپ شبانه‌ی دیتابیس (pg_dump → age → volume محلی → rsync به سرور دوم) | سادگی | Kubernetes | SPOF ← RTO هدف ۴ ساعت، اپ آفلاین تحمل می‌کند |
+
+### تصمیم‌های نهایی مالک محصول (پرامپت ۲۱)
+| ID | تصمیم |
+|---|---|
+| D-1 | شماره‌ی تلفن پشتیبانی نداریم؛ شماره‌های اضطراری عمومی ۱۱۵/۱۲۳/۱۴۸۰ در صفحه ایمنی می‌مانند و `verified_at` پس از راستی‌آزمایی پر می‌شود |
+| D-2 | پشتیبانی = چت درون‌برنامه‌ای بلادرنگ (`docs/10` §5.6) |
+| D-3 | بدون S3/object storage؛ بکاپ کاربر فقط bytea در Postgres (حداکثر ۵MB)؛ بکاپ DB شبانه با pg_dump → age → volume → rsync |
+| D-4 | OTP با sms.ir (جایگزین Kavenegar) |
+| D-5 | بدون تلگرام/بله؛ هشدار: Alertmanager → alert-relay → پیامک sms.ir |
+| D-6 | پرداخت بیرون از مارکت‌ها وجود ندارد |
+| D-7 | SDK بازار و مایکت جدا؛ با چک CI اعمال می‌شود |
+| D-8 | فقط PostgreSQL |
+| D-9 | بدون سرویس پوش؛ WebSocket + polling پس‌زمینه + نوتیف محلی |
 
 ## ۴. نمای سیستم
 
@@ -87,3 +100,14 @@ flowchart LR
 | روز کاربر | `local_day` (`YYYY-MM-DD` میلادی، نمایش شمسی) | با `day_start_hour` |
 | اشتراک فعال | `entitlement` = `premium` | تنها entitlement فعلی |
 | روز بخشش | `streak_freeze` | ماهانه ۱ (configurable) |
+
+### افزوده‌های واژه‌نامه (پرامپت 22)
+| مفهوم | نام canonical |
+|---|---|
+| هدف (قبلاً عادت) | `goal` (جدول محلی همچنان `habits`، ستون `goal_key` جایگزین `template_key`) |
+| حوزه‌ها `area_key` | `sleep, calm, movement, nutrition, connection, focus, self_kindness, home` |
+| تب‌های پیشنهاد | `suggested, easy_wins, calm, connection, gratitude, health, sleep, movement, tidy` |
+| مراحل رشد `cat_stage` | `kitten, young, adult` |
+| حالت‌های گربه (افزوده) | `breathing, away` |
+| تب‌های تمرین | `focus, calm, morning, night, energize` |
+| packهای جدید | `goal_library, quests_daily, quests_special, discoveries, reflection_prompts` |

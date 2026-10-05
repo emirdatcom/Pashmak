@@ -92,6 +92,9 @@ type statusWriter struct {
 	status int
 }
 
+// Unwrap lets http.ResponseController reach the real writer (WebSocket upgrades need Hijack).
+func (s *statusWriter) Unwrap() http.ResponseWriter { return s.ResponseWriter }
+
 func (s *statusWriter) WriteHeader(c int) {
 	s.status = c
 	s.ResponseWriter.WriteHeader(c)

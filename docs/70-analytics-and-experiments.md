@@ -81,3 +81,10 @@
 - `event_id` برای dedupe؛ `client_ts` در کنار `received_at` (clock skew).
 - سرور رویداد با نام ناشناخته یا prop ممنوع را رد/حذف می‌کند و متریک `events_rejected_total{reason}` می‌شمارد.
 - تست قرارداد: enum `AnalyticsEvent` در Dart و allowlist در Go از یک فایل منبع (`config-data/analytics/events.json`) تولید/چک می‌شوند.
+
+
+## یادداشت پرامپت 21
+رویدادهای چت پشتیبانی فقط شمارنده‌اند (بدون متن پیام)؛ در `config-data/analytics/events.json` ثبت‌اند.
+
+## رویدادهای پرامپت 22
+`onboarding_areas_selected, goal_recommended_accepted, goal_created, goal_completed, quest_claimed, discovery_found, cat_stage_up, shop_refreshed, item_sold, pause_mode_toggled` (بدون پاسخ پرسش‌نامه و `energy_level`). `habit_*` برای یک دوره نسخه در allowlist می‌ماند.

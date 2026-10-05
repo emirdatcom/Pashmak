@@ -1,6 +1,11 @@
+import 'goals/domain/goal_title.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/content/content_repository.dart';
+import 'goals/domain/goal_recommender.dart';
+import 'quests/domain/quest_engine.dart';
+import 'quests/domain/quest_service.dart';
+import 'settings/domain/pause_service.dart';
 import 'shop/seasonal/seasonal.dart';
 import 'notifications/domain/notification_planner.dart' show SeasonalEvent;
 
@@ -16,6 +21,7 @@ import '../core/widgets_home/widget_snapshot.dart';
 import '../core/widgets_home/widget_snapshot_publisher.dart';
 import 'adventure/domain/adventure_service.dart';
 import 'notifications/data/notification_scheduler.dart';
+import 'cat/domain/cat_growth.dart';
 import 'cat/domain/cat_mood_resolver.dart';
 import 'checkin/domain/checkin_service.dart';
 import 'exercises/domain/exercise_service.dart';
@@ -76,7 +82,7 @@ final homeWidgetPublisherProvider = Provider<HomeWidgetPublisher>((ref) => HomeW
         ref.watch(databaseProvider),
         ref.watch(clockProvider),
         dayStartHour: ref.watch(dayStartHourProvider),
-        habitTitle: (h) => h.templateKey != null ? ref.read(copyProvider).t('habit.template.${h.templateKey}.title') : (h.title ?? ''),
+        habitTitle: (h) => goalTitle(ref.read(copyProvider), h.goalKey ?? h.templateKey, h.title),
         streakLabel: (n) => n > 0 ? ref.read(copyProvider).t('streak.continue', {'n': n}) : ref.read(copyProvider).t('home.streak.none'),
         progressLabel: (d, t) => ref.read(copyProvider).t('home.habits.progress', {'n': d}),
       ),
@@ -84,7 +90,11 @@ final homeWidgetPublisherProvider = Provider<HomeWidgetPublisher>((ref) => HomeW
       enabled: () => ref.read(appConfigProvider).feature('widgets'),
     ));
 
-final widgetSnapshotPublisherProvider = Provider<WidgetSnapshotPublisher>((ref) => DataChangedPublisher(() async {
+final Provider<WidgetSnapshotPublisher> widgetSnapshotPublisherProvider = Provider<WidgetSnapshotPublisher>((ref) => DataChangedPublisher(() async {
+      // When today's energy bar is full the day's adventure starts by itself (docs/22 §9).
+      try {
+        await ref.read(adventureServiceProvider).maybeAutoStart(isPremium: ref.read(premiumProvider));
+      } catch (_) {}
       await ref.read(notificationSchedulerProvider).replan();
       await ref.read(homeWidgetPublisherProvider).refresh();
     }));
@@ -102,7 +112,7 @@ final habitServiceProvider = Provider<HabitService>((ref) {
   AppConfig cfg() => ref.read(appConfigProvider);
   return HabitService(ref.watch(databaseProvider), ref.watch(clockProvider), ref.watch(walletServiceProvider), ref.watch(streakServiceProvider),
       ref.watch(analyticsProvider), ref.watch(widgetSnapshotPublisherProvider),
-      energyPerHabit: () => cfg().energyPerHabit,
+      energyPerGoal: () => cfg().energyPerGoal,
       freeActiveHabits: () => cfg().freeActiveHabits,
       freeCustomHabits: () => cfg().freeCustomHabits,
       today: () => ref.read(todayProvider));
@@ -121,14 +131,18 @@ final checkinServiceProvider = Provider<CheckinService>((ref) => CheckinService(
     ref.watch(widgetSnapshotPublisherProvider),
     energyPerCheckin: () => ref.read(appConfigProvider).energyPerCheckin, today: () => ref.read(todayProvider), detector: () => _detector(ref)));
 
-final adventureServiceProvider = Provider<AdventureService>((ref) {
+final Provider<AdventureService> adventureServiceProvider = Provider<AdventureService>((ref) {
   final content = ref.watch(contentRepositoryProvider);
   return AdventureService(ref.watch(databaseProvider), ref.watch(clockProvider), ref.watch(walletServiceProvider), ref.watch(analyticsProvider),
       ref.watch(widgetSnapshotPublisherProvider),
       configs: () => ref.read(appConfigProvider).adventureLocations,
       adventuresPack: () => (content.entries('adventures') as Map<String, dynamic>?) ?? const {},
       shopItems: () => (content.entries('shop_items') as List?) ?? const [],
-      freeLocations: () => ref.read(appConfigProvider).freeAdventureLocations);
+      freeLocations: () => ref.read(appConfigProvider).freeAdventureLocations,
+      dailyEnergyTarget: () => ref.read(appConfigProvider).dailyEnergyTarget,
+      discoveries: () => ((content.entries('discoveries') as List?) ?? const []).cast<Map<String, dynamic>>(),
+      growth: () => CatGrowth(young: ref.read(appConfigProvider).growthYoung, adult: ref.read(appConfigProvider).growthAdult),
+      today: () => ref.read(todayProvider).value);
 });
 
 final premiumGateProvider = Provider<PremiumGate>((ref) => PremiumGate(ref.watch(databaseProvider), ref.watch(clockProvider),
@@ -176,6 +190,8 @@ final catStateProvider = Provider<CatVisualState>((ref) {
     adventureJustClaimed: false,
     accessories: [for (final i in equipped) if (i.slot != 'background') i.itemKey],
     background: equipped.where((i) => i.slot == 'background').map((i) => i.itemKey).firstOrNull,
+    stage: ref.watch(catStageProvider),
+    fur: ref.watch(catProfileProvider).value?.fur ?? CatFur.orangeCream,
   );
 });
 
@@ -202,7 +218,111 @@ final shopServiceProvider = Provider<ShopService>((ref) {
   return ShopService(ref.watch(databaseProvider), ref.watch(clockProvider), ref.watch(walletServiceProvider), ref.watch(analyticsProvider),
       ref.watch(widgetSnapshotPublisherProvider),
       items: () => shopCatalog(content, ref.read(seasonalCatalogProvider)),
-      isSeasonActive: (key) => ref.read(seasonalCatalogProvider).active(ref.read(todayProvider)).any((p) => p.key == key));
+      isSeasonActive: (key) => ref.read(seasonalCatalogProvider).active(ref.read(todayProvider)).any((p) => p.key == key),
+      today: () => ref.read(todayProvider).value,
+      installId: () => ref.read(deviceIdentityProvider).installId(),
+      rotationSize: () => ref.read(appConfigProvider).shopRotationSize,
+      refreshCost: () => ref.read(appConfigProvider).shopRefreshCost,
+      sellRatio: () => ref.read(appConfigProvider).shopSellRatio);
+});
+
+// --- prompt 22: quests, rest mode, cat profile -----------------------------------------------------------------
+List<QuestDef> _questPack(ContentRepository c, String key) => [for (final j in ((c.entries(key) as List?) ?? const []).cast<Map<String, dynamic>>()) QuestDef.fromJson(j)];
+
+final questServiceProvider = Provider<QuestService>((ref) {
+  final content = ref.watch(contentRepositoryProvider);
+  return QuestService(ref.watch(databaseProvider), ref.watch(clockProvider), ref.watch(walletServiceProvider), ref.watch(analyticsProvider),
+      ref.watch(widgetSnapshotPublisherProvider),
+      today: () => ref.read(todayProvider).value,
+      dayStart: () {
+        final t = ref.read(todayProvider);
+        return DateTime(t.year, t.month, t.day, ref.read(dayStartHourProvider));
+      },
+      dailyPool: () => _questPack(content, 'quests_daily'),
+      specialPool: () => _questPack(content, 'quests_special'),
+      dailyCount: () => ref.read(appConfigProvider).questsDailyCount,
+      dailyRewardCoins: () => ref.read(appConfigProvider).questsDailyRewardCoins,
+      seed: () async => stableHash(await ref.read(deviceIdentityProvider).installId()));
+});
+
+final pauseServiceProvider = Provider<PauseService>((ref) => PauseService(ref.watch(databaseProvider), ref.watch(clockProvider),
+    ref.watch(streakServiceProvider), ref.watch(analyticsProvider), ref.watch(widgetSnapshotPublisherProvider),
+    today: () => ref.read(todayProvider)));
+
+final pausedProvider = StreamProvider<bool>((ref) => ref.watch(pauseServiceProvider).watch());
+
+/// Bumps on every local DB write, so derived (non-stream) views can recompute.
+final dbTickProvider = StreamProvider<int>((ref) async* {
+  final db = ref.watch(databaseProvider);
+  var n = 0;
+  yield n;
+  await for (final _ in db.tableUpdates()) {
+    yield ++n;
+  }
+});
+
+final dailyQuestsProvider = FutureProvider<List<QuestView>>((ref) {
+  ref.watch(dbTickProvider);
+  ref.watch(todayProvider);
+  return ref.watch(questServiceProvider).daily();
+});
+
+final specialQuestsProvider = FutureProvider<List<QuestView>>((ref) {
+  ref.watch(dbTickProvider);
+  return ref.watch(questServiceProvider).special();
+});
+
+/// Goal library entries (the `goal_library` pack).
+final goalLibraryProvider = Provider<List<GoalDef>>((ref) =>
+    [for (final j in ((ref.watch(contentRepositoryProvider).entries('goal_library') as List?) ?? const []).cast<Map<String, dynamic>>()) GoalDef.fromJson(j)]);
+
+final goalRecommenderProvider = Provider<GoalRecommender>((ref) =>
+    GoalRecommender(goals: ref.watch(goalLibraryProvider), weights: ref.watch(appConfigProvider).recommenderWeights));
+
+/// Cat identity chosen at onboarding (stored in app_meta): fur colour and personality trait.
+class CatProfile {
+  const CatProfile({this.fur = CatFur.orangeCream, this.trait = 'curious', this.userName = '', this.arrivedAt});
+  final CatFur fur;
+  final String trait; // curious | kind | playful
+  final String userName;
+  final DateTime? arrivedAt;
+}
+
+final catProfileProvider = FutureProvider<CatProfile>((ref) async {
+  ref.watch(dbTickProvider);
+  final db = ref.watch(databaseProvider);
+  final furName = await db.meta('cat_fur');
+  final fur = CatFur.values.where((f) => f.name == furName).firstOrNull ?? CatFur.orangeCream;
+  final arrived = int.tryParse(await db.meta('cat_arrived_at') ?? '');
+  return CatProfile(
+      fur: fur,
+      trait: await db.meta('cat_trait') ?? 'curious',
+      userName: await db.meta('user_name') ?? '',
+      arrivedAt: arrived == null ? null : DateTime.fromMillisecondsSinceEpoch(arrived));
+});
+
+/// Completed adventures → growth stage.
+final adventuresCountProvider = FutureProvider<int>((ref) async {
+  ref.watch(dbTickProvider);
+  final db = ref.watch(databaseProvider);
+  return (await (db.select(db.adventures)..where((a) => a.status.equals('claimed'))).get()).length;
+});
+
+final catStageProvider = Provider<CatStage>((ref) {
+  final cfg = ref.watch(appConfigProvider);
+  return CatGrowth(young: cfg.growthYoung, adult: cfg.growthAdult).stageFor(ref.watch(adventuresCountProvider).value ?? 0);
+});
+
+final foundDiscoveriesProvider = StreamProvider<Set<String>>((ref) {
+  final db = ref.watch(databaseProvider);
+  return db.select(db.discoveriesFound).watch().map((r) => {for (final d in r) d.discoveryKey});
 });
 
 final ownedItemsProvider = StreamProvider<List<InventoryData>>((ref) => ref.watch(shopServiceProvider).watchOwned());
+
+/// Number of goal completions ever (profile "details" tab).
+final goalsDoneTotalProvider = FutureProvider<int>((ref) async {
+  ref.watch(dbTickProvider);
+  final db = ref.watch(databaseProvider);
+  return (await (db.select(db.habitLogs)..where((l) => l.deletedAt.isNull())).get()).length;
+});

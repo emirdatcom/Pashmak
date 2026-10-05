@@ -50,6 +50,7 @@ func run() error {
 	if err != nil {
 		return err
 	}
+	go svc.Support.Hub().Run(ctx) // LISTEN/NOTIFY fan-out for the support chat
 	_, handler := app.Handler(svc.Deps(pool, m, clk))
 
 	api := &http.Server{Addr: cfg.HTTPAddr, Handler: handler, ReadHeaderTimeout: 5 * time.Second,

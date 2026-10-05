@@ -51,7 +51,8 @@ class _AppState extends ConsumerState<App> {
       routerConfig: ref.watch(routerProvider),
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      themeMode: ref.watch(themeModeProvider),
+      // The redesign is light-only for now (dark theme disabled until it is redesigned, docs/22 §3).
+      themeMode: ThemeMode.light,
       locale: const Locale('fa', 'IR'),
       supportedLocales: const [Locale('fa', 'IR')],
       localizationsDelegates: const [

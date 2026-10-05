@@ -16,7 +16,7 @@ import (
 )
 
 // PackKeys are the content packs with a schema in config-data/content/schema.
-var PackKeys = []string{"brand", "copy_fa", "habit_templates", "exercises", "adventures", "shop_items", "safety"}
+var PackKeys = []string{"brand", "copy_fa", "habit_templates", "exercises", "adventures", "shop_items", "safety", "goal_library", "quests_daily", "quests_special", "discoveries", "reflection_prompts"}
 
 // SeasonalKeys are the seasonal packs shipped with the app (phase 2). They share one schema
 // (`seasonal.schema.json`); any other `seasonal_<name>` pack is accepted by ValidatePack too.

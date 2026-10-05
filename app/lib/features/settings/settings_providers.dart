@@ -13,7 +13,7 @@ final statsServiceProvider = Provider<StatsService>((ref) => StatsService(ref.wa
 
 final onboardingServiceProvider = Provider<OnboardingService>((ref) {
   final brand = ref.watch(contentRepositoryProvider).bundledEntries('brand');
-  return OnboardingService(ref.watch(databaseProvider), ref.watch(habitServiceProvider), ref.watch(analyticsProvider),
+  return OnboardingService(ref.watch(databaseProvider), ref.watch(habitServiceProvider), ref.watch(analyticsProvider), ref.watch(clockProvider),
       defaultCatName: (brand['cat_default_name'] as String?) ?? '');
 });
 
