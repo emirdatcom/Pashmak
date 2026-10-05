@@ -30,6 +30,32 @@ void main() {
     }
   });
 
+  test('redesign tokens: every text/background pair meets WCAG AA (4.5:1)', () {
+    for (final pair in [
+      (DS.textPrimary, DS.card),
+      (DS.textSecondary, DS.card),
+      (DS.textSecondary, DS.cardCat),
+      (DS.onDark, DS.bgQuests),
+      (DS.onDark, DS.bgShopPanel),
+      (DS.textPrimary, DS.bgBag),
+      (DS.textPrimary, DS.bgCat),
+      (DS.textPrimary, DS.cardCat),
+      (DS.textPrimary, DS.bgSettings),
+      (DS.onDark, DS.bgExercises),
+      (DS.textPrimary, DS.bgBreathing),
+      (DS.textPrimary, DS.bgHomeGround),
+      (DS.onDark, DS.primaryGreen),
+      (DS.textPrimary, DS.progressYellow),
+      (DS.doneText, DS.doneBg),
+      (DS.onDark, DS.premiumBadge),
+      (DS.textPrimary, DS.neutralButton),
+      (DS.textPrimary, DS.bgHomeSky),
+      (DS.onDark, DS.bgHomeSkyNight),
+    ]) {
+      expect(contrast(pair.$1, pair.$2), greaterThanOrEqualTo(4.5), reason: '${pair.$1} on ${pair.$2}');
+    }
+  });
+
   test('themes build with the Persian font', () {
     expect(AppTheme.light.textTheme.bodyLarge!.fontFamily, 'Vazirmatn');
     expect(AppTheme.dark.brightness, Brightness.dark);

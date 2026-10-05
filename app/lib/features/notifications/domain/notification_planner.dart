@@ -169,7 +169,7 @@ List<PlanItem> planNotifications(PlanInput i) {
           titleKey: 'notif.habit_reminder.title',
           bodyKey: tk != null ? 'notif.habit_reminder.$tk' : 'notif.habit_reminder.generic',
           vars: {'habit': h.title ?? tk ?? ''},
-          route: '/habits/${h.id}',
+          route: '/goals/${h.id}',
         ));
       }
     }

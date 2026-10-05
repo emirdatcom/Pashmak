@@ -12,7 +12,21 @@ import '../network/api_error.dart';
 const supportedPackSchemaVersion = 1;
 
 const seasonalPackKeys = ['seasonal_nowruz', 'seasonal_yalda', 'seasonal_ramadan'];
-const bundledPackKeys = ['brand', 'copy_fa', 'habit_templates', 'exercises', 'adventures', 'shop_items', 'safety', ...seasonalPackKeys];
+const bundledPackKeys = [
+  'brand',
+  'copy_fa',
+  'habit_templates',
+  'goal_library',
+  'quests_daily',
+  'quests_special',
+  'discoveries',
+  'reflection_prompts',
+  'exercises',
+  'adventures',
+  'shop_items',
+  'safety',
+  ...seasonalPackKeys,
+];
 
 /// Bundled packs (assets/content) plus downloaded ones (content_cache, sha256-verified).
 class ContentRepository {

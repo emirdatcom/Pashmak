@@ -14,6 +14,7 @@ import '../../../core/providers.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/screen_awake.dart';
 import '../../../core/theme/tokens.dart';
+import '../../../core/widgets/widgets.dart';
 import '../../core_loop_providers.dart';
 import '../../notifications/data/notification_scheduler.dart';
 import '../../onboarding/domain/onboarding_service.dart';
@@ -21,43 +22,71 @@ import '../../onboarding/presentation/onboarding_screen.dart';
 import '../../support/support_providers.dart';
 import '../settings_providers.dart';
 
-/// Settings home (docs/20 §4): notifications, my day, theme, subscription, your data, help, about, contact.
+/// Settings home (docs/22 §12): Account (notifications, profile, preferences, your data, rest mode), Subscription,
+/// Support (chat, help, about, report a problem), and the version line.
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final copy = ref.watch(copyProvider);
     final dayStart = ref.watch(dayStartHourProvider);
-    final theme = ref.watch(themeModeProvider);
     final catName = ref.watch(catNameProvider);
     final unread = ref.watch(supportUnreadCountProvider).value ?? 0;
-    ListTile tile(IconData icon, String title, VoidCallback? onTap, {String? subtitle}) => ListTile(
-          leading: Icon(icon),
-          title: Text(title),
-          subtitle: subtitle == null ? null : Text(subtitle),
-          trailing: onTap == null ? null : const Icon(Icons.chevron_left),
+    final paused = ref.watch(pausedProvider).value ?? false;
+    final content = ref.watch(contentRepositoryProvider);
+    Widget tile(IconData icon, String title, VoidCallback? onTap, {String? subtitle, Widget? leading}) => ListTile(
+          leading: leading ?? Icon(icon, color: DS.textPrimary),
+          title: Text(title, style: const TextStyle(color: DS.textPrimary, fontWeight: FontWeight.w600)),
+          subtitle: subtitle == null ? null : Text(subtitle, style: const TextStyle(color: DS.textSecondary)),
+          trailing: onTap == null ? null : const Icon(Icons.chevron_left, color: DS.textSecondary),
           onTap: onTap,
         );
+    Widget section(String titleKey, List<Widget> children) => Padding(
+          padding: const EdgeInsets.only(bottom: 14),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Padding(padding: const EdgeInsets.fromLTRB(8, 0, 8, 6), child: Text(copy.t(titleKey), style: const TextStyle(color: DS.textSecondary, fontWeight: FontWeight.w700))),
+            RoundCard(padding: const EdgeInsets.symmetric(vertical: 4), child: Material(type: MaterialType.transparency, child: Column(children: children))),
+          ]),
+        );
     return Scaffold(
-      appBar: AppBar(title: Text(copy.t('settings.title'))),
-      body: ListView(children: [
-        tile(Icons.notifications_none, copy.t('settings.notifications.title'), () => context.push('${Routes.settings}/notifications')),
-        tile(Icons.wb_twilight, copy.t('settings.day_start'), () => _pickDayStart(context, ref), subtitle: toPersianDigits(JalaliFormatter.time(dayStart * 60))),
-        tile(Icons.brightness_6_outlined, copy.t('settings.theme'), () => _pickTheme(context, ref), subtitle: copy.t('settings.theme.${theme.name}')),
-        tile(Icons.pets_outlined, copy.t('settings.cat_name'), () => _renameCat(context, ref), subtitle: catName.isEmpty ? null : catName),
-        tile(Icons.workspace_premium_outlined, copy.t('sub.title'), () => context.push(Routes.subscription)),
-        if (ref.watch(appConfigProvider).feature('backup')) tile(Icons.cloud_upload_outlined, copy.t('backup.title'), () => context.push('${Routes.settings}/backup')),
-        if (ref.watch(appConfigProvider).feature('phone_link')) tile(Icons.phone_iphone, copy.t('account.title'), () => context.push('${Routes.settings}/phone')),
-        tile(Icons.lock_outline, copy.t('settings.privacy.title'), () => context.push('${Routes.settings}/privacy')),
-        tile(Icons.favorite_border, copy.t('help.title'), () => context.push(Routes.safety)),
-        tile(Icons.info_outline, copy.t('settings.about'), () => context.push('${Routes.settings}/about')),
-        if (ref.watch(supportEnabledProvider))
-          ListTile(
-            leading: Badge(isLabelVisible: unread > 0, label: Text('$unread'), child: const Icon(Icons.chat_bubble_outline)),
-            title: Text(copy.t('support.entry')),
-            trailing: const Icon(Icons.chevron_left),
-            onTap: () => context.push(Routes.support()),
-          ),
+      backgroundColor: DS.bgSettings,
+      appBar: AppBar(title: Text(copy.t('settings.title')), backgroundColor: DS.bgSettings),
+      body: ListView(padding: const EdgeInsets.all(16), children: [
+        section('settings.section.account', [
+          tile(Icons.notifications_none, copy.t('settings.notifications.title'), () => context.push('${Routes.settings}/notifications')),
+          tile(Icons.pets_outlined, copy.t('settings.profile'), () => _renameCat(context, ref), subtitle: catName.isEmpty ? null : catName),
+          tile(Icons.wb_twilight, copy.t('settings.day_start'), () => _pickDayStart(context, ref), subtitle: toPersianDigits(JalaliFormatter.time(dayStart * 60))),
+          if (ref.watch(appConfigProvider).feature('backup')) tile(Icons.cloud_upload_outlined, copy.t('settings.your_data'), () => context.push('${Routes.settings}/backup')),
+          if (ref.watch(appConfigProvider).feature('phone_link')) tile(Icons.phone_iphone, copy.t('account.title'), () => context.push('${Routes.settings}/phone')),
+          tile(Icons.lock_outline, copy.t('settings.privacy.title'), () => context.push('${Routes.settings}/privacy')),
+          if (ref.watch(appConfigProvider).feature('pause_mode'))
+            SwitchListTile(
+              secondary: const Icon(Icons.spa_outlined, color: DS.textPrimary),
+              title: Text(copy.t('settings.rest_mode'), style: const TextStyle(color: DS.textPrimary, fontWeight: FontWeight.w600)),
+              subtitle: Text(copy.t('settings.rest_mode.hint'), style: const TextStyle(color: DS.textSecondary)),
+              value: paused,
+              onChanged: (v) async {
+                await ref.read(pauseServiceProvider).set(v);
+                if (v && context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(copy.t('settings.rest_mode.on_toast'))));
+              },
+            ),
+        ]),
+        section('settings.section.subscription', [
+          tile(Icons.workspace_premium_outlined, copy.t('sub.title'), () => context.push(Routes.subscription)),
+        ]),
+        section('settings.section.support', [
+          if (ref.watch(supportEnabledProvider))
+            tile(Icons.chat_bubble_outline, copy.t('settings.support_chat'), () => context.push(Routes.support()),
+                leading: Badge(isLabelVisible: unread > 0, label: Text('$unread'), child: const Icon(Icons.chat_bubble_outline, color: DS.textPrimary))),
+          tile(Icons.help_outline, copy.t('settings.help'), () => context.push('${Routes.settings}/help')),
+          tile(Icons.favorite_border, copy.t('help.title'), () => context.push(Routes.safety)),
+          tile(Icons.info_outline, copy.t('settings.about'), () => context.push('${Routes.settings}/about')),
+          if (ref.watch(supportEnabledProvider)) tile(Icons.bug_report_outlined, copy.t('settings.report_issue'), () => context.push(Routes.support(source: 'bug'))),
+        ]),
+        Center(
+          child: Text('${copy.t('settings.version', {'n': toPersianDigits(ref.watch(appVersionProvider))})} · ${copy.t('settings.content_version', {'n': content.version('copy_fa')})}',
+              style: const TextStyle(color: DS.textSecondary, fontSize: 12)),
+        ),
       ]),
     );
   }
@@ -78,19 +107,6 @@ class SettingsScreen extends ConsumerWidget {
       unawaited(ref.read(analyticsProvider).track(AnalyticsEvent.settingsChanged, {'key': 'day_start_hour'}));
       await ref.read(notificationSchedulerProvider).replan();
     }
-  }
-
-  Future<void> _pickTheme(BuildContext context, WidgetRef ref) async {
-    final copy = ref.read(copyProvider);
-    final current = ref.read(themeModeProvider);
-    final m = await showDialog<ThemeMode>(
-      context: context,
-      builder: (c) => SimpleDialog(title: Text(copy.t('settings.theme')), children: [
-        for (final v in ThemeMode.values)
-          ListTile(selected: v == current, title: Text(copy.t('settings.theme.${v.name}')), trailing: v == current ? const Icon(Icons.check) : null, onTap: () => Navigator.pop(c, v)),
-      ]),
-    );
-    if (m != null) await ref.read(themeModeProvider.notifier).save(m);
   }
 
   Future<void> _renameCat(BuildContext context, WidgetRef ref) async {
@@ -359,6 +375,32 @@ class _NotificationSettingsState extends ConsumerState<NotificationSettingsScree
             for (final m in ['xiaomi', 'samsung', 'huawei', 'other']) Padding(padding: const EdgeInsets.only(top: AppSpacing.sm), child: Text(copy.t('settings.notifications.troubleshoot.$m'))),
           ],
         ),
+      ]),
+    );
+  }
+}
+
+/// Local FAQ (content copy, no network).
+class HelpScreen extends ConsumerWidget {
+  const HelpScreen({super.key});
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final copy = ref.watch(copyProvider);
+    return Scaffold(
+      backgroundColor: DS.bgSettings,
+      appBar: AppBar(title: Text(copy.t('help.faq.title')), backgroundColor: DS.bgSettings),
+      body: ListView(padding: const EdgeInsets.all(16), children: [
+        for (var i = 1; i <= 5; i++)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: RoundCard(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(copy.t('help.faq.q$i'), style: const TextStyle(color: DS.textPrimary, fontWeight: FontWeight.w800)),
+                const SizedBox(height: 6),
+                Text(copy.t('help.faq.a$i'), style: const TextStyle(color: DS.textPrimary, height: 1.6)),
+              ]),
+            ),
+          ),
       ]),
     );
   }

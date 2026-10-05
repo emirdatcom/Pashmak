@@ -1,5 +1,8 @@
-/// Cat growth stages (docs/22 §9). `kitten` → `young` → `adult` by completed adventures.
-enum CatStage { kitten, young, adult }
+import '../../../core/widgets/cat_renderer.dart';
+
+export '../../../core/widgets/cat_renderer.dart' show CatStage;
+
+/// Cat growth (docs/22 §9): `kitten` → `young` → `adult` by completed adventures.
 
 class CatGrowth {
   const CatGrowth({required this.young, required this.adult});

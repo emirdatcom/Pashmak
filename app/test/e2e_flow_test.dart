@@ -10,7 +10,9 @@ import 'package:pashmak_app/core/entitlement/entitlement_repository.dart';
 import 'package:pashmak_app/core/entitlement/signature_verifier.dart';
 import 'package:pashmak_app/core/payments/payment_gateway.dart';
 import 'package:pashmak_app/features/adventure/domain/adventure_service.dart';
+import 'package:pashmak_app/features/goals/domain/goal_recommender.dart';
 import 'package:pashmak_app/features/habits/domain/habit_service.dart';
+import 'package:pashmak_app/features/quests/domain/quest_service.dart';
 import 'package:pashmak_app/features/monetization/domain/monetization_service.dart';
 import 'package:pashmak_app/features/onboarding/domain/onboarding_service.dart';
 import 'package:pashmak_app/features/shop/domain/shop_service.dart';
@@ -28,31 +30,55 @@ void main() {
     await h.tokens.write(Tokens(access: 'a', accessExpiresAt: t0.add(const Duration(hours: 2)), refresh: 'r', userId: 'u1'));
     final l = Loop(t0, database: h.db, dayStartHour: 0);
 
-    // 1. onboarding: name + two habits
-    final onboarding = OnboardingService(l.db, l.habits, l.analytics, defaultCatName: 'ملوس');
+    // 1. onboarding: questionnaire answers → 3 suggested goals → the cat arrives
+    final onboarding = OnboardingService(l.db, l.habits, l.analytics, l.clock, defaultCatName: 'ملوس');
     expect(await onboarding.currentStep(), 1);
     await onboarding.saveCatName('پشمک');
-    await onboarding.complete(habits: {'water': 600, 'walk': null}, notifPermission: false, catNameChanged: true);
+    const profile = OnboardingProfile(
+        energyLevel: 2, areas: ['sleep', 'calm'], areaAnswers: {'sleep': AreaAnswer.rarely, 'calm': AreaAnswer.rarely});
+    await onboarding.answers.save(profile);
+    final library = (jsonDecode(realAssets().files['assets/content/goal_library.json']!)['entries'] as List).cast<Map<String, dynamic>>().map(GoalDef.fromJson).toList();
+    final rec = GoalRecommender(goals: library, weights: l.config.recommenderWeights);
+    final plan = rec.recommend(await onboarding.answers.load(), count: l.config.recommendCountFree, seed: 7);
+    expect(plan.length, 3);
+    expect(plan.every((g) => g.difficulty == 1), isTrue, reason: 'low energy: only easy wins');
+    await onboarding.complete(
+        goals: [for (final g in plan) PlannedGoal(g, rec.resolvedTimeOfDay(g, profile.chronotype))],
+        notifPermission: false,
+        catNameChanged: true,
+        profile: profile);
     expect(await l.db.meta('onboarding_completed'), 'true');
+    expect((await l.habits.activeHabits()).length, 3);
 
-    // 2. tick a habit → energy
-    final water = (await l.habits.activeHabits()).firstWhere((x) => x.templateKey == 'water');
-    expect((await l.habits.complete(water.id)).status, CompleteStatus.completed);
-    expect((await l.wallet.balance()).energy, l.config.energyPerGoal);
-    await l.wallet.grant(Currency.energy, 50, 'promo', 'e2e'); // enough for an adventure
+    // 2. tick the goals → energy toward the daily target, plus a check-in to fill the bar
+    for (final g in await l.habits.activeHabits()) {
+      expect((await l.habits.complete(g.id)).status, CompleteStatus.completed);
+    }
+    expect((await l.wallet.balance()).energy, 3 * l.config.energyPerGoal);
+    await l.wallet.grant(Currency.energy, 5, 'promo', 'e2e'); // 20 = the daily target
 
-    // 3. adventure: start, wait (FakeClock), claim
-    final start = await l.adventures.start('alley', isPremium: false);
+    // 3. the day's adventure starts by itself once the bar is full; wait (FakeClock), claim → coins + discovery
+    final start = (await l.adventures.maybeAutoStart(isPremium: false))!;
     expect(start.status, StartStatus.started);
+    expect(await l.adventures.maybeAutoStart(isPremium: false), isNull, reason: 'one adventure a day');
     l.clock.advance(const Duration(minutes: 31));
     final cur = (await l.adventures.current())!;
     expect(cur.status, 'returned');
     final claim = (await l.adventures.claim(cur.id))!;
+    expect(claim.discoveryKey, isNotNull);
     expect((await l.wallet.balance()).coins, claim.coins);
 
-    // 4. buy an item with coins (top up so the test does not depend on the reward roll)
-    await l.wallet.grant(Currency.coins, 500, 'promo', 'e2e-coins');
-    expect(await l.shop.buy('collar_turquoise', isPremium: false), BuyStatus.bought);
+    // 3b. a daily quest pays coins once
+    final before = (await l.wallet.balance()).coins;
+    expect((await l.quests.claim('daily_claim', special: false)).status, ClaimStatus.claimed);
+    expect((await l.wallet.balance()).coins, before + l.config.questsDailyRewardCoins);
+
+    // 4. buy an item from today's rotating stock (top up so the test does not depend on the reward roll)
+    await l.wallet.grant(Currency.coins, 900, 'promo', 'e2e-coins');
+    final stock = await l.shop.stock('outfit');
+    expect(stock, isNotEmpty);
+    final pick = stock.firstWhere((i) => !i.premiumOnly);
+    expect(await l.shop.buy(pick.itemKey, isPremium: false), BuyStatus.bought);
 
     // 5. paywall: buy a plan with the fake gateway; the server confirms with a signed state
     final priv = ed.newKeyFromSeed(Uint8List.fromList(List.generate(32, (i) => i)));

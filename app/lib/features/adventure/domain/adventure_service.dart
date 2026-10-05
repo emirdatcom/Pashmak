@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:drift/drift.dart';
@@ -223,7 +224,9 @@ class AdventureService {
       }
       await _analytics.track(AnalyticsEvent.adventureClaimed, {'location_key': a.locationKey, 'coins': res.coins, 'got_item': res.itemKey != null});
       await _publisher.refresh();
-      return ClaimResult(coins: res.coins, itemKey: res.itemKey, storyKey: res.storyKey, discoveryKey: res.discoveryKey, stageUp: up);
+      final out = ClaimResult(coins: res.coins, itemKey: res.itemKey, storyKey: res.storyKey, discoveryKey: res.discoveryKey, stageUp: up);
+      await _db.setMeta('adventure_result:$adventureId', jsonEncode({'discovery': out.discoveryKey, 'stage_up': out.stageUp?.name}));
+      return out;
     }
     return res;
   }
@@ -240,4 +243,12 @@ class AdventureService {
     await _db.into(_db.discoveriesFound).insert(DiscoveriesFoundCompanion.insert(discoveryKey: key, foundAt: _clock.now().millisecondsSinceEpoch), mode: InsertMode.insertOrIgnore);
     return key;
   }
+}
+
+/// What a claimed adventure brought beyond coins/items (kept so the result screen can be reopened).
+Future<({String? discovery, String? stageUp})> adventureExtras(AppDatabase db, String adventureId) async {
+  final raw = await db.meta('adventure_result:$adventureId');
+  if (raw == null) return (discovery: null, stageUp: null);
+  final m = jsonDecode(raw) as Map<String, dynamic>;
+  return (discovery: m['discovery'] as String?, stageUp: m['stage_up'] as String?);
 }

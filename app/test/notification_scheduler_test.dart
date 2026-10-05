@@ -43,7 +43,7 @@ void main() {
     final todayReminder = out.firstWhere((n) => n.type == 'habit_reminder' && n.fireAt.day == 5);
     expect(todayReminder.body, contains('ورزش'));
     expect(todayReminder.actionLabel, 'انجام شد');
-    expect(todayReminder.route, '/habits/$id');
+    expect(todayReminder.route, '/goals/$id');
     await t.l.habits.complete(id, source: 'notification');
     out = await t.sched.replan();
     expect(out.where((n) => n.type == 'habit_reminder' && n.fireAt.day == 5), isEmpty);

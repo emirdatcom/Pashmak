@@ -89,8 +89,30 @@ class _CatPainter extends CustomPainter {
     if (bg != null) {
       canvas.drawRRect(RRect.fromRectAndRadius(Offset.zero & size, const Radius.circular(24)), Paint()..color = backdropFor(bg));
     }
-    final fur = Paint()..color = AppColors.orange;
-    final dark = Paint()..color = AppColors.orangeDark;
+    final (furColor, spotColor) = switch (state.fur) {
+      CatFur.orangeCream => (AppColors.orange, AppColors.orangeDark),
+      CatFur.smokeGray => (DS.textSecondary, DS.textPrimary),
+      CatFur.tricolor => (DS.bgCat, AppColors.orangeDark),
+    };
+    final fur = Paint()..color = furColor;
+    final dark = Paint()..color = spotColor;
+    // Stage proportions: a kitten has a bigger head on a smaller body; an adult is rounder and larger overall.
+    final headScale = switch (state.stage) { CatStage.kitten => 1.08, CatStage.young => 1.0, CatStage.adult => 0.94 };
+    final bodyScale = switch (state.stage) { CatStage.kitten => 0.8, CatStage.young => 0.95, CatStage.adult => 1.1 };
+    if (!state.faceOnly) {
+      // chubby round body and thick tail behind the head (placeholder for the layered final art)
+      canvas.drawOval(Rect.fromCenter(center: c.translate(0, 74), width: 110 * bodyScale, height: 70 * bodyScale), fur);
+      final tail = Path()
+        ..moveTo(c.dx + 46 * bodyScale, c.dy + 80)
+        ..quadraticBezierTo(c.dx + 92 * bodyScale, c.dy + 70, c.dx + 80 * bodyScale, c.dy + 30)
+        ..quadraticBezierTo(c.dx + 70 * bodyScale, c.dy + 60, c.dx + 44 * bodyScale, c.dy + 62)
+        ..close();
+      canvas.drawPath(tail, fur);
+    }
+    canvas.save();
+    canvas.translate(c.dx, c.dy);
+    canvas.scale(headScale);
+    canvas.translate(-c.dx, -c.dy);
     final ink = Paint()
       ..color = AppColors.ink
       ..style = PaintingStyle.stroke
@@ -111,7 +133,7 @@ class _CatPainter extends CustomPainter {
     canvas.drawCircle(c.translate(-26, -4), 16, dark);
     // eyes
     final eyeY = c.dy - 2;
-    final sleepy = mood == CatMood.sleepy || blink;
+    final sleepy = mood == CatMood.sleepy || mood == CatMood.breathing || blink;
     for (final dx in [-26.0, 26.0]) {
       final e = Offset(c.dx + dx, eyeY);
       if (sleepy) {
@@ -143,6 +165,25 @@ class _CatPainter extends CustomPainter {
     final collarColor = collar == 'collar_red' ? AppColors.danger : AppColors.turquoise;
     canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromCenter(center: c.translate(0, 62), width: 84, height: 12), const Radius.circular(6)), Paint()..color = collarColor);
     canvas.drawCircle(c.translate(0, 72), 6, Paint()..color = AppColors.turquoiseDark);
+    // glasses
+    final glasses = state.accessories.where((a) => a.startsWith('glasses_')).firstOrNull;
+    if (glasses != null) {
+      final rim = Paint()
+        ..color = DS.textPrimary
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3;
+      for (final dx in [-26.0, 26.0]) {
+        canvas.drawCircle(c.translate(dx, -2), glasses == 'glasses_star' ? 14 : 13, rim);
+      }
+      canvas.drawLine(c.translate(-13, -2), c.translate(13, -2), rim);
+    }
+    // scarf
+    final scarf = state.accessories.where((a) => a.startsWith('scarf_')).firstOrNull;
+    if (scarf != null) {
+      final color = switch (scarf) { 'scarf_stripe' => DS.areaNutrition, 'scarf_silk' => DS.areaSelfKindness, _ => DS.areaFocus };
+      canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromCenter(center: c.translate(0, 52), width: 96, height: 16), const Radius.circular(8)), Paint()..color = color);
+      canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromCenter(center: c.translate(30, 66), width: 14, height: 28), const Radius.circular(6)), Paint()..color = color);
+    }
     // hat
     final hat = state.accessories.where((a) => a.startsWith('hat_')).firstOrNull;
     if (hat == 'hat_beanie') {
@@ -158,9 +199,12 @@ class _CatPainter extends CustomPainter {
         canvas.drawCircle(c.translate(math.cos(a) * 9, -62 + math.sin(a) * 9), 7, Paint()..color = const Color(0xFFE8739E));
       }
       canvas.drawCircle(c.translate(0, -62), 5, Paint()..color = const Color(0xFFFFD166));
+    } else if (hat == 'hat_felt') {
+      canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromCenter(center: c.translate(0, -52), width: 70, height: 36), const Radius.circular(16)), Paint()..color = DS.bgShopPanel);
     }
+    canvas.restore();
   }
 
   @override
-  bool shouldRepaint(_CatPainter old) => old.mood != mood || old.blink != blink || old.state.accessories.join() != state.accessories.join() || old.state.background != state.background;
+  bool shouldRepaint(_CatPainter old) => old.mood != mood || old.blink != blink || old.state.stage != state.stage || old.state.fur != state.fur || old.state.faceOnly != state.faceOnly || old.state.accessories.join() != state.accessories.join() || old.state.background != state.background;
 }
