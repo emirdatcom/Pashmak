@@ -124,6 +124,11 @@ void main() {
       expect(r('/onboarding/1'), Routes.home);
       expect(r(Routes.home), isNull);
     });
+    test('a new phone can restore its account before onboarding', () {
+      expect(r('/settings/phone', onboarded: false), isNull);
+      expect(r('/settings/restore', onboarded: false), isNull);
+      expect(r('/settings/privacy', onboarded: false), '/onboarding/1');
+    });
     test('hard update outranks everything except safety', () {
       expect(r(Routes.home, app: '0.9.0'), Routes.update);
       expect(r(Routes.update, app: '0.9.0'), isNull);

@@ -48,6 +48,8 @@ class SettingsScreen extends ConsumerWidget {
         tile(Icons.brightness_6_outlined, copy.t('settings.theme'), () => _pickTheme(context, ref), subtitle: copy.t('settings.theme.${theme.name}')),
         tile(Icons.pets_outlined, copy.t('settings.cat_name'), () => _renameCat(context, ref), subtitle: catName.isEmpty ? null : catName),
         tile(Icons.workspace_premium_outlined, copy.t('sub.title'), () => context.push(Routes.subscription)),
+        if (ref.watch(appConfigProvider).feature('backup')) tile(Icons.cloud_upload_outlined, copy.t('backup.title'), () => context.push('${Routes.settings}/backup')),
+        if (ref.watch(appConfigProvider).feature('phone_link')) tile(Icons.phone_iphone, copy.t('account.title'), () => context.push('${Routes.settings}/phone')),
         tile(Icons.lock_outline, copy.t('settings.privacy.title'), () => context.push('${Routes.settings}/privacy')),
         tile(Icons.favorite_border, copy.t('help.title'), () => context.push(Routes.safety)),
         tile(Icons.info_outline, copy.t('settings.about'), () => context.push('${Routes.settings}/about')),

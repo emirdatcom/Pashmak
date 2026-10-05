@@ -79,7 +79,7 @@ class _DbFailure {
 }
 
 /// Opens the encrypted DB and loads config + content. Returns [_DbFailure] if the DB cannot be opened.
-Future<Object> buildOverrides(Flavor flavor) async {
+Future<Object> buildOverrides(Flavor? flavorOrNull) async {
   final info = await PackageInfo.fromPlatform();
   final AppDatabase db;
   try {
@@ -92,6 +92,10 @@ Future<Object> buildOverrides(Flavor flavor) async {
     return _DbFailure(e);
   }
   AppLogger.attach(db);
+  // The flavor is remembered so background tasks (WorkManager) talk to the server as the right market.
+  final storedFlavor = await db.meta('flavor');
+  final flavor = flavorOrNull ?? Flavor.values.firstWhere((f) => f.wireName == storedFlavor, orElse: () => Flavor.bazaar);
+  await db.setMeta('flavor', flavor.wireName);
 
   const clock = SystemClock();
   const assets = BundleAssetSource();
@@ -237,7 +241,7 @@ Future<ProviderContainer?> openBackgroundContainer() async {
   WidgetsFlutterBinding.ensureInitialized();
   await _initTimezone();
   // Background work only needs local data; the flavor only matters for network headers.
-  final r = await buildOverrides(Flavor.bazaar);
+  final r = await buildOverrides(null);
   if (r is! _Ok) return null;
   return ProviderContainer(overrides: r.overrides);
 }

@@ -62,10 +62,10 @@
   "features": {
     "rive_cat": false,
     "widgets": false,
-    "backup": false,
-    "phone_link": false,
+    "backup": true,
+    "phone_link": true,
     "seasonal_packs": true,
-    "stats_deep": false
+    "stats_deep": true
   },
   "update": {"min_supported_version": "1.0.0", "recommended_version": "1.0.0"}
 }

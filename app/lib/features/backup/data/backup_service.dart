@@ -38,7 +38,7 @@ class RemoteBackup {
   final DateTime? updatedAt;
 }
 
-enum BackupOutcome { done, notEnabled, tooLarge, failed }
+enum BackupOutcome { done, notEnabled, tooLarge, failed, skippedMetered }
 
 class BackupBlobCorrupt implements Exception {}
 
@@ -70,6 +70,7 @@ class BackupService {
   static const _kLast = 'backup_last_at';
   static const _kKdf = 'backup_kdf';
   static const maxBlobBytes = 10 * 1024 * 1024;
+  static const meteredLimitBytes = 1024 * 1024;
 
   Future<bool> isEnabled() async => await _db.meta(_kEnabled) == 'true' && await _secrets.read(_kCode) != null;
 
@@ -112,7 +113,7 @@ class BackupService {
   }
 
   /// Exports → gzip → AES-256-GCM(Argon2id(code)) → `PUT /v1/backup`.
-  Future<BackupOutcome> backupNow({bool auto = false}) async {
+  Future<BackupOutcome> backupNow({bool auto = false, bool unmetered = true}) async {
     final code = await _secrets.read(_kCode);
     if (code == null || await _db.meta(_kEnabled) != 'true') return BackupOutcome.notEnabled;
     final params = await _params();
@@ -120,6 +121,7 @@ class BackupService {
     final plain = await SnapshotExporter(_db, _clock).exportGzip();
     final blob = await BackupCrypto.encrypt(plain, key, currentSnapshotSchema);
     if (blob.length > maxBlobBytes) return BackupOutcome.tooLarge;
+    if (auto && !unmetered && blob.length > meteredLimitBytes) return BackupOutcome.skippedMetered;
     try {
       await _api.request<Map<String, dynamic>>('PUT', '/v1/backup', data: blob, headers: {
         'Content-Type': 'application/octet-stream',

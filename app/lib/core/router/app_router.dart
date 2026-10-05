@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/adventure/presentation/adventure_screens.dart';
+import '../../features/account/phone_screens.dart';
+import '../../features/backup/presentation/backup_screens.dart';
 import '../../features/checkin/presentation/checkin_screen.dart';
 import '../../features/exercises/presentation/exercises_screens.dart';
 import '../../features/habits/presentation/habits_screens.dart';
@@ -76,6 +78,9 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: Routes.lockSelect, builder: (_, _) => const LockSelectionScreen()),
       GoRoute(path: Routes.settings, builder: (_, _) => const SettingsScreen(), routes: [
         GoRoute(path: 'notifications', builder: (_, _) => const NotificationSettingsScreen()),
+        GoRoute(path: 'backup', builder: (_, _) => const BackupScreen()),
+        GoRoute(path: 'restore', builder: (_, _) => const RestoreScreen()),
+        GoRoute(path: 'phone', builder: (_, _) => const PhoneLinkScreen()),
         GoRoute(path: 'privacy', builder: (_, _) => const PrivacyScreen()),
         GoRoute(path: 'about', builder: (_, _) => const AboutScreen()),
         GoRoute(path: 'subscription', builder: (_, _) => const SubscriptionScreen()),

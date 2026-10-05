@@ -13,7 +13,7 @@ void main() {
     expect(RegExp(r'^[A-HJ-NP-Z2-9]{4}(-[A-HJ-NP-Z2-9]{4}){5}$').hasMatch(code), isTrue, reason: code);
     expect(RecoveryCode.normalize(code.toLowerCase().replaceAll('-', ' ')), code.replaceAll('-', ''));
     expect(RecoveryCode.normalize('ABCD-EFGH'), isNull);
-    expect(RecoveryCode.normalize('${'0' * 24}'), isNull, reason: '0 is not in the alphabet');
+    expect(RecoveryCode.normalize('0' * 24), isNull, reason: '0 is not in the alphabet');
     expect({for (var i = 0; i < 50; i++) RecoveryCode.generate()}.length, 50);
   });
 

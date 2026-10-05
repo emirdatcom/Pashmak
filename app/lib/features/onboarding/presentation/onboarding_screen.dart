@@ -167,6 +167,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           const SizedBox(height: AppSpacing.md),
           Text(copy.t('disclaimer.onboarding'), style: theme.textTheme.bodySmall, textAlign: TextAlign.center),
           TextButton(onPressed: _showPrivacy, child: Text(copy.t('onboarding.privacy_link'))),
+          if (ref.watch(appConfigProvider).feature('phone_link'))
+            TextButton(onPressed: () => context.push('${Routes.settings}/phone'), child: Text(copy.t('onboarding.restore_link'))),
         ], action: FilledButton(onPressed: () => _go(2), child: Text(copy.t('common.next'))));
       case 2:
         body = _page(children: [
