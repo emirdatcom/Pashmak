@@ -82,10 +82,10 @@ backend/
 ### ۵.۱ auth / user
 | جدول | فیلدها | نکته |
 |---|---|---|
-| `users` | `id`, `created_at`, `status` (`active`/`deleted`), `phone_e164` (nullable, unique, فاز۲), `phone_verified_at`, `deleted_at` | بدون نام/ایمیل |
+| `users` | `id`, `created_at`, `status` (`active`/`deleted`), `phone_enc` (AES-GCM)، `phone_hash` (HMAC یکتا برای جستجو)، `phone_last4` (فقط برای admin)، `phone_verified_at`, `deleted_at` (فاز۲) | بدون نام/ایمیل؛ شماره هرگز خوانا ذخیره نمی‌شود |
 | `devices` | `id`, `user_id` FK, `install_id` (unique), `device_hash` (sha256 از ANDROID_ID + salt سرور), `market` (`bazaar`/`myket`), `app_version`, `os_version`, `model`, `created_at`, `last_seen_at` | |
 | `refresh_tokens` | `id`, `device_id` FK, `token_hash` (sha256), `family_id`, `expires_at`, `revoked_at`, `created_at` | rotation + تشخیص reuse |
-| `otp_challenges` (فاز۲) | `id`, `phone_e164`, `code_hash`, `attempts`, `expires_at`, `consumed_at` | |
+| `otp_challenges` (فاز۲) | `id`, `user_id`, `phone_hash`, `phone_enc`, `code_hash` (HMAC), `attempts`, `expires_at`, `consumed_at`, `created_at` | کد ۵ رقمی، اعتبار ۲ دقیقه، ≤۵ تلاش |
 
 ### ۵.۲ entitlement / billing
 | جدول | فیلدها | نکته |
@@ -143,7 +143,7 @@ erDiagram
 | POST | `/v1/auth/device` | public | `install_id`, `device_hash_raw` (ANDROID_ID؛ سرور با salt هش می‌کند), `market`, `app_version`, `os_version`, `model` | `user_id`, `access_token`, `access_expires_at`, `refresh_token` | `INVALID_INPUT`, `RATE_LIMITED` |
 | POST | `/v1/auth/refresh` | public | `refresh_token` | همان بالا (refresh جدید) | `TOKEN_INVALID`, `TOKEN_REUSED` |
 | POST | `/v1/auth/phone/otp` (فاز۲، پرامپت 05) | bearer | `phone` | `challenge_id`, `retry_after_s` | `RATE_LIMITED`, `PHONE_INVALID` |
-| POST | `/v1/auth/phone/verify` (فاز۲) | bearer | `challenge_id`, `code` | `user_id` (ممکن است به کاربر قبلی merge شود), توکن‌های جدید | `OTP_INVALID`, `OTP_EXPIRED` |
+| POST | `/v1/auth/phone/verify` (فاز۲) | bearer | `challenge_id`, `code` | `user_id` (ممکن است به کاربر قبلی merge شود), `access_token`, `access_expires_at`, `refresh_token`, `merged` | `OTP_INVALID`, `OTP_EXPIRED` |
 | GET | `/v1/me` | bearer | — | `user_id`, `created_at`, `phone_linked` | — |
 | DELETE | `/v1/me` | bearer | — | 204 | — |
 | GET | `/v1/entitlements` | bearer | — | `EntitlementState` (پایین) | — |
@@ -187,7 +187,7 @@ erDiagram
 **Event**: `{event_id (uuid, idempotency), name, ts, session_id, props}` — نام‌ها فقط از فهرست سند ۷۰؛ رویداد ناشناخته `rejected`.
 
 ### ۶.۳ کدهای خطا
-`INVALID_INPUT` 400، `UNAUTHENTICATED` 401، `TOKEN_INVALID` 401، `TOKEN_REUSED` 401، `FORBIDDEN` 403، `NOT_FOUND` 404، `TRIAL_ALREADY_USED` 409، `TRIAL_DISABLED` 409، `PURCHASE_ALREADY_CLAIMED` 409، `PURCHASE_INVALID` 422، `PAYLOAD_TOO_LARGE` 413، `BACKUP_TOO_LARGE` 413، `RATE_LIMITED` 429، `UPGRADE_REQUIRED` 426، `MARKET_UNAVAILABLE` 503، `INTERNAL` 500.
+`INVALID_INPUT` 400، `PHONE_INVALID` 400، `OTP_INVALID` 400، `OTP_EXPIRED` 400، `UNAUTHENTICATED` 401، `TOKEN_INVALID` 401، `TOKEN_REUSED` 401، `FORBIDDEN` 403، `NOT_FOUND` 404، `TRIAL_ALREADY_USED` 409، `TRIAL_DISABLED` 409، `PURCHASE_ALREADY_CLAIMED` 409، `PURCHASE_INVALID` 422، `PAYLOAD_TOO_LARGE` 413، `BACKUP_TOO_LARGE` 413، `RATE_LIMITED` 429، `UPGRADE_REQUIRED` 426، `MARKET_UNAVAILABLE` 503، `SMS_UNAVAILABLE` 503، `INTERNAL` 500.
 
 ### ۶.۴ Admin (`/admin/v1`، Basic Auth + IP allowlist، فقط از شبکه مدیریت)
 | متد | مسیر | کار |

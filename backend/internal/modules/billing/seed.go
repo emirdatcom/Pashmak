@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/google/uuid"
+
 	"github.com/emirdatcom/pashmak/backend/internal/platform/db/dbgen"
 )
 
@@ -48,4 +50,16 @@ func SeedProducts(ctx context.Context, db dbgen.DBTX, data []byte) (int, error) 
 		}
 	}
 	return n, nil
+}
+
+// OnUserMerged implements auth.MergeHook: purchases (and the grants they created) move to the
+// surviving account; trial grants stay with the retired one (docs/10 §7, prompt 05).
+func (s *Service) OnUserMerged(ctx context.Context, q *dbgen.Queries, from, to uuid.UUID) error {
+	if err := q.TransferUserPurchases(ctx, dbgen.TransferUserPurchasesParams{UserID: from, UserID_2: to}); err != nil {
+		return fmt.Errorf("transfer purchases: %w", err)
+	}
+	if err := q.TransferPurchaseGrants(ctx, dbgen.TransferPurchaseGrantsParams{UserID: from, UserID_2: to}); err != nil {
+		return fmt.Errorf("transfer grants: %w", err)
+	}
+	return nil
 }

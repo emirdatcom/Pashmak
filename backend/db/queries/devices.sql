@@ -18,3 +18,6 @@ SELECT * FROM devices WHERE id = $1;
 
 -- name: UserHasDeviceHash :one
 SELECT EXISTS (SELECT 1 FROM devices WHERE user_id = $1 AND device_hash = $2);
+
+-- name: CountUserDevices :one
+SELECT COUNT(*)::int FROM devices WHERE user_id = $1;

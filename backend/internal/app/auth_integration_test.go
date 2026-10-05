@@ -5,6 +5,7 @@ import (
 	"compress/gzip"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -24,6 +25,7 @@ import (
 	"github.com/emirdatcom/pashmak/backend/internal/modules/admin"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/analytics"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/auth"
+	"github.com/emirdatcom/pashmak/backend/internal/modules/backup"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/billing"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/billing/fake"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/content"
@@ -31,6 +33,7 @@ import (
 	"github.com/emirdatcom/pashmak/backend/internal/modules/remoteconfig"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/user"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/clock"
+	"github.com/emirdatcom/pashmak/backend/internal/platform/crypt"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/db"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/metrics"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/schemas"
@@ -49,6 +52,35 @@ type env struct {
 	fake *fake.Adapter
 	sink *recordingSink
 	an   *analytics.Service
+	sms  *recordingSMS
+}
+
+// recordingSMS captures OTP codes instead of sending them.
+type recordingSMS struct {
+	mu    sync.Mutex
+	last  map[string]string // e164 -> code
+	count int
+	fail  bool
+}
+
+func (r *recordingSMS) SendOTP(_ context.Context, phone, code string) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	if r.fail {
+		return fmt.Errorf("provider down")
+	}
+	if r.last == nil {
+		r.last = map[string]string{}
+	}
+	r.last[phone] = code
+	r.count++
+	return nil
+}
+
+func (r *recordingSMS) code(phone string) string {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	return r.last[phone]
 }
 
 const (
@@ -128,8 +160,16 @@ func newEnv(t *testing.T) *env {
 	if err != nil {
 		t.Fatal(err)
 	}
+	box, err := crypt.New(bytes.Repeat([]byte{9}, 32))
+	if err != nil {
+		t.Fatal(err)
+	}
+	sms := &recordingSMS{}
+	ph := auth.NewPhoneService(pool, a, box, sms, clk, bs)
+	bk := backup.NewService(pool, clk, nil)
+	u.AddHook(bk)
 	_, h := app.Handler(app.Deps{DB: pool, Metrics: metrics.New(), Clock: clk, Auth: a, User: u, Entitle: ent, Billing: bs,
-		RemoteConfig: rc, Content: ct, Analytics: an, Admin: adm})
+		RemoteConfig: rc, Content: ct, Analytics: an, Admin: adm, Phone: ph, Backup: bk})
 	doc, err := openapi3.NewLoader().LoadFromFile("../../api/openapi.yaml")
 	if err != nil {
 		t.Fatal(err)
@@ -138,7 +178,7 @@ func newEnv(t *testing.T) *env {
 		t.Fatalf("openapi invalid: %v", err)
 	}
 	u.AddHook(an)
-	return &env{h: h, clk: clk, t: t, doc: doc, pool: pool, ent: ent, bill: bs, fake: f, sink: sink, an: an}
+	return &env{h: h, clk: clk, t: t, doc: doc, pool: pool, ent: ent, bill: bs, fake: f, sink: sink, an: an, sms: sms}
 }
 
 // call performs a request, validates the response against openapi.yaml and returns status + body.
@@ -151,7 +191,9 @@ func (e *env) call(method, path, token string, body any, ip string) (int, map[st
 func (e *env) callH(method, path, token string, body any, ip string, hdr map[string]string) (int, http.Header, map[string]any) {
 	e.t.Helper()
 	var rdr *bytes.Reader
-	if body != nil {
+	if raw, isRaw := body.([]byte); isRaw {
+		rdr = bytes.NewReader(raw)
+	} else if body != nil {
 		b, _ := json.Marshal(body)
 		rdr = bytes.NewReader(b)
 	} else {
@@ -159,6 +201,9 @@ func (e *env) callH(method, path, token string, body any, ip string, hdr map[str
 	}
 	req := httptest.NewRequest(method, path, rdr)
 	req.Header.Set("Content-Type", "application/json")
+	if _, isRaw := body.([]byte); isRaw {
+		req.Header.Set("Content-Type", "application/octet-stream")
+	}
 	if token != "" {
 		req.Header.Set("Authorization", "Bearer "+token)
 	}

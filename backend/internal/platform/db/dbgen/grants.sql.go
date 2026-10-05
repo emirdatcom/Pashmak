@@ -147,6 +147,20 @@ func (q *Queries) RevokeUserGrants(ctx context.Context, arg RevokeUserGrantsPara
 	return err
 }
 
+const transferPurchaseGrants = `-- name: TransferPurchaseGrants :exec
+UPDATE entitlement_grants SET user_id = $2 WHERE user_id = $1 AND purchase_id IS NOT NULL
+`
+
+type TransferPurchaseGrantsParams struct {
+	UserID   uuid.UUID
+	UserID_2 uuid.UUID
+}
+
+func (q *Queries) TransferPurchaseGrants(ctx context.Context, arg TransferPurchaseGrantsParams) error {
+	_, err := q.db.Exec(ctx, transferPurchaseGrants, arg.UserID, arg.UserID_2)
+	return err
+}
+
 const updateGrantEnd = `-- name: UpdateGrantEnd :exec
 UPDATE entitlement_grants SET ends_at = $2 WHERE id = $1
 `

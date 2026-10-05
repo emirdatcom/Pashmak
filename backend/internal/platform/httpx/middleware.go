@@ -132,12 +132,18 @@ func Metrics(m *metrics.Metrics) Middleware {
 	}
 }
 
-// BodyLimit rejects bodies larger than max with 413 PAYLOAD_TOO_LARGE.
+// BodyLimit rejects bodies larger than limit with 413 PAYLOAD_TOO_LARGE.
 func BodyLimit(limit int64) Middleware {
+	return BodyLimitFunc(func(*http.Request) (int64, Code) { return limit, CodePayloadTooLarge })
+}
+
+// BodyLimitFunc is BodyLimit with a per-request limit and error code (e.g. larger bodies for backups).
+func BodyLimitFunc(f func(*http.Request) (int64, Code)) Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			limit, code := f(r)
 			if r.ContentLength > limit {
-				WriteError(w, r, CodePayloadTooLarge, "request body too large")
+				WriteError(w, r, code, "request body too large")
 				return
 			}
 			r.Body = http.MaxBytesReader(w, r.Body, limit)

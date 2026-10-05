@@ -14,3 +14,4 @@
 - ابزارها: `go run ./cmd/content-lint -dir ../config-data` (CI)؛ `admin-cli publish-config|activate-config|publish-content|experiment put` با `ADMIN_URL/ADMIN_USER/ADMIN_PASSWORD`. اولین استقرار: `admin-cli seed-products`, `publish-content ../config-data/content`, `publish-config -activate ../config-data/config/default.json`.
 - `CONFIG_DATA_DIR` (پیش‌فرض `../config-data`، در image: `/config-data`) محل schemaها و کاتالوگ رویدادهاست. image را از ریشه‌ی مخزن بساز: `docker build -f backend/deploy/Dockerfile .`
 - worker: `reverify_subscriptions`, `create_partitions`, `rollup_daily`, `prune_events`.
+- فاز ۲: `POST /v1/auth/phone/otp|verify` (فقط با `SMS_PROVIDER`)، `PUT|GET|DELETE /v1/backup` (blob رمزشده‌ی کلاینت؛ `BACKUP_STORAGE=db|s3`).

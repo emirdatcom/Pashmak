@@ -2,7 +2,6 @@ package billing
 
 import (
 	"context"
-	"crypto/cipher"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -15,6 +14,7 @@ import (
 
 	"github.com/emirdatcom/pashmak/backend/internal/modules/entitlement"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/clock"
+	"github.com/emirdatcom/pashmak/backend/internal/platform/crypt"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/db"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/db/dbgen"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/httpx"
@@ -43,12 +43,12 @@ type Options struct {
 // Service verifies purchases.
 type Service struct {
 	o   Options
-	gcm cipher.AEAD
+	box *crypt.Box
 }
 
 // NewService builds a Service.
 func NewService(o Options) (*Service, error) {
-	g, err := newGCM(o.EncKey)
+	g, err := crypt.New(o.EncKey)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +72,7 @@ func NewService(o Options) (*Service, error) {
 	if o.MarketCall == 0 {
 		o.MarketCall = marketTimeout
 	}
-	return &Service{o: o, gcm: g}, nil
+	return &Service{o: o, box: g}, nil
 }
 
 // PurchaseInput is one purchase from the client.
@@ -217,7 +217,7 @@ func (s *Service) verifyAttempt(ctx context.Context, p httpx.Principal, in Purch
 		remaining := time.Duration(0)
 		switch {
 		case !found:
-			enc, eerr := encrypt(s.gcm, []byte(in.PurchaseToken))
+			enc, eerr := s.box.Encrypt([]byte(in.PurchaseToken))
 			if eerr != nil {
 				return eerr
 			}
@@ -408,7 +408,7 @@ func (s *Service) reverifyOne(ctx context.Context, pu dbgen.Purchase) error {
 	if err != nil {
 		return fmt.Errorf("get product: %w", err)
 	}
-	token, err := decrypt(s.gcm, pu.PurchaseTokenEnc)
+	token, err := s.box.Decrypt(pu.PurchaseTokenEnc)
 	if err != nil {
 		return err
 	}

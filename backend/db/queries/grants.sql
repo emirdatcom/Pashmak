@@ -23,3 +23,6 @@ UPDATE entitlement_grants SET revoked_at = $2 WHERE purchase_id = $1 AND revoked
 
 -- name: RevokeUserGrants :exec
 UPDATE entitlement_grants SET revoked_at = $2 WHERE user_id = $1 AND revoked_at IS NULL;
+
+-- name: TransferPurchaseGrants :exec
+UPDATE entitlement_grants SET user_id = $2 WHERE user_id = $1 AND purchase_id IS NOT NULL;

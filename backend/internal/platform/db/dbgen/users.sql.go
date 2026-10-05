@@ -13,7 +13,7 @@ import (
 )
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (id, created_at) VALUES ($1, $2) RETURNING id, created_at, status, phone_e164, phone_verified_at, deleted_at
+INSERT INTO users (id, created_at) VALUES ($1, $2) RETURNING id, created_at, status, phone_verified_at, deleted_at, phone_enc, phone_hash, phone_last4
 `
 
 type CreateUserParams struct {
@@ -28,15 +28,37 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.ID,
 		&i.CreatedAt,
 		&i.Status,
-		&i.PhoneE164,
 		&i.PhoneVerifiedAt,
 		&i.DeletedAt,
+		&i.PhoneEnc,
+		&i.PhoneHash,
+		&i.PhoneLast4,
+	)
+	return i, err
+}
+
+const getActiveUserByPhoneHash = `-- name: GetActiveUserByPhoneHash :one
+SELECT id, created_at, status, phone_verified_at, deleted_at, phone_enc, phone_hash, phone_last4 FROM users WHERE phone_hash = $1 AND status = 'active'
+`
+
+func (q *Queries) GetActiveUserByPhoneHash(ctx context.Context, phoneHash *string) (User, error) {
+	row := q.db.QueryRow(ctx, getActiveUserByPhoneHash, phoneHash)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.Status,
+		&i.PhoneVerifiedAt,
+		&i.DeletedAt,
+		&i.PhoneEnc,
+		&i.PhoneHash,
+		&i.PhoneLast4,
 	)
 	return i, err
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, created_at, status, phone_e164, phone_verified_at, deleted_at FROM users WHERE id = $1
+SELECT id, created_at, status, phone_verified_at, deleted_at, phone_enc, phone_hash, phone_last4 FROM users WHERE id = $1
 `
 
 func (q *Queries) GetUser(ctx context.Context, id uuid.UUID) (User, error) {
@@ -46,15 +68,55 @@ func (q *Queries) GetUser(ctx context.Context, id uuid.UUID) (User, error) {
 		&i.ID,
 		&i.CreatedAt,
 		&i.Status,
-		&i.PhoneE164,
 		&i.PhoneVerifiedAt,
 		&i.DeletedAt,
+		&i.PhoneEnc,
+		&i.PhoneHash,
+		&i.PhoneLast4,
 	)
 	return i, err
 }
 
+const markUserDeleted = `-- name: MarkUserDeleted :exec
+UPDATE users SET status = 'deleted', deleted_at = $2, phone_enc = NULL, phone_hash = NULL, phone_last4 = NULL, phone_verified_at = NULL
+WHERE id = $1 AND status = 'active'
+`
+
+type MarkUserDeletedParams struct {
+	ID        uuid.UUID
+	DeletedAt *time.Time
+}
+
+func (q *Queries) MarkUserDeleted(ctx context.Context, arg MarkUserDeletedParams) error {
+	_, err := q.db.Exec(ctx, markUserDeleted, arg.ID, arg.DeletedAt)
+	return err
+}
+
+const setUserPhone = `-- name: SetUserPhone :exec
+UPDATE users SET phone_enc = $2, phone_hash = $3, phone_last4 = $4, phone_verified_at = $5 WHERE id = $1
+`
+
+type SetUserPhoneParams struct {
+	ID              uuid.UUID
+	PhoneEnc        []byte
+	PhoneHash       *string
+	PhoneLast4      *string
+	PhoneVerifiedAt *time.Time
+}
+
+func (q *Queries) SetUserPhone(ctx context.Context, arg SetUserPhoneParams) error {
+	_, err := q.db.Exec(ctx, setUserPhone,
+		arg.ID,
+		arg.PhoneEnc,
+		arg.PhoneHash,
+		arg.PhoneLast4,
+		arg.PhoneVerifiedAt,
+	)
+	return err
+}
+
 const softDeleteUser = `-- name: SoftDeleteUser :execrows
-UPDATE users SET status = 'deleted', deleted_at = $2, phone_e164 = NULL, phone_verified_at = NULL
+UPDATE users SET status = 'deleted', deleted_at = $2, phone_enc = NULL, phone_hash = NULL, phone_last4 = NULL, phone_verified_at = NULL
 WHERE id = $1 AND status = 'active'
 `
 

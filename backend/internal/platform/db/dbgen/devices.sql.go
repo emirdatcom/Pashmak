@@ -12,6 +12,17 @@ import (
 	"github.com/google/uuid"
 )
 
+const countUserDevices = `-- name: CountUserDevices :one
+SELECT COUNT(*)::int FROM devices WHERE user_id = $1
+`
+
+func (q *Queries) CountUserDevices(ctx context.Context, userID uuid.UUID) (int32, error) {
+	row := q.db.QueryRow(ctx, countUserDevices, userID)
+	var column_1 int32
+	err := row.Scan(&column_1)
+	return column_1, err
+}
+
 const createDevice = `-- name: CreateDevice :one
 INSERT INTO devices (id, user_id, install_id, device_hash, market, app_version, os_version, model, created_at, last_seen_at)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $9)

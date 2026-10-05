@@ -173,6 +173,20 @@ func (q *Queries) TransferPurchase(ctx context.Context, arg TransferPurchasePara
 	return err
 }
 
+const transferUserPurchases = `-- name: TransferUserPurchases :exec
+UPDATE purchases SET user_id = $2 WHERE user_id = $1
+`
+
+type TransferUserPurchasesParams struct {
+	UserID   uuid.UUID
+	UserID_2 uuid.UUID
+}
+
+func (q *Queries) TransferUserPurchases(ctx context.Context, arg TransferUserPurchasesParams) error {
+	_, err := q.db.Exec(ctx, transferUserPurchases, arg.UserID, arg.UserID_2)
+	return err
+}
+
 const updatePurchaseVerification = `-- name: UpdatePurchaseVerification :exec
 UPDATE purchases SET state = $2, verified_at = $3, expires_at = $4, auto_renewing = $5, raw_response = $6
 WHERE id = $1

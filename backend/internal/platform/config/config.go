@@ -35,6 +35,16 @@ type Config struct {
 	BazaarRefreshToken   string
 	MyketPackageName     string
 	MyketAccessToken     string
+
+	SMSProvider       string // "", "log" (dev) or "kavenegar"
+	KavenegarAPIKey   string
+	KavenegarTemplate string
+	BackupStorage     string // "db" (default) or "s3"
+	S3Endpoint        string
+	S3Region          string
+	S3Bucket          string
+	S3AccessKey       string
+	S3SecretKey       string
 }
 
 // IsProd reports whether APP_ENV is prod.
@@ -72,6 +82,16 @@ func LoadFrom(get func(string) string) (Config, error) {
 		BazaarRefreshToken:   get("BAZAAR_REFRESH_TOKEN"),
 		MyketPackageName:     get("MYKET_PACKAGE_NAME"),
 		MyketAccessToken:     get("MYKET_ACCESS_TOKEN"),
+
+		SMSProvider:       get("SMS_PROVIDER"),
+		KavenegarAPIKey:   get("KAVENEGAR_API_KEY"),
+		KavenegarTemplate: get("KAVENEGAR_TEMPLATE"),
+		BackupStorage:     str("BACKUP_STORAGE", "db"),
+		S3Endpoint:        get("S3_ENDPOINT"),
+		S3Region:          str("S3_REGION", "us-east-1"),
+		S3Bucket:          get("S3_BUCKET"),
+		S3AccessKey:       get("S3_ACCESS_KEY"),
+		S3SecretKey:       get("S3_SECRET_KEY"),
 	}
 	var errs []error
 	switch c.AppEnv {
@@ -101,6 +121,23 @@ func LoadFrom(get func(string) string) (Config, error) {
 			c.DataEncKey = k
 		}
 	}
+	switch c.SMSProvider {
+	case "", "log", "kavenegar":
+	default:
+		errs = append(errs, fmt.Errorf("SMS_PROVIDER must be empty, log or kavenegar, got %q", c.SMSProvider))
+	}
+	if c.SMSProvider == "kavenegar" && (c.KavenegarAPIKey == "" || c.KavenegarTemplate == "") {
+		errs = append(errs, errors.New("KAVENEGAR_API_KEY and KAVENEGAR_TEMPLATE are required when SMS_PROVIDER=kavenegar"))
+	}
+	switch c.BackupStorage {
+	case "db":
+	case "s3":
+		if c.S3Endpoint == "" || c.S3Bucket == "" || c.S3AccessKey == "" || c.S3SecretKey == "" {
+			errs = append(errs, errors.New("S3_ENDPOINT, S3_BUCKET, S3_ACCESS_KEY and S3_SECRET_KEY are required when BACKUP_STORAGE=s3"))
+		}
+	default:
+		errs = append(errs, fmt.Errorf("BACKUP_STORAGE must be db or s3, got %q", c.BackupStorage))
+	}
 	if c.DatabaseURL == "" {
 		errs = append(errs, errors.New("DATABASE_URL is required"))
 	}
@@ -116,6 +153,9 @@ func LoadFrom(get func(string) string) (Config, error) {
 		}
 		if c.DataEncKey == nil {
 			errs = append(errs, errors.New("DATA_ENC_KEY is required in prod"))
+		}
+		if c.SMSProvider == "log" {
+			errs = append(errs, errors.New("SMS_PROVIDER=log must not be used in prod (it logs OTP codes)"))
 		}
 		if c.BillingFakeEnabled {
 			errs = append(errs, errors.New("BILLING_FAKE_ENABLED must not be set in prod"))

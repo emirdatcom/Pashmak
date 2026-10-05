@@ -9,6 +9,7 @@ import (
 	"github.com/emirdatcom/pashmak/backend/internal/modules/admin"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/analytics"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/auth"
+	"github.com/emirdatcom/pashmak/backend/internal/modules/backup"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/billing"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/content"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/entitlement"
@@ -21,6 +22,16 @@ import (
 
 // MaxBodyBytes is the default request body limit (docs/10 §12).
 const MaxBodyBytes = 256 * 1024
+
+// MaxBackupBytes is the body limit of PUT /v1/backup (docs/10 §6.1).
+const MaxBackupBytes = 10 << 20
+
+func bodyLimit(r *http.Request) (int64, httpx.Code) {
+	if r.Method == http.MethodPut && r.URL.Path == "/v1/backup" {
+		return MaxBackupBytes, httpx.CodeBackupTooLarge
+	}
+	return MaxBodyBytes, httpx.CodePayloadTooLarge
+}
 
 // Pinger checks database liveness.
 type Pinger interface {
@@ -41,6 +52,8 @@ type Deps struct {
 	Content      *content.Service
 	Analytics    *analytics.Service
 	Admin        *admin.Service
+	Phone        *auth.PhoneService // nil unless an SMS provider is configured
+	Backup       *backup.Service
 }
 
 // Handler builds the router with the global middleware chain:
@@ -78,6 +91,12 @@ func Handler(d Deps) (*httpx.Router, http.Handler) {
 		if d.Analytics != nil {
 			analytics.Register(r, d.Analytics, requireAuth)
 		}
+		if d.Phone != nil {
+			auth.RegisterPhone(r, d.Phone, requireAuth, d.Clock)
+		}
+		if d.Backup != nil {
+			backup.Register(r, d.Backup, requireAuth, d.Clock)
+		}
 	}
 	if d.Content != nil {
 		content.Register(r, d.Content)
@@ -89,6 +108,6 @@ func Handler(d Deps) (*httpx.Router, http.Handler) {
 	global := httpx.NewRateLimiter(d.Clock, 120, 6000)
 	h := httpx.Chain(r,
 		httpx.RequestID(), httpx.Recover(), httpx.Logging(), httpx.Metrics(d.Metrics),
-		httpx.BodyLimit(MaxBodyBytes), httpx.RateLimit(global))
+		httpx.BodyLimitFunc(bodyLimit), httpx.RateLimit(global))
 	return r, h
 }

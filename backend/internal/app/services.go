@@ -10,6 +10,9 @@ import (
 	"github.com/emirdatcom/pashmak/backend/internal/modules/admin"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/analytics"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/auth"
+	"github.com/emirdatcom/pashmak/backend/internal/modules/auth/sms/kavenegar"
+	smslog "github.com/emirdatcom/pashmak/backend/internal/modules/auth/sms/log"
+	"github.com/emirdatcom/pashmak/backend/internal/modules/backup"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/billing"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/content"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/entitlement"
@@ -17,6 +20,7 @@ import (
 	"github.com/emirdatcom/pashmak/backend/internal/modules/user"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/clock"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/config"
+	"github.com/emirdatcom/pashmak/backend/internal/platform/crypt"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/db"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/metrics"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/schemas"
@@ -33,6 +37,8 @@ type Services struct {
 	Content      *content.Service
 	Analytics    *analytics.Service
 	Admin        *admin.Service
+	Phone        *auth.PhoneService // nil unless SMS_PROVIDER is set
+	Backup       *backup.Service
 }
 
 // entitlementConfig adapts remoteconfig to entitlement.ConfigReader using the active base config
@@ -119,6 +125,31 @@ func BuildServices(ctx context.Context, cfg config.Config, pool *db.Pool, clk cl
 	if err != nil {
 		return nil, fmt.Errorf("billing: %w", err)
 	}
+	var blobs backup.BlobStore
+	if cfg.BackupStorage == "s3" {
+		blobs = &backup.S3{Endpoint: cfg.S3Endpoint, Region: cfg.S3Region, Bucket: cfg.S3Bucket,
+			AccessKey: cfg.S3AccessKey, SecretKey: cfg.S3SecretKey}
+	}
+	sv.Backup = backup.NewService(pool, clk, blobs)
+	sv.User.AddHook(sv.Backup)
+	if cfg.SMSProvider != "" {
+		key := cfg.DataEncKey
+		if key == nil {
+			key = devEncKey
+		}
+		box, err := crypt.New(key)
+		if err != nil {
+			return nil, fmt.Errorf("phone service: %w", err)
+		}
+		var sender auth.SMSSender
+		switch cfg.SMSProvider {
+		case "kavenegar":
+			sender = kavenegar.New(kavenegar.Config{APIKey: cfg.KavenegarAPIKey, Template: cfg.KavenegarTemplate}, nil)
+		default:
+			sender = smslog.Adapter{}
+		}
+		sv.Phone = auth.NewPhoneService(pool, sv.Auth, box, sender, clk, sv.Billing)
+	}
 	if cfg.AdminUser != "" {
 		sv.Admin, err = admin.New(admin.Options{Pool: pool, Config: sv.RemoteConfig, Content: sv.Content, Grants: sv.Entitlement,
 			Clock: clk, User: cfg.AdminUser, PasswordHash: cfg.AdminPasswordHash, Allowlist: cfg.AdminIPAllowlist, AllowLocal: !cfg.IsProd()})
@@ -132,7 +163,8 @@ func BuildServices(ctx context.Context, cfg config.Config, pool *db.Pool, clk cl
 // Deps converts Services to handler dependencies.
 func (s *Services) Deps(pool *db.Pool, m *metrics.Metrics, clk clock.Clock) Deps {
 	return Deps{DB: pool, Metrics: m, Clock: clk, Auth: s.Auth, User: s.User, Entitle: s.Entitlement, Billing: s.Billing,
-		RemoteConfig: s.RemoteConfig, Content: s.Content, Analytics: s.Analytics, Admin: s.Admin}
+		RemoteConfig: s.RemoteConfig, Content: s.Content, Analytics: s.Analytics, Admin: s.Admin,
+		Phone: s.Phone, Backup: s.Backup}
 }
 
 // ConfigDataFile reads a file under the config-data directory (used by tools and tests).

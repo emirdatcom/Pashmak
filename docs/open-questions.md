@@ -78,3 +78,11 @@
 - **A30:** admin پشت Caddy از بیرون 404 است؛ دسترسی با SSH tunnel به شبکه‌ی docker و `ADMIN_IP_ALLOWLIST` (IP یا CIDR). allowlist خالی در prod ⇒ همه رد می‌شوند؛ در dev فقط loopback. `X-Forwarded-For` عمداً اعتماد نمی‌شود. بدنه admin هم تابع سقف ۲۵۶KB است (pack بزرگ‌تر ⇒ سقف per-route افزایش یابد).
 - **A31:** content-lint: واژه‌های ممنوع روی همه‌ی packها اعمال می‌شود جز pack `safety`، `safety.keywords` و کلیدهای copy با پیشوند `disclaimer.`/`safety.`/`help.`/`legal.` (باید «درمان نیست» را بگویند). طول نوتیف: متن ≤ ۸۰، عنوان (`notif.*.title`) ≤ ۲۵ نویسه (بدون جایگزینی متغیرها). بررسی «همه‌ی کلیدهای bundled در pack دانلودی» عملاً در مخزن واحد تکراری است و پیاده نشد.
 - **V9 (یادآوری):** شماره‌های `safety.json` (۱۲۳، ۱۴۸۰، ۱۱۵) از حافظه‌اند و `verified_at=null` دارند؛ تا راستی‌آزمایی، کلاینت فقط متن عمومی نشان دهد. قیمت‌های `default.json` و مقدار سکه‌ی `products.json` نمونه‌ی موقت‌اند.
+
+## یافته‌ها و تصمیم‌های پیاده‌سازی پرامپت 05 (OTP و backup)
+- **V6 (OTP ایرانی):** adapter کاوه‌نگار (`auth/sms/kavenegar`، `verify/lookup.json` با پترن) از حافظه نوشته شد و راستی‌آزمایی نشده؛ پترن مصوب و خط خدماتی لازم است. `SMS_PROVIDER=log` فقط dev (در prod رد می‌شود چون کد را لاگ می‌کند). endpointهای phone فقط وقتی `SMS_PROVIDER` تنظیم باشد ثبت می‌شوند.
+- **V8 (object storage):** کلاینت S3 دست‌نویس (path-style، SigV4) با بردار تست رسمی AWS تأیید شد؛ با هیچ ارائه‌دهنده‌ی ایرانی/MinIO آزموده نشده (Docker در محیط ساخت نبود). پیش‌فرض `BACKUP_STORAGE=db` (bytea).
+- **A32:** merge: دستگاه فعلی به کاربر A منتقل می‌شود، refresh tokenهای B باطل، خریدهای B و grantهای مرتبط با خرید به A می‌روند؛ تریال B و grant تریال منتقل نمی‌شود. اگر B دستگاه دیگری نداشت `status=deleted` می‌شود (events قبلی B به A منتقل نمی‌شود).
+- **A33:** در `RequestOTP` وجود/نبود حساب برای شماره فاش نمی‌شود. محدودیت: ۳ کد/ساعت/شماره (از DB)، فاصله‌ی ۶۰ ثانیه بین دو درخواست، ۱۰/ساعت/IP. خطای ارسال پیامک (`SMS_UNAVAILABLE`) challenge را مصرف‌شده می‌کند تا سهمیه‌ی کاربر نسوزد.
+- **A34:** سقف بدنه‌ی `PUT /v1/backup` برابر ۱۰MB است (با کد `BACKUP_TOO_LARGE`)، بقیه‌ی مسیرها ۲۵۶KB. سقف ۲۰ PUT در روز per user با token bucket درون‌حافظه.
+- **A35:** `X-Kdf-Params` فقط از نظر شکل (argon2id، m/t/p/salt) بررسی می‌شود؛ سرور blob را parse یا رمزگشایی نمی‌کند.

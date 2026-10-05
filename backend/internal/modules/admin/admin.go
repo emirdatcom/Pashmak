@@ -281,7 +281,8 @@ func (s *Service) handleUser(w http.ResponseWriter, r *http.Request) {
 	purchases, _ := q.ListPurchasesByUser(r.Context(), id)
 	trial, terr := q.GetTrialByUser(r.Context(), id)
 	out := map[string]any{"user_id": id, "status": u.Status, "created_at": u.CreatedAt, "phone_linked": u.PhoneVerifiedAt != nil,
-		"devices": devices, "grants": grants, "purchases": purchases}
+		"phone_last4": u.PhoneLast4,
+		"devices":     devices, "grants": grants, "purchases": purchases}
 	if terr == nil {
 		out["trial"] = map[string]any{"started_at": trial.StartedAt, "ends_at": trial.EndsAt}
 	}

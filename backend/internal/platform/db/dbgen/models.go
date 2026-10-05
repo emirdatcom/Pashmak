@@ -19,6 +19,18 @@ type AdminAudit struct {
 	At      time.Time
 }
 
+type Backup struct {
+	UserID        uuid.UUID
+	Storage       string
+	BlobRef       string
+	Blob          []byte
+	SizeBytes     int32
+	SchemaVersion int32
+	Sha256        string
+	KdfParams     []byte
+	UpdatedAt     time.Time
+}
+
 type ConfigVersion struct {
 	ID            int64
 	Version       int32
@@ -103,6 +115,18 @@ type Experiment struct {
 	UpdatedAt time.Time
 }
 
+type OtpChallenge struct {
+	ID         uuid.UUID
+	UserID     uuid.UUID
+	PhoneHash  string
+	PhoneEnc   []byte
+	CodeHash   string
+	Attempts   int32
+	ExpiresAt  time.Time
+	ConsumedAt *time.Time
+	CreatedAt  time.Time
+}
+
 type Product struct {
 	ID           string
 	Market       string
@@ -154,7 +178,9 @@ type User struct {
 	ID              uuid.UUID
 	CreatedAt       time.Time
 	Status          string
-	PhoneE164       *string
 	PhoneVerifiedAt *time.Time
 	DeletedAt       *time.Time
+	PhoneEnc        []byte
+	PhoneHash       *string
+	PhoneLast4      *string
 }

@@ -14,8 +14,19 @@ import (
 )
 
 type tuser struct {
-	token string
-	id    string
+	token   string
+	id      string
+	refresh string
+}
+
+// relogin rotates the refresh token (needed after advancing the fake clock past the 1h access TTL).
+func (e *env) relogin(u *tuser) {
+	e.t.Helper()
+	st, m := e.call("POST", "/v1/auth/refresh", "", map[string]any{"refresh_token": u.refresh}, "")
+	if st != 200 {
+		e.t.Fatalf("relogin: %d %v", st, m)
+	}
+	u.token, u.refresh = m["access_token"].(string), m["refresh_token"].(string)
 }
 
 // newUser registers a fresh install on the hardware identified by raw.
@@ -27,7 +38,7 @@ func (e *env) newUser(raw string) tuser {
 	if st != 200 {
 		e.t.Fatalf("register: %d %v", st, m)
 	}
-	return tuser{token: m["access_token"].(string), id: m["user_id"].(string)}
+	return tuser{token: m["access_token"].(string), id: m["user_id"].(string), refresh: m["refresh_token"].(string)}
 }
 
 func (e *env) state(u tuser) (entitlement.State, map[string]any) {

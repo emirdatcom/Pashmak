@@ -343,6 +343,76 @@ paths:
         "400": {$ref: "#/components/responses/Error"}
         "401": {$ref: "#/components/responses/Error"}
         "403": {$ref: "#/components/responses/Error"}
+  /v1/auth/phone/otp:
+    post:
+      operationId: phoneOtp
+      security: [{bearer: []}]
+      requestBody:
+        required: true
+        content: {application/json: {schema: {type: object, additionalProperties: false, required: [phone], properties: {phone: {type: string}}}}}
+      responses:
+        "200":
+          description: code sent
+          content: {application/json: {schema: {type: object, required: [challenge_id, retry_after_s], properties: {challenge_id: {type: string, format: uuid}, retry_after_s: {type: integer}}}}}
+        "400": {$ref: "#/components/responses/Error"}
+        "401": {$ref: "#/components/responses/Error"}
+        "429": {$ref: "#/components/responses/Error"}
+        "503": {$ref: "#/components/responses/Error"}
+  /v1/auth/phone/verify:
+    post:
+      operationId: phoneVerify
+      security: [{bearer: []}]
+      requestBody:
+        required: true
+        content: {application/json: {schema: {type: object, additionalProperties: false, required: [challenge_id, code], properties: {challenge_id: {type: string}, code: {type: string}}}}}
+      responses:
+        "200":
+          description: linked; merged=true when the phone belonged to another account and the device moved to it
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [user_id, access_token, access_expires_at, refresh_token, merged]
+                properties:
+                  user_id: {type: string, format: uuid}
+                  access_token: {type: string}
+                  access_expires_at: {type: string, format: date-time}
+                  refresh_token: {type: string}
+                  merged: {type: boolean}
+        "400": {$ref: "#/components/responses/Error"}
+        "401": {$ref: "#/components/responses/Error"}
+  /v1/backup:
+    put:
+      operationId: putBackup
+      security: [{bearer: []}]
+      parameters:
+        - {name: X-Backup-Schema, in: header, required: true, schema: {type: integer}}
+        - {name: X-Backup-Sha256, in: header, required: true, schema: {type: string}}
+        - {name: X-Kdf-Params, in: header, required: true, schema: {type: string}}
+      requestBody:
+        required: true
+        content: {application/octet-stream: {schema: {type: string, format: binary, maxLength: 10485760}}}
+      responses:
+        "200": {description: stored, content: {application/json: {schema: {type: object, required: [updated_at], properties: {updated_at: {type: string, format: date-time}}}}}}
+        "400": {$ref: "#/components/responses/Error"}
+        "401": {$ref: "#/components/responses/Error"}
+        "413": {$ref: "#/components/responses/Error"}
+        "429": {$ref: "#/components/responses/Error"}
+    get:
+      operationId: getBackup
+      security: [{bearer: []}]
+      responses:
+        "200":
+          description: the opaque encrypted blob; metadata in X-Backup-Schema, X-Backup-Sha256, X-Kdf-Params, X-Backup-Updated-At
+          content: {application/octet-stream: {schema: {type: string, format: binary}}}
+        "401": {$ref: "#/components/responses/Error"}
+        "404": {$ref: "#/components/responses/Error"}
+    delete:
+      operationId: deleteBackup
+      security: [{bearer: []}]
+      responses:
+        "204": {description: deleted}
+        "401": {$ref: "#/components/responses/Error"}
 components:
   securitySchemes:
     bearer: {type: http, scheme: bearer, bearerFormat: JWT}
@@ -368,7 +438,7 @@ components:
           type: object
           required: [code, message, request_id]
           properties:
-            code: {type: string, enum: [INVALID_INPUT, UNAUTHENTICATED, TOKEN_INVALID, TOKEN_REUSED, FORBIDDEN, NOT_FOUND, TRIAL_ALREADY_USED, TRIAL_DISABLED, PURCHASE_ALREADY_CLAIMED, PURCHASE_INVALID, PAYLOAD_TOO_LARGE, BACKUP_TOO_LARGE, RATE_LIMITED, UPGRADE_REQUIRED, MARKET_UNAVAILABLE, INTERNAL]}
+            code: {type: string, enum: [INVALID_INPUT, UNAUTHENTICATED, TOKEN_INVALID, TOKEN_REUSED, FORBIDDEN, NOT_FOUND, TRIAL_ALREADY_USED, TRIAL_DISABLED, PURCHASE_ALREADY_CLAIMED, PURCHASE_INVALID, PAYLOAD_TOO_LARGE, BACKUP_TOO_LARGE, RATE_LIMITED, UPGRADE_REQUIRED, MARKET_UNAVAILABLE, INTERNAL, PHONE_INVALID, OTP_INVALID, OTP_EXPIRED, SMS_UNAVAILABLE]}
             message: {type: string}
             request_id: {type: string}
     EntitlementState:

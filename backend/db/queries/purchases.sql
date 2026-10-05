@@ -21,3 +21,6 @@ WHERE pr.kind = 'subscription' AND p.state = 'verified'
   AND (p.expires_at < $1::timestamptz + interval '48 hours' OR p.purchased_at > $1::timestamptz - interval '7 days')
 ORDER BY p.created_at
 LIMIT $2;
+
+-- name: TransferUserPurchases :exec
+UPDATE purchases SET user_id = $2 WHERE user_id = $1;
