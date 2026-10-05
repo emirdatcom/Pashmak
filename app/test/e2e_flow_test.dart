@@ -38,7 +38,7 @@ void main() {
     // 2. tick a habit → energy
     final water = (await l.habits.activeHabits()).firstWhere((x) => x.templateKey == 'water');
     expect((await l.habits.complete(water.id)).status, CompleteStatus.completed);
-    expect((await l.wallet.balance()).energy, l.config.energyPerHabit);
+    expect((await l.wallet.balance()).energy, l.config.energyPerGoal);
     await l.wallet.grant(Currency.energy, 50, 'promo', 'e2e'); // enough for an adventure
 
     // 3. adventure: start, wait (FakeClock), claim

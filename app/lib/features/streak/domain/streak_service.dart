@@ -42,6 +42,8 @@ class StreakService {
   /// Resets the monthly freeze budget and handles a missed day. Call when the app opens / a new day starts.
   Future<StreakOutcome> evaluate(LocalDay today) => _db.transaction(() async {
         var s = await _db.select(_db.streakState).getSingle();
+        // Rest mode freezes the streak: no reset and no freeze is spent while it is on.
+        if (await _db.setting('pause_mode') == 'true') return StreakOutcome(snapshot: _snap(s));
         var changed = false;
         final month = JalaliFormatter.monthKey(today);
         var freezes = s.freezesLeft;
@@ -86,4 +88,12 @@ class StreakService {
         return StreakOutcome(
             snapshot: _snap(await _db.select(_db.streakState).getSingle()), reset: before.reset, freezeUsed: before.freezeUsed, changed: true);
       });
+
+  /// Rest mode ended: continue "from the same point" — the last active day becomes yesterday so the next
+  /// activity extends the streak instead of resetting it.
+  Future<void> resumeFromPause(LocalDay today) async {
+    final s = await _db.select(_db.streakState).getSingle();
+    if (s.current <= 0) return;
+    await _db.update(_db.streakState).write(StreakStateCompanion(lastActiveDay: Value(today.addDays(-1).value)));
+  }
 }

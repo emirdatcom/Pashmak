@@ -50,7 +50,7 @@ void main() {
     expect(out.where((n) => n.type == 'habit_reminder' && n.fireAt.day == 6).length, 1);
     final log = await t.l.db.select(t.l.db.habitLogs).getSingle();
     expect(log.source, 'notification');
-    expect((await t.l.wallet.balance()).energy, 10, reason: 'the quick action earns energy like a normal tick');
+    expect((await t.l.wallet.balance()).energy, 5, reason: 'the quick action earns energy like a normal tick');
   });
 
   test('the remote kill switch and the user switches remove types; streak_gentle is opt-in', () async {

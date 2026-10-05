@@ -85,9 +85,9 @@ void main() {
       final h = WidgetActionHandler(l.habits, l.checkins, () async => republished++);
       expect(await h.handle(CompleteHabitAction(id)), isTrue);
       expect((await l.db.select(l.db.habitLogs).getSingle()).source, 'widget');
-      expect((await l.wallet.balance()).energy, l.config.energyPerHabit);
+      expect((await l.wallet.balance()).energy, l.config.energyPerGoal);
       expect(await h.handle(CompleteHabitAction(id)), isTrue, reason: 'already done is fine');
-      expect((await l.wallet.balance()).energy, l.config.energyPerHabit, reason: 'no extra energy');
+      expect((await l.wallet.balance()).energy, l.config.energyPerGoal, reason: 'no extra energy');
       expect(republished, 2);
       expect(await h.handle(const CompleteHabitAction('nope')), isFalse);
     });

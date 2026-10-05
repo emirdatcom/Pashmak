@@ -1,3 +1,4 @@
+import 'goals/domain/goal_title.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/content/content_repository.dart';
@@ -16,6 +17,7 @@ import '../core/widgets_home/widget_snapshot.dart';
 import '../core/widgets_home/widget_snapshot_publisher.dart';
 import 'adventure/domain/adventure_service.dart';
 import 'notifications/data/notification_scheduler.dart';
+import 'cat/domain/cat_growth.dart';
 import 'cat/domain/cat_mood_resolver.dart';
 import 'checkin/domain/checkin_service.dart';
 import 'exercises/domain/exercise_service.dart';
@@ -76,7 +78,7 @@ final homeWidgetPublisherProvider = Provider<HomeWidgetPublisher>((ref) => HomeW
         ref.watch(databaseProvider),
         ref.watch(clockProvider),
         dayStartHour: ref.watch(dayStartHourProvider),
-        habitTitle: (h) => h.templateKey != null ? ref.read(copyProvider).t('habit.template.${h.templateKey}.title') : (h.title ?? ''),
+        habitTitle: (h) => goalTitle(ref.read(copyProvider), h.goalKey ?? h.templateKey, h.title),
         streakLabel: (n) => n > 0 ? ref.read(copyProvider).t('streak.continue', {'n': n}) : ref.read(copyProvider).t('home.streak.none'),
         progressLabel: (d, t) => ref.read(copyProvider).t('home.habits.progress', {'n': d}),
       ),
@@ -102,7 +104,7 @@ final habitServiceProvider = Provider<HabitService>((ref) {
   AppConfig cfg() => ref.read(appConfigProvider);
   return HabitService(ref.watch(databaseProvider), ref.watch(clockProvider), ref.watch(walletServiceProvider), ref.watch(streakServiceProvider),
       ref.watch(analyticsProvider), ref.watch(widgetSnapshotPublisherProvider),
-      energyPerHabit: () => cfg().energyPerHabit,
+      energyPerGoal: () => cfg().energyPerGoal,
       freeActiveHabits: () => cfg().freeActiveHabits,
       freeCustomHabits: () => cfg().freeCustomHabits,
       today: () => ref.read(todayProvider));
@@ -128,7 +130,11 @@ final adventureServiceProvider = Provider<AdventureService>((ref) {
       configs: () => ref.read(appConfigProvider).adventureLocations,
       adventuresPack: () => (content.entries('adventures') as Map<String, dynamic>?) ?? const {},
       shopItems: () => (content.entries('shop_items') as List?) ?? const [],
-      freeLocations: () => ref.read(appConfigProvider).freeAdventureLocations);
+      freeLocations: () => ref.read(appConfigProvider).freeAdventureLocations,
+      dailyEnergyTarget: () => ref.read(appConfigProvider).dailyEnergyTarget,
+      discoveries: () => ((content.entries('discoveries') as List?) ?? const []).cast<Map<String, dynamic>>(),
+      growth: () => CatGrowth(young: ref.read(appConfigProvider).growthYoung, adult: ref.read(appConfigProvider).growthAdult),
+      today: () => ref.read(todayProvider).value);
 });
 
 final premiumGateProvider = Provider<PremiumGate>((ref) => PremiumGate(ref.watch(databaseProvider), ref.watch(clockProvider),

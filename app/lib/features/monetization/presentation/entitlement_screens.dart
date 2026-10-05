@@ -1,3 +1,4 @@
+import '../../goals/domain/goal_title.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -87,7 +88,7 @@ class _LockSelectionState extends ConsumerState<LockSelectionScreen> {
                   for (final h in _habits)
                     CheckboxListTile(
                       value: _keep.contains(h.id),
-                      title: Text(h.templateKey != null ? copy.t('habit.template.${h.templateKey}.title') : (h.title ?? '')),
+                      title: Text(goalTitle(copy, h.goalKey ?? h.templateKey, h.title)),
                       onChanged: (v) => setState(() {
                         if (v == true) {
                           if (_keep.length < max) _keep.add(h.id);

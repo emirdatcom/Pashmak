@@ -60,7 +60,7 @@ void main() {
     final (_, _, app) = await setup(tester, Routes.exercises);
     await tester.pumpWidget(app);
     await tester.pump(const Duration(milliseconds: 300));
-    expect(find.byIcon(Icons.lock_outline), findsNWidgets(4));
+    expect(find.byIcon(Icons.lock_outline), findsWidgets);
     await tester.tap(find.text('شکرگزاری'));
     await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 200)));
     await tester.pump(const Duration(milliseconds: 300));

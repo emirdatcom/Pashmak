@@ -107,7 +107,7 @@ void main() {
       expect(await l.shop.buy('collar_turquoise', isPremium: false), BuyStatus.alreadyOwned);
       expect((await l.wallet.balance()).coins, 940);
       final ledger = await (l.db.select(l.db.walletLedger)..where((x) => x.reason.equals('shop_purchase'))).get();
-      expect(ledger.single.refId, 'collar_turquoise');
+      expect(ledger.single.refId, startsWith('collar_turquoise:'), reason: 'unique per purchase so an item can be bought again after selling it');
     });
 
     test('not enough coins changes nothing; premium-only items need premium; unknown item', () async {

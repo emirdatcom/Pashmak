@@ -4,7 +4,7 @@ import '../../../core/time/local_day.dart';
 const notificationPriority = ['trial', 'support_reply', 'habit_reminder', 'cat_returned', 'evening_checkin', 'morning', 'seasonal', 'comeback', 'streak_gentle'];
 
 class PlanHabit {
-  const PlanHabit({required this.id, this.templateKey, this.title, this.reminderMinutes, required this.scheduleType, required this.weekdaysMask, this.isLocked = false, this.doneToday = false});
+  const PlanHabit({required this.id, this.templateKey, this.title, this.reminderMinutes, required this.scheduleType, required this.weekdaysMask, this.isLocked = false, this.doneToday = false, this.repeatType = 'daily', this.dueDay});
   final String id;
   final String? templateKey;
   final String? title;
@@ -13,6 +13,8 @@ class PlanHabit {
   final int weekdaysMask; // bit0 = Saturday
   final bool isLocked;
   final bool doneToday;
+  final String repeatType; // daily | weekly | once
+  final String? dueDay; // local_day of a `once` goal
 }
 
 class PlanAdventure {
@@ -91,6 +93,7 @@ class PlanInput {
     this.log = const [],
     this.seasonal = const [],
     this.supportReplyAt,
+    this.paused = false,
   });
   final DateTime now;
   final int dayStartHour;
@@ -107,6 +110,9 @@ class PlanInput {
 
   /// When a support reply notification should fire (set by the `support_poll` task when it found a new reply).
   final DateTime? supportReplyAt;
+
+  /// Rest mode (prompt 22): nothing is planned except the trial reminders.
+  final bool paused;
 }
 
 /// A notification the planner wants scheduled. Text is resolved later from the copy keys.
@@ -151,7 +157,9 @@ List<PlanItem> planNotifications(PlanInput i) {
     if (s.on('habit_reminder')) {
       for (final h in i.habits) {
         if (h.reminderMinutes == null || h.isLocked) continue;
-        final scheduled = h.scheduleType == 'daily' || (h.weekdaysMask >> d.weekdayIndex) & 1 == 1;
+        final scheduled = h.repeatType == 'once'
+            ? h.dueDay == d.value
+            : (h.scheduleType == 'daily' || (h.weekdaysMask >> d.weekdayIndex) & 1 == 1);
         if (!scheduled || (isToday && h.doneToday)) continue;
         final tk = h.templateKey;
         cands.add(PlanItem(
@@ -213,6 +221,9 @@ List<PlanItem> planNotifications(PlanInput i) {
       cands.add(PlanItem(type: 'seasonal', ref: e.id, fireAt: e.at, titleKey: 'notif.seasonal.title', bodyKey: e.copyKey, route: '/home'));
     }
   }
+
+  // Rest mode keeps only the trial reminders (a purchase deadline the user must not miss silently).
+  if (i.paused) cands.removeWhere((c) => c.type != 'trial');
 
   // 1. quiet hours: move to the end of the quiet window; the cat's return is dropped instead.
   final moved = <PlanItem>[];

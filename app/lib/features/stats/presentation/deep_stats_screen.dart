@@ -1,3 +1,4 @@
+import '../../goals/domain/goal_title.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -86,7 +87,7 @@ class _DeepStatsState extends ConsumerState<DeepStatsScreen> {
                 EmptyState(message: copy.t('stats.habits.empty'))
               else
                 for (final r in i.heat) ...[
-                  Text(r.habit.templateKey != null ? copy.t('habit.template.${r.habit.templateKey}.title') : (r.habit.title ?? ''), style: theme.textTheme.bodySmall),
+                  Text(goalTitle(copy, r.habit.goalKey ?? r.habit.templateKey, r.habit.title), style: theme.textTheme.bodySmall),
                   const SizedBox(height: 2),
                   HabitHeatmap(rows: [r], on: AppColors.turquoiseDark, off: theme.colorScheme.surfaceContainerHighest, cell: i.days.length > 10 ? 8 : 14),
                   const SizedBox(height: AppSpacing.sm),
@@ -98,7 +99,7 @@ class _DeepStatsState extends ConsumerState<DeepStatsScreen> {
                 Card(
                   child: ListTile(
                     leading: const Icon(Icons.insights_outlined),
-                    title: Text(copy.t('stats.correlation', {'habit': c.habit.templateKey != null ? copy.t('habit.template.${c.habit.templateKey}.title') : (c.habit.title ?? '')})),
+                    title: Text(copy.t('stats.correlation', {'habit': goalTitle(copy, c.habit.goalKey ?? c.habit.templateKey, c.habit.title)})),
                   ),
                 ),
               if (i.bestWeekday == null && i.correlations.isEmpty)

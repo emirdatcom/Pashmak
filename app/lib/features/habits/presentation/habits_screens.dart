@@ -1,3 +1,5 @@
+import '../../../core/content/copy_resolver.dart';
+import '../../goals/domain/goal_title.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -12,8 +14,7 @@ import '../../core_loop_providers.dart';
 import '../../home/presentation/home_screen.dart' show passGate;
 import '../domain/habit_service.dart';
 
-String habitTitle(dynamic copy, String? templateKey, String? title) =>
-    templateKey != null ? copy.t('habit.template.$templateKey.title') as String : (title ?? '');
+String habitTitle(dynamic copy, String? templateKey, String? title) => goalTitle(copy as CopyResolver, templateKey, title);
 
 /// List of all active habits; creation goes through the premium gate (docs/60 §5).
 class HabitsScreen extends ConsumerWidget {

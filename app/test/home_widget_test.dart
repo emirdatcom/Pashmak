@@ -78,7 +78,7 @@ void main() {
     await tester.tap(find.byType(Checkbox));
     await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 300)));
     await tester.pump(const Duration(milliseconds: 400));
-    expect(find.text('۱۰/۱۰۰'), findsOneWidget);
+    expect(find.text('۵/۱۰۰'), findsOneWidget);
     expect(find.text('برگردون'), findsOneWidget);
   });
 

@@ -19,7 +19,15 @@ void main() {
     test('bundled default.json exposes every typed getter', () async {
       final cfg = AppConfig(jsonDecode(realAssets().files['assets/config/default.json']!) as Map<String, dynamic>);
       expect(cfg.freeActiveHabits, 3);
-      expect(cfg.freeExercises, ['breathing_basic']);
+      expect(cfg.freeExercises, ['breathing_basic', 'breathing_square']);
+      expect(cfg.energyPerGoal, 5);
+      expect(cfg.dailyEnergyTarget, 20);
+      expect((cfg.growthYoung, cfg.growthAdult), (7, 30));
+      expect((cfg.questsDailyCount, cfg.questsDailyRewardCoins), (4, 10));
+      expect((cfg.shopRotationSize, cfg.shopRefreshCost, cfg.shopSellRatio), (6, 30, 0.5));
+      expect((cfg.recommendCountFree, cfg.recommendCountTrial), (3, 4));
+      expect(cfg.recommenderWeights.needWeight, 10);
+      expect(cfg.feature('pause_mode'), isTrue);
       expect(cfg.plans.map((p) => p.productId), contains('premium_12m'));
       expect(cfg.plans.firstWhere((p) => p.highlight).productId, 'premium_12m');
       expect(cfg.trialEnabled && cfg.trialDays == 7 && cfg.trialReminderDay == 6, isTrue);

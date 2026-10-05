@@ -1,3 +1,4 @@
+import '../../goals/domain/goal_title.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -56,7 +57,7 @@ class StatsScreen extends ConsumerWidget {
           if (s.perHabit.isEmpty) ConstrainedBox(constraints: const BoxConstraints(minHeight: 160), child: EmptyState(message: copy.t('stats.habits.empty'))),
           for (final h in s.perHabit)
             ListTile(
-              title: Text(h.habit.templateKey != null ? copy.t('habit.template.${h.habit.templateKey}.title') : (h.habit.title ?? '')),
+              title: Text(goalTitle(copy, h.habit.goalKey ?? h.habit.templateKey, h.habit.title)),
               trailing: Text(toPersianDigits(h.count)),
             ),
           const SizedBox(height: AppSpacing.lg),

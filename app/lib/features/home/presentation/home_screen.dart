@@ -1,3 +1,4 @@
+import '../../goals/domain/goal_title.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -213,7 +214,7 @@ class _HabitTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final copy = ref.watch(copyProvider);
     final h = item.habit;
-    final title = h.templateKey != null ? copy.t('habit.template.${h.templateKey}.title') : (h.title ?? '');
+    final title = goalTitle(copy, h.goalKey ?? h.templateKey, h.title);
     final service = ref.read(habitServiceProvider);
     return Semantics(
       label: title,

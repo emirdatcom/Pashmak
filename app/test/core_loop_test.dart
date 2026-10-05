@@ -53,34 +53,35 @@ void main() {
   });
 
   group('habits', () {
-    test('completing grants +10 energy once; undo takes it back; re-complete grants one fresh reward', () async {
+    test('completing grants +5 energy once; undo takes it back; re-complete grants one fresh reward', () async {
       final l = Loop(at(5));
       final id = await water(l);
       final r1 = await l.habits.complete(id);
       expect(r1.status, CompleteStatus.completed);
-      expect(r1.energyGranted, 10);
+      expect(r1.energyGranted, 5);
       expect((await l.habits.complete(id)).status, CompleteStatus.alreadyDone);
-      expect((await l.wallet.balance()).energy, 10);
+      expect((await l.wallet.balance()).energy, 5);
       // undo takes it back (balance covers it), re-completing the same day grants nothing (anti-farming)
       expect(await l.habits.undo(id), isTrue);
       expect((await l.wallet.balance()).energy, 0);
       final r2 = await l.habits.complete(id);
       expect(r2.status, CompleteStatus.completed);
-      expect(r2.energyGranted, 10, reason: 'the undo really took the energy back, so one fresh reward is fine');
-      expect((await l.wallet.balance()).energy, 10);
+      expect(r2.energyGranted, 5, reason: 'the undo really took the energy back, so one fresh reward is fine');
+      expect((await l.wallet.balance()).energy, 5);
       // …but only once: undo/redo cycles cannot farm energy
       expect(await l.habits.undo(id), isTrue);
       await l.habits.complete(id);
-      expect((await l.wallet.balance()).energy, lessThanOrEqualTo(10));
+      expect((await l.wallet.balance()).energy, lessThanOrEqualTo(5));
     });
 
     test('undo keeps the energy when it was already spent', () async {
       final l = Loop(at(5));
       final id = await water(l);
       await l.habits.complete(id);
-      await l.wallet.spend(Currency.energy, 5, 'adventure_start', 'a');
+      await l.wallet.grant(Currency.energy, 5, 'checkin', 'c1');
+      await l.wallet.spend(Currency.energy, 8, 'adventure_start', 'a');
       await l.habits.undo(id);
-      expect((await l.wallet.balance()).energy, 5);
+      expect((await l.wallet.balance()).energy, 2);
     });
 
     test('free limit: 3 active habits, then fourth_habit; custom is gated; premium is free', () async {

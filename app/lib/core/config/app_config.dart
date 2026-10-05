@@ -54,7 +54,7 @@ class AppConfig {
   int get pendingVerificationHours => _get('entitlement.pending_verification_hours');
 
   // economy.*
-  int get energyPerHabit => _get('economy.energy_per_habit');
+  int get energyPerGoal => _get('economy.energy_per_goal');
   int get energyPerCheckin => _get('economy.energy_per_checkin');
   int get energyPerExercise => _get('economy.energy_per_exercise');
   int get exerciseRewardsPerDay => _get('economy.exercise_rewards_per_day');
@@ -66,6 +66,21 @@ class AppConfig {
       .toList();
   AdventureLocationConfig? adventureLocation(String key) =>
       adventureLocations.firstWhereOrNull((l) => l.locationKey == key);
+
+  // adventure.daily_energy_target, growth.*, quests.*, shop.*
+  int get dailyEnergyTarget => _get('adventure.daily_energy_target');
+  int get growthYoung => _get('growth.thresholds.young');
+  int get growthAdult => _get('growth.thresholds.adult');
+  int get questsDailyCount => _get('quests.daily_count');
+  int get questsDailyRewardCoins => _get('quests.daily_reward_coins');
+  int get shopRotationSize => _get('shop.rotation_size');
+  int get shopRefreshCost => _get('shop.refresh_cost');
+  double get shopSellRatio => (_get<num>('shop.sell_ratio')).toDouble();
+
+  // onboarding.*
+  int get recommendCountFree => _get('onboarding.recommend_count_free');
+  int get recommendCountTrial => _get('onboarding.recommend_count_trial');
+  RecommenderWeights get recommenderWeights => RecommenderWeights.fromJson(_get<Map<String, dynamic>>('onboarding.recommender'));
 
   // streak.*
   int get streakFreezesPerMonth => _get('streak.freezes_per_month');
@@ -147,4 +162,27 @@ class SupportHours {
   final int weekday;
   final String from;
   final String to;
+}
+
+/// Coefficients of `GoalRecommender` (config `onboarding.recommender`, A/B-able; docs/70 §6).
+class RecommenderWeights {
+  const RecommenderWeights({
+    this.areaSelected = 2,
+    this.answerRarely = 2,
+    this.answerSometimes = 1,
+    this.needWeight = 10,
+    this.tagWeight = 3,
+    this.difficultyPenalty = 2,
+    this.chronotypeBonus = 2,
+  });
+  factory RecommenderWeights.fromJson(Map<String, dynamic> j) => RecommenderWeights(
+        areaSelected: j['area_selected'] as int,
+        answerRarely: j['answer_rarely'] as int,
+        answerSometimes: j['answer_sometimes'] as int,
+        needWeight: j['need_weight'] as int,
+        tagWeight: j['tag_weight'] as int,
+        difficultyPenalty: j['difficulty_penalty'] as int,
+        chronotypeBonus: j['chronotype_bonus'] as int,
+      );
+  final int areaSelected, answerRarely, answerSometimes, needWeight, tagWeight, difficultyPenalty, chronotypeBonus;
 }
