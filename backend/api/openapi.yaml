@@ -1,0 +1,57 @@
+openapi: 3.0.3
+info: {title: API, version: "1.0.0"}
+paths:
+  /healthz:
+    get:
+      operationId: healthz
+      responses:
+        "200": {description: ok, content: {application/json: {schema: {type: object, properties: {status: {type: string}}}}}}
+  /readyz:
+    get:
+      operationId: readyz
+      responses:
+        "200": {description: ready, content: {application/json: {schema: {type: object, properties: {status: {type: string}, db: {type: string}}}}}}
+        "503": {description: db down}
+components:
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message, request_id]
+          properties:
+            code: {type: string, enum: [INVALID_INPUT, UNAUTHENTICATED, TOKEN_INVALID, TOKEN_REUSED, FORBIDDEN, NOT_FOUND, TRIAL_ALREADY_USED, TRIAL_DISABLED, PURCHASE_ALREADY_CLAIMED, PURCHASE_INVALID, PAYLOAD_TOO_LARGE, BACKUP_TOO_LARGE, RATE_LIMITED, UPGRADE_REQUIRED, MARKET_UNAVAILABLE, INTERNAL]}
+            message: {type: string}
+            request_id: {type: string}
+    EntitlementState:
+      type: object
+      required: [entitlements, trial, server_time, valid_until, grace_days, signature, kid]
+      properties:
+        entitlements:
+          type: array
+          items: {type: object, required: [key, source, starts_at, ends_at], properties: {key: {type: string, enum: [premium]}, source: {type: string, enum: [trial, subscription, pass, promo]}, starts_at: {type: string, format: date-time}, ends_at: {type: string, format: date-time}}}
+        trial: {type: object, required: [eligible, used], properties: {eligible: {type: boolean}, used: {type: boolean}, ends_at: {type: string, format: date-time, nullable: true}}}
+        server_time: {type: string, format: date-time}
+        valid_until: {type: string, format: date-time}
+        grace_days: {type: integer}
+        signature: {type: string}
+        kid: {type: string}
+    ConfigResponse:
+      type: object
+      required: [version, payload, experiments, etag]
+      properties:
+        version: {type: integer}
+        payload: {type: object, additionalProperties: true}
+        experiments: {type: object, additionalProperties: {type: string}}
+        etag: {type: string}
+    Event:
+      type: object
+      required: [event_id, name, ts, session_id, props]
+      properties:
+        event_id: {type: string, format: uuid}
+        name: {type: string}
+        ts: {type: string, format: date-time}
+        session_id: {type: string}
+        props: {type: object, additionalProperties: true}
