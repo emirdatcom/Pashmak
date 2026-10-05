@@ -24,5 +24,11 @@ jobs:
           git diff --exit-code -- lib drift_schemas
       - run: flutter analyze
       - run: flutter test
+      - name: market SDK separation self-test (D-7)
+        run: bash tool/test_check_sdk_separation.sh
       - run: flutter build apk --flavor bazaar -t lib/main_bazaar.dart --split-per-abi
+      - name: bazaar APK has no Myket SDK
+        run: for f in build/app/outputs/flutter-apk/app-*-bazaar-release.apk; do bash tool/check_sdk_separation.sh bazaar "$f"; done
       - run: flutter build apk --flavor myket -t lib/main_myket.dart --split-per-abi
+      - name: myket APK has no Bazaar SDK
+        run: for f in build/app/outputs/flutter-apk/app-*-myket-release.apk; do bash tool/check_sdk_separation.sh myket "$f"; done

@@ -16,6 +16,8 @@ type Metrics struct {
 	MarketVerify   *prometheus.CounterVec
 	EventsIngested prometheus.Counter
 	EventsRejected *prometheus.CounterVec
+
+	SupportFirstResponse prometheus.Histogram
 }
 
 // DBStats is the subset of pool statistics we export.
@@ -46,6 +48,10 @@ func New() *Metrics {
 		Name: "events_ingested_total", Help: "Analytics events accepted."})
 	m.EventsRejected = prometheus.NewCounterVec(prometheus.CounterOpts{
 		Name: "events_rejected_total", Help: "Analytics events rejected by reason."}, []string{"reason"})
+	m.SupportFirstResponse = prometheus.NewHistogram(prometheus.HistogramOpts{
+		Name: "support_first_response_seconds", Help: "Time from a user's message to the first operator reply.",
+		Buckets: []float64{30, 60, 120, 300, 600, 1800, 3600, 4 * 3600, 12 * 3600, 24 * 3600}})
+	reg.MustRegister(m.SupportFirstResponse)
 	reg.MustRegister(m.HTTPRequests, m.HTTPDuration, m.MarketVerify, m.EventsIngested, m.EventsRejected)
 	return m
 }
@@ -65,4 +71,9 @@ func (m *Metrics) RegisterDBPool(stats func() DBStats) {
 // Handler serves /metrics.
 func (m *Metrics) Handler() http.Handler {
 	return promhttp.HandlerFor(m.Registry, promhttp.HandlerOpts{})
+}
+
+// RegisterGauge exports a gauge computed on every scrape (support queue depth etc.).
+func (m *Metrics) RegisterGauge(name, help string, f func() float64) {
+	m.Registry.MustRegister(prometheus.NewGaugeFunc(prometheus.GaugeOpts{Name: name, Help: help}, f))
 }

@@ -5,7 +5,7 @@
   "description": "Every key has a bundled default in config-data/config/default.json. Unknown keys are rejected so typos fail at publish time.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["limits", "pricing", "trial", "paywall", "entitlement", "economy", "adventure", "streak", "notifications", "safety", "features", "update"],
+  "required": ["limits", "pricing", "trial", "paywall", "entitlement", "economy", "adventure", "streak", "notifications", "safety", "features", "support", "update"],
   "$defs": {
     "productId": {"type": "string", "pattern": "^[a-z0-9_]{1,64}$"},
     "key": {"type": "string", "pattern": "^[a-z0-9_]{1,64}$"},
@@ -149,6 +149,24 @@
       "properties": {
         "rive_cat": {"type": "boolean"}, "widgets": {"type": "boolean"}, "backup": {"type": "boolean"},
         "phone_link": {"type": "boolean"}, "seasonal_packs": {"type": "boolean"}, "stats_deep": {"type": "boolean"}
+      }
+    },
+    "support": {
+      "type": "object", "additionalProperties": false,
+      "required": ["enabled", "hours", "timezone", "max_message_chars", "poll_schedule", "unanswered_alert"],
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "hours": {"type": "array", "maxItems": 14, "items": {
+          "type": "object", "additionalProperties": false, "required": ["weekday", "from", "to"],
+          "properties": {"weekday": {"type": "integer", "minimum": 0, "maximum": 6}, "from": {"$ref": "#/$defs/hhmm"}, "to": {"$ref": "#/$defs/hhmm"}}}},
+        "timezone": {"type": "string", "minLength": 1},
+        "max_message_chars": {"type": "integer", "minimum": 100, "maximum": 5000},
+        "poll_schedule": {"type": "object", "additionalProperties": false,
+          "required": ["first_interval_minutes", "first_window_hours", "second_interval_hours", "stop_after_days"],
+          "properties": {"first_interval_minutes": {"$ref": "#/$defs/posInt"}, "first_window_hours": {"$ref": "#/$defs/posInt"},
+                         "second_interval_hours": {"$ref": "#/$defs/posInt"}, "stop_after_days": {"$ref": "#/$defs/posInt"}}},
+        "unanswered_alert": {"type": "object", "additionalProperties": false, "required": ["count", "minutes"],
+          "properties": {"count": {"$ref": "#/$defs/posInt"}, "minutes": {"$ref": "#/$defs/posInt"}}}
       }
     },
     "update": {

@@ -68,7 +68,9 @@ void main() {
     walk('', raw);
     final src = File('lib/core/config/app_config.dart').readAsStringSync();
     final accessors = RegExp(r"_(?:get|strings)(?:<[^(]*>)?\('([a-z0-9_.]+)'\)").allMatches(src).map((m) => m.group(1)!).toSet();
-    bool covered(String leaf) => accessors.any((a) => leaf == a || leaf.startsWith('$a.'));
+    // Keys only the server reads (alert rules); the app needs no getter for them.
+    const serverOnly = ['support.unanswered_alert'];
+    bool covered(String leaf) => serverOnly.any(leaf.startsWith) || accessors.any((a) => leaf == a || leaf.startsWith('$a.'));
     expect(leaves.where((l) => !covered(l)), isEmpty, reason: 'keys in default.json that no AppConfig getter reads');
     bool exists(String a) {
       Object? cur = raw;

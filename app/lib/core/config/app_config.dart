@@ -87,6 +87,17 @@ class AppConfig {
   int get safetyLowMoodWindowDays => _get('safety.low_mood_window_days');
   int get safetyCardCooldownHours => _get('safety.card_cooldown_hours');
 
+  // support.*
+  bool get supportEnabled => _get('support.enabled');
+  int get supportMaxMessageChars => _get('support.max_message_chars');
+  String get supportTimezone => _get('support.timezone');
+  List<SupportHours> get supportHours =>
+      _get<List<dynamic>>('support.hours').map((e) => SupportHours.fromJson(e as Map<String, dynamic>)).toList();
+  int get supportPollFirstMinutes => _get('support.poll_schedule.first_interval_minutes');
+  int get supportPollFirstWindowHours => _get('support.poll_schedule.first_window_hours');
+  int get supportPollSecondHours => _get('support.poll_schedule.second_interval_hours');
+  int get supportPollStopDays => _get('support.poll_schedule.stop_after_days');
+
   // features.*
   bool feature(String name) => (_get<Map<String, dynamic>>('features')[name] as bool?) ?? false;
 
@@ -127,4 +138,13 @@ class AdventureLocationConfig {
   final int coinsMin;
   final int coinsMax;
   final double itemDropRate;
+}
+
+/// One support opening window (`weekday` 0 = Saturday … 6 = Friday, "HH:mm" local time of `support.timezone`).
+class SupportHours {
+  const SupportHours({required this.weekday, required this.from, required this.to});
+  factory SupportHours.fromJson(Map<String, dynamic> j) => SupportHours(weekday: j['weekday'] as int, from: j['from'] as String, to: j['to'] as String);
+  final int weekday;
+  final String from;
+  final String to;
 }

@@ -14,6 +14,8 @@ import (
 	"github.com/emirdatcom/pashmak/backend/internal/modules/content"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/entitlement"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/remoteconfig"
+	"github.com/emirdatcom/pashmak/backend/internal/modules/support"
+	"github.com/emirdatcom/pashmak/backend/internal/modules/support/operatorpanel"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/user"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/clock"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/httpx"
@@ -55,6 +57,8 @@ type Deps struct {
 	Admin        *admin.Service
 	Phone        *auth.PhoneService // nil unless an SMS provider is configured
 	Backup       *backup.Service
+	Support      *support.Service
+	SupportPanel *operatorpanel.Panel
 }
 
 // Handler builds the router with the global middleware chain:
@@ -98,12 +102,18 @@ func Handler(d Deps) (*httpx.Router, http.Handler) {
 		if d.Backup != nil {
 			backup.Register(r, d.Backup, requireAuth, d.Clock)
 		}
+		if d.Support != nil {
+			support.Register(r, d.Support, requireAuth, d.Auth, d.Clock)
+		}
 	}
 	if d.Content != nil {
 		content.Register(r, d.Content)
 	}
 	if d.Admin != nil {
 		admin.Register(r, d.Admin)
+	}
+	if d.SupportPanel != nil {
+		d.SupportPanel.Register(r)
 	}
 	// Generous global per-IP limit; stricter per-route limits are added by modules.
 	global := httpx.NewRateLimiter(d.Clock, 120, 6000)

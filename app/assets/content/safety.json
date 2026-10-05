@@ -13,19 +13,19 @@
         "label_key": "safety.hotline.social_emergency",
         "number": "123",
         "hours_key": "safety.hours.always",
-        "verified_at": null
+        "verified_at": "2026-10-05T00:00:00Z"
       },
       {
         "label_key": "safety.hotline.counseling",
         "number": "1480",
-        "hours_key": "safety.hours.always",
-        "verified_at": null
+        "hours_key": "safety.hours.varies",
+        "verified_at": "2026-10-05T00:00:00Z"
       },
       {
         "label_key": "safety.hotline.medical_emergency",
         "number": "115",
         "hours_key": "safety.hours.always",
-        "verified_at": null
+        "verified_at": "2026-10-05T00:00:00Z"
       }
     ],
     "keywords": [

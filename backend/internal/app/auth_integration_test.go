@@ -31,6 +31,8 @@ import (
 	"github.com/emirdatcom/pashmak/backend/internal/modules/content"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/entitlement"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/remoteconfig"
+	"github.com/emirdatcom/pashmak/backend/internal/modules/support"
+	"github.com/emirdatcom/pashmak/backend/internal/modules/support/operatorpanel"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/user"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/clock"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/crypt"
@@ -53,6 +55,9 @@ type env struct {
 	sink *recordingSink
 	an   *analytics.Service
 	sms  *recordingSMS
+	sup  *support.Service
+	scfg *testSupportCfg
+	srv  *httptest.Server
 }
 
 // recordingSMS captures OTP codes instead of sending them.
@@ -156,7 +161,7 @@ func newEnv(t *testing.T) *env {
 	ct := content.NewService(pool, sch, clk)
 	hash, _ := bcrypt.GenerateFromPassword([]byte(adminPass), bcrypt.MinCost)
 	adm, err := admin.New(admin.Options{Pool: pool, Config: rc, Content: ct, Grants: ent, Clock: clk,
-		User: "admin", PasswordHash: string(hash), Allowlist: []string{"10.200.0.0/16"}})
+		User: "admin", PasswordHash: string(hash), Allowlist: []string{"10.200.0.0/16", "127.0.0.1"}})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -168,8 +173,17 @@ func newEnv(t *testing.T) *env {
 	ph := auth.NewPhoneService(pool, a, box, sms, clk, bs)
 	bk := backup.NewService(pool, clk, 0)
 	u.AddHook(bk)
+	scfg := &testSupportCfg{c: support.DefaultConfig()}
+	scfg.c.Hours = nil // always "outside hours" unless a test sets windows
+	hub := support.NewHub(pool)
+	sup := support.NewService(pool, clk, box, scfg, hub, support.Observer{})
+	u.AddHook(sup)
+	ctxHub, cancelHub := context.WithCancel(context.Background())
+	t.Cleanup(cancelHub)
+	go hub.Run(ctxHub)
+	panel := operatorpanel.New(operatorpanel.Options{Pool: pool, Support: sup, Grants: ent, Clock: clk, Guard: adm.IPGuard()})
 	_, h := app.Handler(app.Deps{DB: pool, Metrics: metrics.New(), Clock: clk, Auth: a, User: u, Entitle: ent, Billing: bs,
-		RemoteConfig: rc, Content: ct, Analytics: an, Admin: adm, Phone: ph, Backup: bk})
+		RemoteConfig: rc, Content: ct, Analytics: an, Admin: adm, Phone: ph, Backup: bk, Support: sup, SupportPanel: panel})
 	doc, err := openapi3.NewLoader().LoadFromFile("../../api/openapi.yaml")
 	if err != nil {
 		t.Fatal(err)
@@ -178,7 +192,7 @@ func newEnv(t *testing.T) *env {
 		t.Fatalf("openapi invalid: %v", err)
 	}
 	u.AddHook(an)
-	return &env{h: h, clk: clk, t: t, doc: doc, pool: pool, ent: ent, bill: bs, fake: f, sink: sink, an: an, sms: sms}
+	return &env{h: h, clk: clk, t: t, doc: doc, pool: pool, ent: ent, bill: bs, fake: f, sink: sink, an: an, sms: sms, sup: sup, scfg: scfg}
 }
 
 // call performs a request, validates the response against openapi.yaml and returns status + body.

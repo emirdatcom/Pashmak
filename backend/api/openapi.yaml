@@ -413,10 +413,220 @@ paths:
       responses:
         "204": {description: deleted}
         "401": {$ref: "#/components/responses/Error"}
+  /v1/support/conversation:
+    get:
+      operationId: supportConversation
+      security: [{bearer: []}]
+      responses:
+        "200": {description: summary, content: {application/json: {schema: {$ref: "#/components/schemas/SupportConversation"}}}}
+        "401": {$ref: "#/components/responses/Error"}
+        "503": {$ref: "#/components/responses/Error"}
+    delete:
+      operationId: supportDeleteConversation
+      security: [{bearer: []}]
+      responses:
+        "204": {description: the user's conversation and messages are deleted}
+        "401": {$ref: "#/components/responses/Error"}
+  /v1/support/messages:
+    get:
+      operationId: supportMessages
+      security: [{bearer: []}]
+      parameters:
+        - {name: after, in: query, required: false, schema: {type: string, format: uuid}}
+        - {name: before, in: query, required: false, schema: {type: string, format: uuid}}
+        - {name: limit, in: query, required: false, schema: {type: integer, minimum: 1, maximum: 100}}
+      responses:
+        "200": {description: page, content: {application/json: {schema: {type: object, required: [messages, has_more], properties: {messages: {type: array, items: {$ref: "#/components/schemas/SupportMessage"}}, has_more: {type: boolean}}}}}}
+        "400": {$ref: "#/components/responses/Error"}
+        "401": {$ref: "#/components/responses/Error"}
+    post:
+      operationId: supportSend
+      security: [{bearer: []}]
+      requestBody:
+        required: true
+        content: {application/json: {schema: {type: object, additionalProperties: false, required: [client_msg_id, body], properties: {client_msg_id: {type: string, format: uuid}, body: {type: string, maxLength: 5000}, include_device_meta: {type: boolean}}}}}
+      responses:
+        "200": {description: stored (idempotent on client_msg_id), content: {application/json: {schema: {$ref: "#/components/schemas/SupportMessage"}}}}
+        "400": {$ref: "#/components/responses/Error"}
+        "401": {$ref: "#/components/responses/Error"}
+        "429": {$ref: "#/components/responses/Error"}
+        "503": {$ref: "#/components/responses/Error"}
+  /v1/support/read:
+    post:
+      operationId: supportRead
+      security: [{bearer: []}]
+      requestBody:
+        required: true
+        content: {application/json: {schema: {type: object, additionalProperties: false, required: [up_to_message_id], properties: {up_to_message_id: {type: string, format: uuid}}}}}
+      responses:
+        "204": {description: marked read}
+        "400": {$ref: "#/components/responses/Error"}
+        "401": {$ref: "#/components/responses/Error"}
+  /v1/support/ws:
+    get:
+      operationId: supportSocket
+      description: "WebSocket. First client frame {type:auth, token}; server frames ready, message.new, message.read, conversation.status, pong. Close 4401 = unauthorized, 4503 = disabled."
+      responses:
+        "101": {description: switching protocols}
+  /admin/v1/support/login:
+    post:
+      operationId: supportOperatorLogin
+      requestBody:
+        required: true
+        content: {application/json: {schema: {type: object, additionalProperties: false, required: [username, password], properties: {username: {type: string}, password: {type: string}}}}}
+      responses:
+        "200": {description: session cookie op_session set, content: {application/json: {schema: {type: object, required: [username, display_name, role, csrf], properties: {username: {type: string}, display_name: {type: string}, role: {type: string, enum: [agent, admin]}, csrf: {type: string}}}}}}
+        "401": {$ref: "#/components/responses/Error"}
+        "403": {$ref: "#/components/responses/Error"}
+        "429": {$ref: "#/components/responses/Error"}
+  /admin/v1/support/logout:
+    post:
+      operationId: supportOperatorLogout
+      security: [{operatorSession: []}]
+      responses:
+        "204": {description: logged out}
+        "401": {$ref: "#/components/responses/Error"}
+        "403": {$ref: "#/components/responses/Error"}
+  /admin/v1/support/me:
+    get:
+      operationId: supportOperatorMe
+      security: [{operatorSession: []}]
+      responses:
+        "200": {description: operator, content: {application/json: {schema: {type: object}}}}
+        "401": {$ref: "#/components/responses/Error"}
+        "403": {$ref: "#/components/responses/Error"}
+  /admin/v1/support/conversations:
+    get:
+      operationId: supportQueue
+      security: [{operatorSession: []}]
+      parameters: [{name: status, in: query, required: false, schema: {type: string, enum: [open, waiting_user, closed]}}]
+      responses:
+        "200": {description: queue (oldest unanswered first), content: {application/json: {schema: {type: object, required: [conversations], properties: {conversations: {type: array, items: {type: object}}}}}}}
+        "400": {$ref: "#/components/responses/Error"}
+        "401": {$ref: "#/components/responses/Error"}
+        "403": {$ref: "#/components/responses/Error"}
+  /admin/v1/support/conversations/{id}:
+    get:
+      operationId: supportConversationDetail
+      security: [{operatorSession: []}]
+      parameters: [{name: id, in: path, required: true, schema: {type: string, format: uuid}}]
+      responses:
+        "200": {description: "facts, consented device meta, entitlement status", content: {application/json: {schema: {type: object}}}}
+        "401": {$ref: "#/components/responses/Error"}
+        "403": {$ref: "#/components/responses/Error"}
+        "404": {$ref: "#/components/responses/Error"}
+  /admin/v1/support/conversations/{id}/messages:
+    get:
+      operationId: supportOperatorMessages
+      security: [{operatorSession: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string, format: uuid}}
+        - {name: after, in: query, required: false, schema: {type: string, format: uuid}}
+        - {name: before, in: query, required: false, schema: {type: string, format: uuid}}
+      responses:
+        "200": {description: page, content: {application/json: {schema: {type: object, required: [messages, has_more], properties: {messages: {type: array, items: {$ref: "#/components/schemas/SupportMessage"}}, has_more: {type: boolean}}}}}}
+        "401": {$ref: "#/components/responses/Error"}
+        "403": {$ref: "#/components/responses/Error"}
+        "404": {$ref: "#/components/responses/Error"}
+    post:
+      operationId: supportOperatorReply
+      security: [{operatorSession: []}]
+      parameters: [{name: id, in: path, required: true, schema: {type: string, format: uuid}}]
+      requestBody:
+        required: true
+        content: {application/json: {schema: {type: object, additionalProperties: false, required: [body], properties: {body: {type: string}}}}}
+      responses:
+        "200": {description: stored, content: {application/json: {schema: {$ref: "#/components/schemas/SupportMessage"}}}}
+        "400": {$ref: "#/components/responses/Error"}
+        "401": {$ref: "#/components/responses/Error"}
+        "403": {$ref: "#/components/responses/Error"}
+        "404": {$ref: "#/components/responses/Error"}
+  /admin/v1/support/conversations/{id}/read:
+    post:
+      operationId: supportOperatorRead
+      security: [{operatorSession: []}]
+      parameters: [{name: id, in: path, required: true, schema: {type: string, format: uuid}}]
+      requestBody:
+        required: true
+        content: {application/json: {schema: {type: object, additionalProperties: false, required: [up_to_message_id], properties: {up_to_message_id: {type: string, format: uuid}}}}}
+      responses:
+        "204": {description: ok}
+        "400": {$ref: "#/components/responses/Error"}
+        "401": {$ref: "#/components/responses/Error"}
+        "403": {$ref: "#/components/responses/Error"}
+  /admin/v1/support/conversations/{id}/assign:
+    post:
+      operationId: supportOperatorAssign
+      security: [{operatorSession: []}]
+      parameters: [{name: id, in: path, required: true, schema: {type: string, format: uuid}}]
+      requestBody: {required: false, content: {application/json: {schema: {type: object}}}}
+      responses:
+        "204": {description: assigned to the caller}
+        "401": {$ref: "#/components/responses/Error"}
+        "403": {$ref: "#/components/responses/Error"}
+        "404": {$ref: "#/components/responses/Error"}
+  /admin/v1/support/conversations/{id}/close:
+    post:
+      operationId: supportOperatorClose
+      security: [{operatorSession: []}]
+      parameters: [{name: id, in: path, required: true, schema: {type: string, format: uuid}}]
+      requestBody: {required: false, content: {application/json: {schema: {type: object}}}}
+      responses:
+        "204": {description: closed}
+        "401": {$ref: "#/components/responses/Error"}
+        "403": {$ref: "#/components/responses/Error"}
+        "404": {$ref: "#/components/responses/Error"}
+  /admin/v1/support/canned:
+    get:
+      operationId: supportCannedList
+      security: [{operatorSession: []}]
+      responses:
+        "200": {description: canned replies, content: {application/json: {schema: {type: object, required: [canned], properties: {canned: {type: array, items: {type: object}}}}}}}
+        "401": {$ref: "#/components/responses/Error"}
+        "403": {$ref: "#/components/responses/Error"}
+  /admin/v1/support/canned/{key}:
+    put:
+      operationId: supportCannedPut
+      description: role admin only
+      security: [{operatorSession: []}]
+      parameters: [{name: key, in: path, required: true, schema: {type: string}}]
+      requestBody:
+        required: true
+        content: {application/json: {schema: {type: object, additionalProperties: false, required: [title, body], properties: {title: {type: string}, body: {type: string}, active: {type: boolean}}}}}
+      responses:
+        "204": {description: saved}
+        "400": {$ref: "#/components/responses/Error"}
+        "401": {$ref: "#/components/responses/Error"}
+        "403": {$ref: "#/components/responses/Error"}
+    delete:
+      operationId: supportCannedDelete
+      description: role admin only
+      security: [{operatorSession: []}]
+      parameters: [{name: key, in: path, required: true, schema: {type: string}}]
+      responses:
+        "204": {description: deleted}
+        "401": {$ref: "#/components/responses/Error"}
+        "403": {$ref: "#/components/responses/Error"}
+  /admin/v1/support/users/{id}/grant:
+    post:
+      operationId: supportOperatorGrant
+      description: role admin only; audited
+      security: [{operatorSession: []}]
+      parameters: [{name: id, in: path, required: true, schema: {type: string, format: uuid}}]
+      requestBody:
+        required: true
+        content: {application/json: {schema: {type: object, additionalProperties: false, required: [days, reason], properties: {days: {type: integer, minimum: 1, maximum: 365}, reason: {type: string}}}}}
+      responses:
+        "201": {description: granted, content: {application/json: {schema: {type: object}}}}
+        "400": {$ref: "#/components/responses/Error"}
+        "401": {$ref: "#/components/responses/Error"}
+        "403": {$ref: "#/components/responses/Error"}
+        "404": {$ref: "#/components/responses/Error"}
 components:
   securitySchemes:
     bearer: {type: http, scheme: bearer, bearerFormat: JWT}
     basic: {type: http, scheme: basic}
+    operatorSession: {type: apiKey, in: cookie, name: op_session}
   responses:
     Error:
       description: error
@@ -438,7 +648,7 @@ components:
           type: object
           required: [code, message, request_id]
           properties:
-            code: {type: string, enum: [INVALID_INPUT, UNAUTHENTICATED, TOKEN_INVALID, TOKEN_REUSED, FORBIDDEN, NOT_FOUND, TRIAL_ALREADY_USED, TRIAL_DISABLED, PURCHASE_ALREADY_CLAIMED, PURCHASE_INVALID, PAYLOAD_TOO_LARGE, BACKUP_TOO_LARGE, RATE_LIMITED, UPGRADE_REQUIRED, MARKET_UNAVAILABLE, INTERNAL, PHONE_INVALID, OTP_INVALID, OTP_EXPIRED, SMS_UNAVAILABLE]}
+            code: {type: string, enum: [INVALID_INPUT, UNAUTHENTICATED, TOKEN_INVALID, TOKEN_REUSED, FORBIDDEN, NOT_FOUND, TRIAL_ALREADY_USED, TRIAL_DISABLED, PURCHASE_ALREADY_CLAIMED, PURCHASE_INVALID, PAYLOAD_TOO_LARGE, BACKUP_TOO_LARGE, RATE_LIMITED, UPGRADE_REQUIRED, MARKET_UNAVAILABLE, INTERNAL, PHONE_INVALID, OTP_INVALID, OTP_EXPIRED, SMS_UNAVAILABLE, SUPPORT_DISABLED]}
             message: {type: string}
             request_id: {type: string}
     EntitlementState:
@@ -462,6 +672,28 @@ components:
         payload: {type: object, additionalProperties: true}
         experiments: {type: object, additionalProperties: {type: string}}
         etag: {type: string}
+    SupportConversation:
+      type: object
+      required: [status, unread_count, online]
+      properties:
+        conversation_id: {type: string, format: uuid}
+        status: {type: string, enum: [none, open, waiting_user, closed]}
+        unread_count: {type: integer}
+        operator_display_name: {type: string}
+        online: {type: boolean}
+        next_online_at: {type: string, format: date-time}
+    SupportMessage:
+      type: object
+      required: [id, sender, body, created_at, read_at]
+      properties:
+        id: {type: string, format: uuid}
+        conversation_id: {type: string, format: uuid}
+        sender: {type: string, enum: [user, operator, system]}
+        body: {type: string}
+        created_at: {type: string, format: date-time}
+        read_at: {type: string, format: date-time, nullable: true}
+        operator_display_name: {type: string}
+        client_msg_id: {type: string, format: uuid}
     Event:
       type: object
       required: [event_id, name, ts, session_id, props]

@@ -31,6 +31,7 @@ const (
 	CodeOTPInvalid        Code = "OTP_INVALID"
 	CodeOTPExpired        Code = "OTP_EXPIRED"
 	CodeSMSUnavailable    Code = "SMS_UNAVAILABLE"
+	CodeSupportDisabled   Code = "SUPPORT_DISABLED"
 )
 
 // Status maps every API code to its HTTP status.
@@ -55,6 +56,7 @@ var Status = map[Code]int{
 	CodeOTPInvalid:        http.StatusBadRequest,
 	CodeOTPExpired:        http.StatusBadRequest,
 	CodeSMSUnavailable:    http.StatusServiceUnavailable,
+	CodeSupportDisabled:   http.StatusServiceUnavailable,
 }
 
 // Error is a domain error carrying an API code. Services return these (or wrap them with %w).

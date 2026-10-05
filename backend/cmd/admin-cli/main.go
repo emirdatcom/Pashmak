@@ -7,6 +7,7 @@
 //	admin-cli activate-config <version>
 //	admin-cli publish-content <dir>
 //	admin-cli experiment put <file>
+//	admin-cli support-operator add|disable|enable|reset-password   support chat operators (password on stdin)
 package main
 
 import (
@@ -37,6 +38,8 @@ func run(args []string) error {
 	switch args[0] {
 	case "keygen":
 		return keygen(args[1:])
+	case "support-operator":
+		return supportOperator(args[1:])
 	case "hash-password":
 		return hashPassword()
 	case "seed-products":
