@@ -53,10 +53,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
     await ref.read(adventureServiceProvider).current();
     await ref.read(analyticsProvider).track(AnalyticsEvent.appOpened, {'source': 'launcher'});
     await _syncEntitlements();
-    unawaited(ref.read(analyticsFlusherProvider).flush().then((_) {}, onError: (Object _) {}));
+    unawaited(_flushAnalytics());
     final scheduler = ref.read(notificationSchedulerProvider);
     await scheduler.recordOpen();
     await scheduler.replan();
+  }
+
+  /// Best effort: analytics must never disturb the screen (offline, no session yet, tests without an API client).
+  Future<void> _flushAnalytics() async {
+    try {
+      await ref.read(analyticsFlusherProvider).flush();
+    } catch (_) {}
   }
 
   /// Delivers queued trial/purchase calls, refreshes the signed state (at most every 6h) and reacts to expiry.
