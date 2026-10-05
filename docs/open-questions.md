@@ -103,3 +103,10 @@
 - **A43 (صفحات ناقص):** `/settings/terms` هنوز placeholder است (متن شرایط استفاده تدوین نشده). آمار عمیق (حال و الگوها) فقط پشت `PremiumGate(stats_deep)` با پیام «به‌زودی» است (فاز 16).
 - **تست‌ها:** تست‌های golden تصویری نوشته نشد؛ جایگزین آن تست overflow در `textScale` ۱٫۰ و ۱٫۳ (تم روشن/تیره) است. جریان «نصب تا خرید» به‌صورت تست دامنه (`test/e2e_flow_test.dart`) اجرا می‌شود، نه `integration_test` روی دستگاه. TalkBack، `FLAG_SECURE` (`setSecure` در MainActivity)، share intent خروجی (`share_plus`) و اندازه‌ی APK/شروع سرد **روی دستگاه آزموده نشده‌اند** (`docs/perf-report.md`).
 - یک باگ واقعی با تست textScale پیدا و رفع شد: ردیف حال‌های چک‌این در ۱٫۳ overflow می‌کرد (اکنون `Wrap`)، و بنر پایان تریال/کارت آمار قفل با `ListTile`+trailing.
+
+## یافته‌ها و تصمیم‌های پرامپت 20 (یکپارچه‌سازی و انتشار) — آنچه در این محیط ممکن بود
+- **انجام و تست‌شده:** ارسال رویدادها به `/v1/events` (قبلاً فقط صف می‌شدند! بدون این، هیچ آنالیتیکسی به سرور نمی‌رسید)، props مشترک (`app_version`، `market`، `is_premium`، `trial_state`، `install_age_days`، `session_id`)، تست قرارداد اپ↔OpenAPI و `default.json`↔`AppConfig`، fixture مشترک Go↔Dart.
+- **نوشته‌شده ولی اجرا نشده (نیازمند محیط واقعی):** staging compose، k6 (`load/k6`)، `scripts/smoke.sh`، `integration_test/e2e_flow_test.dart` + `e2e.yml`، `release.yml`، `docs/runbook.md`، `docs/store-listing.md`، `docs/release-checklist-1.0.0.md`. هیچ سناریوی E2E روی staging، تست بار، استقرار production، خرید واقعی در مارکت، restore بکاپ و ساخت APK انجام **نشده** و در چک‌لیست با ⬜/🟡 مشخص است.
+- **امضای release:** `build.gradle.kts` حالا keystore را از env/`key.properties` (خارج از repo) می‌خواند؛ بدون آن، build release با کلید debug امضا می‌شود و **قابل انتشار نیست**.
+- **A44:** کلید عمومی entitlement (`assets/keys/entitlement_pub.json`) باید قبل از انتشار پر شود؛ خالی ⇒ همه‌ی کاربران رایگان (fail-safe). چرخش کلید `ent-` باید ابتدا در اپ منتشر شود (runbook §۴).
+- **V مرتبط با MVP هنوز باز:** V2، V3، V4 (کد Kotlin بازارها آزمایش نشده)، V6 (کاوه‌نگار)، V8 (object storage)، V9 (شماره‌های کمک)، V10/V14 (الزامات مارکت). طبق معیار پذیرش پرامپت 20 تا بسته‌شدن یا پذیرش صریح ریسک، انتشار MVP **آماده نیست**.

@@ -123,6 +123,9 @@ Future<Object> buildOverrides(Flavor flavor) async {
   final onboarded = await db.meta('onboarding_completed') == 'true';
   final catName = await db.meta('cat_name') ?? '';
   final dayStart = (int.tryParse(await db.setting('day_start_hour') ?? '') ?? 4).clamp(0, 6);
+  final installAt = int.tryParse(await db.meta('install_at') ?? '') ?? clock.now().millisecondsSinceEpoch;
+  if (await db.meta('install_at') == null) await db.setMeta('install_at', '$installAt');
+  final installAge = clock.now().difference(DateTime.fromMillisecondsSinceEpoch(installAt)).inDays;
   final themeMode = ThemeModeNotifier.parse(await db.setting('theme_mode'));
   final softDismissed = await db.meta('soft_update_dismissed_day') == LocalDay.today(clock, dayStartHour: dayStart).value;
 
@@ -141,6 +144,7 @@ Future<Object> buildOverrides(Flavor flavor) async {
     catNameProvider.overrideWith(() => _PresetCatName(catName)),
     dayStartHourProvider.overrideWith(() => _PresetDayStart(dayStart)),
     themeModeProvider.overrideWith(() => _PresetTheme(themeMode)),
+    installAgeDaysProvider.overrideWith(() => _PresetAge(installAge)),
     softUpdateDismissedProvider.overrideWith(() => _PresetSoftUpdate(softDismissed)),
   ]);
 }
@@ -178,6 +182,13 @@ class _PresetSoftUpdate extends SoftUpdateDismissedNotifier {
   final bool _v;
   @override
   bool build() => _v;
+}
+
+class _PresetAge extends InstallAgeNotifier {
+  _PresetAge(this._v);
+  final int _v;
+  @override
+  int build() => _v;
 }
 
 class _PresetTheme extends ThemeModeNotifier {

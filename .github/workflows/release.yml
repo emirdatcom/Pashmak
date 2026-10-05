@@ -1,0 +1,41 @@
+name: release
+# Manual release build per flavor. Secrets live only in the repository secret store (never in the repo).
+on:
+  workflow_dispatch:
+    inputs:
+      flavor: {description: "bazaar | myket", required: true, default: bazaar}
+      api_base_url: {description: "Production API base URL", required: true}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults: {run: {working-directory: app}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: {channel: stable, cache: true}
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: "17"}
+      - run: sudo apt-get update && sudo apt-get install -y libsqlcipher1
+      - run: flutter pub get
+      - run: flutter analyze && flutter test
+      - name: restore keystore
+        run: echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 -d > "$RUNNER_TEMP/release.jks"
+      - name: build
+        env:
+          RELEASE_KEYSTORE_PATH: ${{ runner.temp }}/release.jks
+          RELEASE_KEYSTORE_PASSWORD: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
+          RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+          MYKET_RSA_KEY: ${{ secrets.MYKET_RSA_KEY }}
+          BAZAAR_RSA_KEY: ${{ secrets.BAZAAR_RSA_KEY }}
+        run: >
+          flutter build apk --release --flavor ${{ inputs.flavor }} -t lib/main_${{ inputs.flavor }}.dart
+          --split-per-abi --obfuscate --split-debug-info=build/symbols
+          --dart-define=API_BASE_URL=${{ inputs.api_base_url }}
+          --dart-define=MYKET_RSA_KEY=$MYKET_RSA_KEY --dart-define=BAZAAR_RSA_KEY=$BAZAAR_RSA_KEY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.flavor }}-apks-and-symbols
+          path: |
+            app/build/app/outputs/flutter-apk/*.apk
+            app/build/symbols

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart' show ThemeMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
+import 'analytics/analytics_flusher.dart';
 import 'analytics/analytics_service.dart';
 import 'auth/device_identity.dart';
 import 'auth/token_store.dart';
@@ -58,7 +59,37 @@ final analyticsProvider = Provider<AnalyticsService>((ref) => QueueAnalytics(
       ref.watch(databaseProvider),
       ref.watch(clockProvider),
       sessionId: () => ref.read(sessionIdProvider),
+      commonProps: () => {
+        'app_version': ref.read(appVersionProvider),
+        'market': ref.read(flavorProvider).wireName,
+        'is_premium': ref.read(premiumProvider),
+        'trial_state': ref.read(trialStateProvider),
+        'install_age_days': ref.read(installAgeDaysProvider),
+        'session_id': ref.read(sessionIdProvider),
+      },
     ));
+
+final analyticsFlusherProvider = Provider<AnalyticsFlusher>((ref) =>
+    AnalyticsFlusher(ref.watch(databaseProvider), ref.watch(apiClientProvider), ref.watch(clockProvider)));
+
+/// Days since the first run; loaded in the bootstrap from `app_meta.install_at` (0 in tests).
+class InstallAgeNotifier extends Notifier<int> {
+  @override
+  int build() => 0;
+}
+
+final installAgeDaysProvider = NotifierProvider<InstallAgeNotifier, int>(InstallAgeNotifier.new);
+
+/// `none` / `active` / `ended` / `converted` (docs/70 §3), derived from the signed state.
+final trialStateProvider = Provider<String>((ref) {
+  final s = ref.watch(premiumStatusProvider);
+  final repo = ref.watch(entitlementRepositoryProvider);
+  if (s.isPremium && (s.source == 'pass' || s.source == 'subscription')) return 'converted';
+  if (s.isPremium && s.source == 'trial') return 'active';
+  final st = repo?.snapshot.state;
+  if (st != null && st.trialUsed) return 'ended';
+  return 'none';
+});
 
 /// Current effective config; replaced when a refresh brings new values.
 class AppConfigNotifier extends Notifier<AppConfig> {

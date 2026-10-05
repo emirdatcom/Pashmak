@@ -1,0 +1,13 @@
+# Staging: same images as production, separate project name/volumes, fake billing market adapter and a
+# short adventure/config for E2E. Usage (on the staging host):
+#   cp .env.staging.example .env      # APP_ENV=staging, BILLING_FAKE_ENABLED=true
+#   docker compose -p pashmak-staging -f docker-compose.yml -f docker-compose.staging.yml up -d --build
+# The app talks to it with: --dart-define=API_BASE_URL=https://staging-api.example.ir
+services:
+  api:
+    environment:
+      APP_ENV: staging
+      BILLING_FAKE_ENABLED: "true"
+  caddy:
+    environment:
+      API_DOMAIN: ${STAGING_API_DOMAIN:-staging-api.example.ir}

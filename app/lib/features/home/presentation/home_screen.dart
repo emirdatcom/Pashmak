@@ -53,6 +53,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
     await ref.read(adventureServiceProvider).current();
     await ref.read(analyticsProvider).track(AnalyticsEvent.appOpened, {'source': 'launcher'});
     await _syncEntitlements();
+    unawaited(ref.read(analyticsFlusherProvider).flush().then((_) {}, onError: (Object _) {}));
     final scheduler = ref.read(notificationSchedulerProvider);
     await scheduler.recordOpen();
     await scheduler.replan();

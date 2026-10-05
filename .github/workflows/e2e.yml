@@ -1,0 +1,39 @@
+name: e2e
+# Manual: needs a reachable staging backend and an Android emulator. Nothing here runs on every push.
+on:
+  workflow_dispatch:
+    inputs:
+      api_base_url: {description: "Staging API base URL", required: true}
+jobs:
+  smoke-and-load:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: smoke
+        run: scripts/smoke.sh "${{ inputs.api_base_url }}"
+      - uses: grafana/setup-k6-action@v1
+      - name: load (config, events)
+        run: |
+          k6 run -e BASE_URL="${{ inputs.api_base_url }}" load/k6/config.js
+          k6 run -e BASE_URL="${{ inputs.api_base_url }}" load/k6/events.js
+  device:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: {channel: stable, cache: true}
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: "17"}
+      - run: sudo apt-get update && sudo apt-get install -y libsqlcipher1
+      - name: enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          working-directory: app
+          script: >
+            flutter test integration_test/e2e_flow_test.dart --flavor bazaar
+            --dart-define=API_BASE_URL=${{ inputs.api_base_url }} --dart-define=FAKE_BILLING=true
