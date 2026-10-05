@@ -1,5 +1,6 @@
 import '../db/app_database.dart';
 import '../time/clock.dart';
+import 'paywall_policy.dart';
 
 enum GateDecision {
   /// The user may proceed (premium, trigger disabled remotely, or nothing to gate).
@@ -37,14 +38,17 @@ class PremiumGate {
   /// [userInitiated]: the user tapped something premium (always allowed to see the paywall unless a
   /// forbidden context applies). Automatic paywalls also respect `paywall.cooldown_hours`.
   Future<GateDecision> evaluate(String trigger, {required bool isPremium, GateContext context = const GateContext(), bool userInitiated = true}) async {
-    if (isPremium || !triggerEnabled(trigger)) return GateDecision.allow;
-    if (context.inExercise || context.onSafetyScreen || context.lowMoodThisSession) return GateDecision.suppressed;
-    if (!context.onboardingCompleted && trigger != 'trial_offer') return GateDecision.suppressed;
-    if (!userInitiated) {
-      final last = int.tryParse(await _db.meta(_kLastShown) ?? '');
-      if (last != null && _clock.now().millisecondsSinceEpoch - last < cooldownHours() * 3600 * 1000) return GateDecision.suppressed;
-    }
-    return GateDecision.showPaywall;
+    final last = userInitiated ? null : int.tryParse(await _db.meta(_kLastShown) ?? '');
+    return PaywallPolicy.decide(
+      trigger: trigger,
+      isPremium: isPremium,
+      triggerEnabled: triggerEnabled(trigger),
+      context: context,
+      userInitiated: userInitiated,
+      lastShown: last == null ? null : DateTime.fromMillisecondsSinceEpoch(last),
+      now: _clock.now(),
+      cooldownHours: cooldownHours(),
+    );
   }
 
   Future<void> markShown() => _db.setMeta(_kLastShown, '${_clock.now().millisecondsSinceEpoch}');

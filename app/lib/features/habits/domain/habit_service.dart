@@ -83,6 +83,23 @@ class HabitService {
     return rows.length;
   }
 
+  /// Premium ended: every active habit not in [keepIds] becomes read-only (locked, never deleted).
+  Future<void> lockExcept(Set<String> keepIds) => _db.transaction(() async {
+        final rows = await (_db.select(_db.habits)..where(_active)).get();
+        for (final h in rows) {
+          final lock = !keepIds.contains(h.id);
+          if (h.isLocked != lock) {
+            await (_db.update(_db.habits)..where((t) => t.id.equals(h.id))).write(HabitsCompanion(isLocked: Value(lock), updatedAt: Value(_now())));
+          }
+        }
+      });
+
+  /// Premium restored: everything is writable again.
+  Future<void> unlockAll() => (_db.update(_db.habits)..where((h) => h.isLocked.equals(true))).write(HabitsCompanion(isLocked: const Value(false), updatedAt: Value(_now())));
+
+  /// Active habits (locked or not) — the lock-selection screen lists these.
+  Future<List<Habit>> activeHabits() => (_db.select(_db.habits)..where(_active)..orderBy([(h) => OrderingTerm.asc(h.sortOrder)])).get();
+
   /// Returns the gate that blocks creating this habit for a free user, or null if allowed.
   Future<HabitGate?> gateFor(HabitDraft draft, {required bool isPremium}) async {
     if (isPremium) return null;

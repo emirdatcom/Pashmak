@@ -2,6 +2,8 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        maven { url = uri("https://jitpack.io") } // Poolakey (bazaar flavor)
+        maven { url = uri("https://maven.myket.ir") } // Myket billing client (myket flavor)
     }
 }
 

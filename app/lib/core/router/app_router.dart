@@ -1,3 +1,5 @@
+import '../../features/monetization/presentation/entitlement_screens.dart';
+import '../../features/monetization/presentation/paywall_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -67,9 +69,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         GoRoute(path: 'result/:id', builder: (_, s) => AdventureResultScreen(adventureId: s.pathParameters['id']!)),
       ]),
       GoRoute(path: Routes.stats, builder: (_, _) => ph('stats')),
-      GoRoute(path: '/paywall', builder: (_, s) => ph('paywall?trigger=${s.uri.queryParameters['trigger'] ?? ''}')),
+      GoRoute(path: '/paywall', builder: (_, s) => PaywallScreen(trigger: s.uri.queryParameters['trigger'] ?? 'settings')),
+      GoRoute(path: Routes.trialEnded, builder: (_, _) => const TrialEndedScreen()),
+      GoRoute(path: Routes.lockSelect, builder: (_, _) => const LockSelectionScreen()),
       GoRoute(path: Routes.settings, builder: (_, _) => const SettingsScreen(), routes: [
         GoRoute(path: 'notifications', builder: (_, _) => const NotificationSettingsScreen()),
+        GoRoute(path: 'subscription', builder: (_, _) => const SubscriptionScreen()),
         GoRoute(path: ':section', builder: (_, s) => ph('settings/${s.pathParameters['section']}')),
       ]),
       GoRoute(path: Routes.safety, builder: (_, _) => const SafetyScreen()),

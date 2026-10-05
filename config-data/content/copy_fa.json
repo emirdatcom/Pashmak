@@ -366,6 +366,27 @@
     "settings.notifications.troubleshoot.samsung": "سامسونگ: تنظیمات ← باتری ← محدودیت‌های پس‌زمینه ← این برنامه رو از «برنامه‌های خواب» دربیار.",
     "settings.notifications.troubleshoot.huawei": "هواوی: تنظیمات ← باتری ← راه‌اندازی برنامه ← این برنامه رو «مدیریت دستی» کن و هر سه گزینه رو روشن بذار.",
     "settings.notifications.troubleshoot.other": "گوشی‌های دیگه: دنبال «بهینه‌سازی باتری» یا «مدیریت پس‌زمینه» بگرد و این برنامه رو مستثنی کن.",
-    "settings.privacy.placeholder": "به‌زودی"
+    "settings.privacy.placeholder": "به‌زودی",
+    "paywall.price_toman": "{n} تومان",
+    "paywall.pending": "پرداختت ثبت شد و داریم تأییدش می‌کنیم. تا اون موقع پریمیوم فعاله.",
+    "paywall.error.purchase": "پرداخت کامل نشد. اگه مبلغی کم شده، با «بازگردانی خرید» برمی‌گرده.",
+    "paywall.error.offline": "الان به اینترنت وصل نیستی؛ بعداً دوباره امتحان کن.",
+    "paywall.restore.done": "{n} خرید بازگردانی شد.",
+    "paywall.restore.none": "خریدی برای بازگردانی پیدا نشد.",
+    "paywall.trial_used": "دوره رایگان قبلاً روی این گوشی استفاده شده. تا پایان امروز پریمیوم می‌مونه.",
+    "paywall.unlocked": "پریمیوم فعال شد. ممنون که همراهی!",
+    "sub.title": "اشتراک من",
+    "sub.status.free": "الان نسخه‌ی رایگان رو داری.",
+    "sub.status.premium": "پریمیوم فعاله تا {date}.",
+    "sub.status.trial": "دوره‌ی رایگان تا {date} فعاله.",
+    "sub.status.grace": "داریم وضعیت اشتراکت رو بررسی می‌کنیم؛ تا اون موقع همه‌چیز فعاله.",
+    "sub.status.pending": "پرداختت در حال تأییده؛ تا اون موقع پریمیوم فعاله.",
+    "sub.upgrade": "دیدن پلن‌ها",
+    "lock.title": "کدوم عادت‌ها فعال بمونن؟",
+    "lock.body": "نسخه‌ی رایگان تا {n} عادت فعال داره. بقیه فقط قفل می‌شن و پاک نمی‌شن؛ با پریمیوم برمی‌گردن.",
+    "lock.selected": "انتخاب‌شده: {n}",
+    "lock.confirm": "تأیید",
+    "lock.later": "بعداً",
+    "trial.banner.action": "دیدن پلن‌ها"
   }
 }

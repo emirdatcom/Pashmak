@@ -19,6 +19,9 @@ class Routes {
   static const stats = '/stats';
   static String paywall(String trigger) => '/paywall?trigger=$trigger';
   static const settings = '/settings';
+  static const subscription = '/settings/subscription';
+  static const trialEnded = '/trial-ended';
+  static const lockSelect = '/lock-select';
   static const safety = '/safety';
   static const update = '/update';
 }

@@ -15,6 +15,9 @@ import '../../adventure/presentation/adventure_card.dart';
 import '../../cat/presentation/cat_view.dart';
 import '../../core_loop_providers.dart';
 import '../../habits/domain/habit_service.dart';
+import '../../monetization/domain/monetization_service.dart';
+import '../../monetization/monetization_providers.dart';
+import '../../monetization/presentation/entitlement_screens.dart';
 import '../../wallet/presentation/wallet_bar.dart';
 
 /// Home: greeting, cat, wallet, streak, today's habits, check-in, adventure and the kind safety card.
@@ -49,9 +52,37 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
     await ref.read(streakServiceProvider).evaluate(today);
     await ref.read(adventureServiceProvider).current();
     await ref.read(analyticsProvider).track(AnalyticsEvent.appOpened, {'source': 'launcher'});
+    await _syncEntitlements();
     final scheduler = ref.read(notificationSchedulerProvider);
     await scheduler.recordOpen();
     await scheduler.replan();
+  }
+
+  /// Delivers queued trial/purchase calls, refreshes the signed state (at most every 6h) and reacts to expiry.
+  Future<void> _syncEntitlements() async {
+    final repo = ref.read(entitlementRepositoryProvider);
+    if (repo == null) return;
+    final svc = ref.read(monetizationServiceProvider);
+    await svc.outbox.runDue();
+    await repo.refresh();
+    final habits = ref.read(habitServiceProvider);
+    final all = await habits.activeHabits();
+    final action = await svc.reconcile(
+      activeHabits: all.where((h) => !h.isLocked).length,
+      lockedHabits: all.where((h) => h.isLocked).length,
+      freeLimit: ref.read(appConfigProvider).freeActiveHabits,
+    );
+    if (!mounted) return;
+    switch (action) {
+      case ExpiryAction.unlockHabits:
+        await habits.unlockAll();
+      case ExpiryAction.showTrialEnded:
+        unawaited(context.push(Routes.trialEnded));
+      case ExpiryAction.showLockSelection:
+        unawaited(context.push(Routes.lockSelect));
+      case ExpiryAction.none:
+        break;
+    }
   }
 
   String _greetingKey(int hour) {
@@ -85,6 +116,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
         const SizedBox(height: AppSpacing.md),
         const WalletBar(),
         const SizedBox(height: AppSpacing.md),
+        const TrialEndingBanner(),
         if (cardVisible) _SafetyCard(),
         _StreakCard(current: streak?.current ?? 0),
         const SizedBox(height: AppSpacing.md),

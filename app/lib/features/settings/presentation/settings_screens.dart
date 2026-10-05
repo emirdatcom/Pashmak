@@ -19,6 +19,7 @@ class SettingsScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(copy.t('settings.title'))),
       body: ListView(children: [
         ListTile(leading: const Icon(Icons.notifications_none), title: Text(copy.t('settings.notifications.title')), trailing: const Icon(Icons.chevron_left), onTap: () => context.push('${Routes.settings}/notifications')),
+        ListTile(leading: const Icon(Icons.workspace_premium_outlined), title: Text(copy.t('sub.title')), trailing: const Icon(Icons.chevron_left), onTap: () => context.push(Routes.subscription)),
         ListTile(leading: const Icon(Icons.favorite_border), title: Text(copy.t('help.title')), trailing: const Icon(Icons.chevron_left), onTap: () => context.push(Routes.safety)),
       ]),
     );

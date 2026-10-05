@@ -5,6 +5,7 @@ import 'dart:io';
 import 'dart:ui' show PlatformDispatcher;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_timezone/flutter_timezone.dart';
@@ -22,6 +23,8 @@ import 'core/config/config_repository.dart';
 import 'core/content/content_repository.dart';
 import 'core/db/app_database.dart';
 import 'core/db/connection.dart';
+import 'core/entitlement/entitlement_repository.dart';
+import 'core/entitlement/signature_verifier.dart';
 import 'core/flavor.dart';
 import 'core/logger.dart';
 import 'core/network/api_client.dart';
@@ -114,6 +117,8 @@ Future<Object> buildOverrides(Flavor flavor) async {
     ),
     onBackgroundAction: notificationBackgroundHandler,
   );
+  final entitlements = EntitlementRepository(db, api, SignatureVerifier(await _loadEntitlementKeys()), clock, trialDays: () => config.current.trialDays);
+  await entitlements.load();
   final onboarded = await db.meta('onboarding_completed') == 'true';
   final catName = await db.meta('cat_name') ?? '';
 
@@ -126,10 +131,25 @@ Future<Object> buildOverrides(Flavor flavor) async {
     configRepositoryProvider.overrideWithValue(config),
     contentRepositoryProvider.overrideWithValue(content),
     deviceIdentityProvider.overrideWithValue(identity),
+    entitlementRepositoryProvider.overrideWithValue(entitlements),
     notificationServiceProvider.overrideWithValue(notifications),
     onboardingCompletedProvider.overrideWith(() => _PresetOnboarding(onboarded)),
     catNameProvider.overrideWith(() => _PresetCatName(catName)),
   ]);
+}
+
+/// Production keys ship in assets/keys/entitlement_pub.json. With no key the app can never trust a
+/// state and stays on the free tier (fail-safe). Staging/dev may add one with
+/// `--dart-define=ENT_PUBKEY=<kid>:<base64url public key>` without committing it.
+const _extraKey = String.fromEnvironment('ENT_PUBKEY');
+
+Future<EntitlementKeys> _loadEntitlementKeys() async {
+  final keys = EntitlementKeys.fromJson(await rootBundle.loadString('assets/keys/entitlement_pub.json'));
+  if (_extraKey.contains(':')) {
+    final i = _extraKey.indexOf(':');
+    return keys.withKey(_extraKey.substring(0, i), _extraKey.substring(i + 1));
+  }
+  return keys;
 }
 
 class _PresetOnboarding extends OnboardingCompletedNotifier {

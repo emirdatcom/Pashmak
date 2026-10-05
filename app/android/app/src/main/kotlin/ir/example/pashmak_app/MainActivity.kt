@@ -9,6 +9,7 @@ import io.flutter.plugin.common.MethodChannel
 class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        FlavorBilling.register(this, flutterEngine) // implemented per flavor (src/bazaar, src/myket)
         // Tiny channel: the raw ANDROID_ID used (salted+hashed server-side) to limit one trial per device.
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "app/device").setMethodCallHandler { call, result ->
             when (call.method) {

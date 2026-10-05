@@ -56,6 +56,10 @@ android {
 }
 
 dependencies {
+    // Each market flavor links only its own billing SDK.
+    "bazaarImplementation"("com.github.cafebazaar.Poolakey:poolakey:2.2.0")
+    "myketImplementation"("com.github.myketstore:myket-billing-client:1.19")
+    "myketImplementation"("com.google.code.gson:gson:2.10.1")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 }
 

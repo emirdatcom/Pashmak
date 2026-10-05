@@ -9,9 +9,11 @@ import 'config/config_repository.dart';
 import 'content/content_repository.dart';
 import 'content/copy_resolver.dart';
 import 'db/app_database.dart';
+import 'entitlement/entitlement_repository.dart';
 import 'flavor.dart';
 import 'network/api_client.dart';
 import 'notifications/notification_service.dart';
+import 'payments/channel_gateway.dart';
 import 'payments/payment_gateway.dart';
 import 'time/clock.dart';
 import 'time/local_day.dart';
@@ -32,7 +34,19 @@ final secretStoreProvider = Provider<SecretStore>((ref) => const SecureSecretSto
 final tokenStoreProvider = Provider<TokenStore>((ref) => TokenStore(ref.watch(secretStoreProvider)));
 final deviceIdentityProvider = Provider<DeviceIdentity>((ref) => DeviceIdentity(ref.watch(databaseProvider), AndroidDeviceIdSource()));
 
-final paymentGatewayProvider = Provider<PaymentGateway>((ref) => FakeGateway(market: ref.watch(flavorProvider).market));
+const _fakeBilling = bool.fromEnvironment('FAKE_BILLING');
+const _bazaarRsa = String.fromEnvironment('BAZAAR_RSA_KEY');
+const _myketRsa = String.fromEnvironment('MYKET_RSA_KEY');
+
+/// The flavor decides the market gateway; `--dart-define=FAKE_BILLING=true` swaps in the fake (dev/test).
+final paymentGatewayProvider = Provider<PaymentGateway>((ref) {
+  final flavor = ref.watch(flavorProvider);
+  if (_fakeBilling) return FakeGateway(market: flavor.market);
+  return switch (flavor) {
+    Flavor.bazaar => BazaarGateway(rsaKey: _bazaarRsa.isEmpty ? null : _bazaarRsa),
+    Flavor.myket => MyketGateway(rsaKey: _myketRsa.isEmpty ? null : _myketRsa),
+  };
+});
 final notificationServiceProvider = Provider<NotificationService>((ref) => const NoopNotificationService());
 final catRendererProvider = Provider<CatRenderer>((ref) => const StaticCatRenderer());
 
@@ -107,14 +121,31 @@ class SoftUpdateDismissedNotifier extends Notifier<bool> {
 
 final softUpdateDismissedProvider = NotifierProvider<SoftUpdateDismissedNotifier, bool>(SoftUpdateDismissedNotifier.new);
 
-/// Premium state. Stub until prompt 14 (signed entitlement); tests and dev can override it.
+/// Signed-entitlement cache + refresh; null until bootstrap provides it (unit/widget tests then see a free user).
+final entitlementRepositoryProvider = Provider<EntitlementRepository?>((ref) => null);
+
+/// The single "is the user premium" answer for the UI (docs/60 §6). Derived from the signed state; the
+/// `set` override exists for tests and dev only and is ignored once a repository drives it.
 class PremiumNotifier extends Notifier<bool> {
   @override
-  bool build() => false;
+  bool build() {
+    final repo = ref.watch(entitlementRepositoryProvider);
+    if (repo == null) return false;
+    final sub = repo.changes.listen((_) => state = repo.status().isPremium);
+    ref.onDispose(sub.cancel);
+    return repo.status().isPremium;
+  }
+
   void set(bool v) => state = v;
 }
 
 final premiumProvider = NotifierProvider<PremiumNotifier, bool>(PremiumNotifier.new);
+
+/// Detailed status (source, ends_at, provisional, grace) for the subscription screen and banners.
+final premiumStatusProvider = Provider<PremiumStatus>((ref) {
+  ref.watch(premiumProvider); // re-evaluate on every entitlement change
+  return ref.watch(entitlementRepositoryProvider)?.status() ?? PremiumStatus.free;
+});
 
 /// True after a check-in with mood_level <= 2 in this session (paywall suppression, docs/60 §5).
 class LowMoodSessionNotifier extends Notifier<bool> {
