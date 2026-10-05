@@ -313,6 +313,25 @@
     "home.adventure.start": "بفرستش گشت",
     "safety.talk_hint": "با یه نفر مورد اعتمادت یا یه متخصص حرف بزن.",
     "safety.no_hotlines": "اگه حالت خیلی بده، همین الان با یه آدم مورد اعتمادت تماس بگیر.",
-    "settings.placeholder": "به‌زودی"
+    "settings.placeholder": "به‌زودی",
+    "exercise.duration": "حدود {n} دقیقه",
+    "exercise.start": "شروع",
+    "exercise.pause": "مکث",
+    "exercise.resume": "ادامه",
+    "exercise.continue": "ادامه می‌دم",
+    "exercise.quit": "فعلاً نه",
+    "exercise.quit.confirm": "وسط تمرین هستی. اگه الان بری، چیزی ثبت نمی‌شه. بی‌خیال می‌شی؟",
+    "exercise.energy": "{n} انرژی گرفتی",
+    "shop.closet": "کمد",
+    "shop.closet.empty": "هنوز چیزی نخریدی. تو فروشگاه یه سر بزن.",
+    "shop.tab.cat": "گربه",
+    "shop.tab.room": "اتاق",
+    "shop.tab.background": "پس‌زمینه",
+    "shop.slot.collar": "گردنبند",
+    "shop.slot.hat": "کلاه",
+    "shop.slot.background": "پس‌زمینه",
+    "shop.slot.room_table": "روی میز",
+    "shop.slot.room_floor": "کف اتاق",
+    "shop.slot.room_wall": "دیوار"
   }
 }

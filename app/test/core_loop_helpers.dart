@@ -9,7 +9,9 @@ import 'package:pashmak_app/core/time/local_day.dart';
 import 'package:pashmak_app/core/widget_snapshot.dart';
 import 'package:pashmak_app/features/adventure/domain/adventure_service.dart';
 import 'package:pashmak_app/features/checkin/domain/checkin_service.dart';
+import 'package:pashmak_app/features/exercises/domain/exercise_service.dart';
 import 'package:pashmak_app/features/habits/domain/habit_service.dart';
+import 'package:pashmak_app/features/shop/domain/shop_service.dart';
 import 'package:pashmak_app/features/safety/domain/safety_service.dart';
 import 'package:pashmak_app/features/streak/domain/streak_service.dart';
 import 'package:pashmak_app/features/wallet/domain/wallet_service.dart';
@@ -48,7 +50,19 @@ class Loop {
         adventuresPack: () => adventuresPack,
         shopItems: () => shopPack,
         freeLocations: () => config.freeAdventureLocations);
+    exercisePack = (jsonDecode(assets['assets/content/exercises.json']!)['entries'] as List).cast<Map<String, dynamic>>();
+    exercises = ExerciseService(db, clock, wallet, streak, analytics, const NoopWidgetSnapshotPublisher(),
+        today: today,
+        energyPerExercise: () => config.energyPerExercise,
+        rewardsPerDay: () => config.exerciseRewardsPerDay,
+        freeExercises: () => config.freeExercises);
+    shop = ShopService(db, clock, wallet, analytics, const NoopWidgetSnapshotPublisher(),
+        items: () => [for (final j in shopPack.cast<Map<String, dynamic>>()) ShopItem.fromJson(j)]);
   }
+
+  late final ExerciseService exercises;
+  late final ShopService shop;
+  late final List<Map<String, dynamic>> exercisePack;
 
   final AppDatabase db;
   final FakeClock clock;

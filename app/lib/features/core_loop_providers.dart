@@ -7,11 +7,14 @@ import '../core/providers.dart';
 import '../core/safety/distress_detector.dart';
 import '../core/widget_snapshot.dart';
 import '../core/widgets/cat_renderer.dart';
+import '../core/screen_awake.dart';
 import 'adventure/domain/adventure_service.dart';
 import 'cat/domain/cat_mood_resolver.dart';
 import 'checkin/domain/checkin_service.dart';
+import 'exercises/domain/exercise_service.dart';
 import 'habits/domain/habit_service.dart';
 import 'safety/domain/safety_service.dart';
+import 'shop/domain/shop_service.dart';
 import 'streak/domain/streak_service.dart';
 import 'wallet/domain/wallet_service.dart';
 
@@ -103,6 +106,27 @@ final catStateProvider = Provider<CatVisualState>((ref) {
     lastCheckinMoodToday: mood,
     allHabitsDoneToday: habits.isNotEmpty && habits.every((h) => h.done),
     adventureJustClaimed: false,
-    accessories: [for (final i in equipped) i.itemKey],
+    accessories: [for (final i in equipped) if (i.slot != 'background') i.itemKey],
+    background: equipped.where((i) => i.slot == 'background').map((i) => i.itemKey).firstOrNull,
   );
 });
+
+// --- exercises & shop (prompt 12) ---------------------------------------------------------------
+final screenAwakeProvider = Provider<ScreenAwake>((ref) => const ChannelScreenAwake());
+
+final exerciseServiceProvider = Provider<ExerciseService>((ref) => ExerciseService(
+    ref.watch(databaseProvider), ref.watch(clockProvider), ref.watch(walletServiceProvider), ref.watch(streakServiceProvider),
+    ref.watch(analyticsProvider), ref.watch(widgetSnapshotPublisherProvider),
+    today: () => ref.read(todayProvider),
+    energyPerExercise: () => ref.read(appConfigProvider).energyPerExercise,
+    rewardsPerDay: () => ref.read(appConfigProvider).exerciseRewardsPerDay,
+    freeExercises: () => ref.read(appConfigProvider).freeExercises));
+
+final shopServiceProvider = Provider<ShopService>((ref) {
+  final content = ref.watch(contentRepositoryProvider);
+  return ShopService(ref.watch(databaseProvider), ref.watch(clockProvider), ref.watch(walletServiceProvider), ref.watch(analyticsProvider),
+      ref.watch(widgetSnapshotPublisherProvider),
+      items: () => [for (final j in ((content.entries('shop_items') as List?) ?? const []).cast<Map<String, dynamic>>()) ShopItem.fromJson(j)]);
+});
+
+final ownedItemsProvider = StreamProvider<List<InventoryData>>((ref) => ref.watch(shopServiceProvider).watchOwned());

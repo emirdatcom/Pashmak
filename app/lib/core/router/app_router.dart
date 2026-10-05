@@ -4,9 +4,11 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/adventure/presentation/adventure_screens.dart';
 import '../../features/checkin/presentation/checkin_screen.dart';
+import '../../features/exercises/presentation/exercises_screens.dart';
 import '../../features/habits/presentation/habits_screens.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/safety/presentation/safety_screen.dart';
+import '../../features/shop/presentation/shop_screens.dart';
 import '../../features/system/force_update_screen.dart';
 import '../../features/system/placeholder_screen.dart';
 import '../../features/system/splash_screen.dart';
@@ -51,11 +53,11 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(path: 'edit', builder: (_, s) => HabitEditorScreen(habitId: s.pathParameters['id'])),
             ]),
           ]),
-          GoRoute(path: Routes.exercises, builder: (_, _) => ph('exercises'), routes: [
-            GoRoute(path: ':id/run', builder: (_, s) => ph('exercises/${s.pathParameters['id']}/run')),
+          GoRoute(path: Routes.exercises, builder: (_, _) => const ExercisesScreen(), routes: [
+            GoRoute(path: ':id/run', builder: (_, s) => ExerciseRunScreen(exerciseKey: s.pathParameters['id']!)),
           ]),
-          GoRoute(path: Routes.shop, builder: (_, _) => ph('shop'), routes: [
-            GoRoute(path: 'closet', builder: (_, _) => ph('shop/closet')),
+          GoRoute(path: Routes.shop, builder: (_, _) => const ShopScreen(), routes: [
+            GoRoute(path: 'closet', builder: (_, _) => const ClosetScreen()),
           ]),
         ],
       ),

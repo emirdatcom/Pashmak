@@ -61,7 +61,7 @@ class _AnimatedCatState extends State<_AnimatedCat> with TickerProviderStateMixi
               offset: Offset(0, hop),
               child: Transform.scale(
                 scale: breathe,
-                child: CustomPaint(size: const Size(160, 160), painter: _CatPainter(widget.state.mood, _breath.value > 0.5)),
+                child: CustomPaint(size: const Size(180, 180), painter: _CatPainter(widget.state, _breath.value > 0.5)),
               ),
             ),
           );
@@ -72,13 +72,23 @@ class _AnimatedCatState extends State<_AnimatedCat> with TickerProviderStateMixi
 }
 
 class _CatPainter extends CustomPainter {
-  _CatPainter(this.mood, this.blink);
+  _CatPainter(this.state, this.blink) : mood = state.mood;
+  final CatVisualState state;
   final CatMood mood;
   final bool blink;
+
+  static const _backdrops = [Color(0xFFFBE3C2), Color(0xFFCFE8E6), Color(0xFFD9D2EE), Color(0xFFE6EFC9)];
+
+  /// Placeholder backdrop colour derived from the item key until real art exists.
+  static Color backdropFor(String key) => _backdrops[key.codeUnits.fold<int>(0, (a, b) => a + b) % _backdrops.length];
 
   @override
   void paint(Canvas canvas, Size size) {
     final c = size.center(Offset.zero);
+    final bg = state.background;
+    if (bg != null) {
+      canvas.drawRRect(RRect.fromRectAndRadius(Offset.zero & size, const Radius.circular(24)), Paint()..color = backdropFor(bg));
+    }
     final fur = Paint()..color = AppColors.orange;
     final dark = Paint()..color = AppColors.orangeDark;
     final ink = Paint()
@@ -128,11 +138,29 @@ class _CatPainter extends CustomPainter {
         ..quadraticBezierTo(c.dx, c.dy + 40, c.dx + 12, c.dy + 28);
     }
     canvas.drawPath(mouth, ink);
-    // turquoise collar
-    canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromCenter(center: c.translate(0, 62), width: 84, height: 12), const Radius.circular(6)), Paint()..color = AppColors.turquoise);
+    // collar (default turquoise; an equipped collar item overrides it)
+    final collar = state.accessories.where((a) => a.startsWith('collar_')).firstOrNull;
+    final collarColor = collar == 'collar_red' ? AppColors.danger : AppColors.turquoise;
+    canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromCenter(center: c.translate(0, 62), width: 84, height: 12), const Radius.circular(6)), Paint()..color = collarColor);
     canvas.drawCircle(c.translate(0, 72), 6, Paint()..color = AppColors.turquoiseDark);
+    // hat
+    final hat = state.accessories.where((a) => a.startsWith('hat_')).firstOrNull;
+    if (hat == 'hat_beanie') {
+      final p = Path()
+        ..moveTo(c.dx - 40, c.dy - 36)
+        ..quadraticBezierTo(c.dx, c.dy - 96, c.dx + 40, c.dy - 36)
+        ..close();
+      canvas.drawPath(p, Paint()..color = AppColors.turquoiseDark);
+      canvas.drawCircle(c.translate(0, -82), 7, Paint()..color = Colors.white);
+    } else if (hat == 'hat_flower') {
+      for (var i = 0; i < 5; i++) {
+        final a = i * 2 * math.pi / 5;
+        canvas.drawCircle(c.translate(math.cos(a) * 9, -62 + math.sin(a) * 9), 7, Paint()..color = const Color(0xFFE8739E));
+      }
+      canvas.drawCircle(c.translate(0, -62), 5, Paint()..color = const Color(0xFFFFD166));
+    }
   }
 
   @override
-  bool shouldRepaint(_CatPainter old) => old.mood != mood || old.blink != blink;
+  bool shouldRepaint(_CatPainter old) => old.mood != mood || old.blink != blink || old.state.accessories.join() != state.accessories.join() || old.state.background != state.background;
 }
