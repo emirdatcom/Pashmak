@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/outbox/outbox_worker.dart';
 import '../../core/providers.dart';
 import '../core_loop_providers.dart';
+import '../settings/settings_providers.dart';
 import 'domain/monetization_service.dart';
 
 /// Trial, purchase and restore flows plus their durable outbox. Needs the bootstrapped entitlement repository.
@@ -18,6 +19,7 @@ final monetizationServiceProvider = Provider<MonetizationService>((ref) {
     analytics: ref.watch(analyticsProvider),
     clock: ref.watch(clockProvider),
     config: () => ref.read(appConfigProvider),
+    extraHandlers: ref.watch(dataServiceProvider).handlers,
   );
 });
 

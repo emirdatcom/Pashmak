@@ -20,6 +20,13 @@ class MainActivity : FlutterActivity() {
                     else window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     result.success(null)
                 }
+                // Hides the app preview in Recent Apps and blocks screenshots (settings: hide in recents).
+                "setSecure" -> {
+                    val on = call.arguments as? Boolean ?: false
+                    if (on) window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+                    else window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+                    result.success(null)
+                }
                 else -> result.notImplemented()
             }
         }

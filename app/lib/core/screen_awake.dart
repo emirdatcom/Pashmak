@@ -24,3 +24,16 @@ class NoopScreenAwake implements ScreenAwake {
   @override
   Future<void> set(bool on) async {}
 }
+
+/// FLAG_SECURE: hides the app preview in Recent Apps (settings → your data).
+class SecureWindow {
+  const SecureWindow();
+  static const _channel = MethodChannel('app/device');
+  Future<void> set(bool on) async {
+    try {
+      await _channel.invokeMethod<void>('setSecure', on);
+    } on MissingPluginException {
+      // not on Android
+    }
+  }
+}

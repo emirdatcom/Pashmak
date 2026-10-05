@@ -163,10 +163,16 @@ class TrialEndingBanner extends ConsumerWidget {
     final copy = ref.watch(copyProvider);
     return Card(
       color: AppColors.creamDeep,
-      child: ListTile(
-        title: Text(copy.t('paywall.trial_ending.title')),
-        subtitle: Text(copy.t('paywall.trial_ending.body')),
-        trailing: TextButton(onPressed: () => context.push(Routes.paywall('trial_end')), child: Text(copy.t('trial.banner.action'))),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(copy.t('paywall.trial_ending.title'), style: Theme.of(context).textTheme.titleSmall),
+          Text(copy.t('paywall.trial_ending.body')),
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: TextButton(onPressed: () => context.push(Routes.paywall('trial_end')), child: Text(copy.t('trial.banner.action'))),
+          ),
+        ]),
       ),
     );
   }

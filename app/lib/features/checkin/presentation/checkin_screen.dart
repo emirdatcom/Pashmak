@@ -71,7 +71,8 @@ class _CheckinScreenState extends ConsumerState<CheckinScreen> {
   Widget _form(dynamic copy) => ListView(children: [
         Text(copy.t('checkin.prompt'), textAlign: TextAlign.center, style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: AppSpacing.lg),
-        Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+        // Wrap, not Row: at large text scales the five moods flow onto a second line instead of overflowing.
+        Wrap(alignment: WrapAlignment.spaceEvenly, runSpacing: AppSpacing.sm, children: [
           for (var i = 1; i <= 5; i++)
             Semantics(
               button: true,

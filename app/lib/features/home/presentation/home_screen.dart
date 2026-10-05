@@ -107,7 +107,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
     return Scaffold(
       appBar: AppBar(
         title: Text(JalaliFormatter.weekdayDate(today), style: Theme.of(context).textTheme.bodyMedium),
-        actions: [IconButton(tooltip: copy.t('settings.title'), icon: const Icon(Icons.settings_outlined), onPressed: () => context.push(Routes.settings))],
+        actions: [
+          IconButton(tooltip: copy.t('stats.title'), icon: const Icon(Icons.insights_outlined), onPressed: () => context.push(Routes.stats)),
+          IconButton(tooltip: copy.t('settings.title'), icon: const Icon(Icons.settings_outlined), onPressed: () => context.push(Routes.settings)),
+        ],
       ),
       body: ListView(padding: const EdgeInsets.all(AppSpacing.md), children: [
         Text(copy.t(_greetingKey(now.hour)), style: Theme.of(context).textTheme.titleLarge),

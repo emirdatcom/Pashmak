@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart' show ThemeMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
@@ -82,9 +83,31 @@ class DayStartHourNotifier extends Notifier<int> {
   @override
   int build() => 4;
   void set(int h) => state = h;
+
+  /// Persists to `user_settings.day_start_hour` and re-evaluates "today" everywhere.
+  Future<void> save(int h) async {
+    await ref.read(databaseProvider).setSetting('day_start_hour', '$h');
+    state = h;
+  }
 }
 
 final dayStartHourProvider = NotifierProvider<DayStartHourNotifier, int>(DayStartHourNotifier.new);
+
+/// `user_settings.theme_mode`: light | dark | system.
+class ThemeModeNotifier extends Notifier<ThemeMode> {
+  @override
+  ThemeMode build() => ThemeMode.system;
+  Future<void> save(ThemeMode m) async {
+    await ref.read(databaseProvider).setSetting('theme_mode', m.name);
+    state = m;
+  }
+
+  void reset() => state = ThemeMode.system;
+
+  static ThemeMode parse(String? v) => ThemeMode.values.where((m) => m.name == v).firstOrNull ?? ThemeMode.system;
+}
+
+final themeModeProvider = NotifierProvider<ThemeModeNotifier, ThemeMode>(ThemeModeNotifier.new);
 
 final todayProvider = Provider<LocalDay>((ref) => LocalDay.today(ref.watch(clockProvider), dayStartHour: ref.watch(dayStartHourProvider)));
 
@@ -112,11 +135,17 @@ class OnboardingCompletedNotifier extends Notifier<bool> {
 
 final onboardingCompletedProvider = NotifierProvider<OnboardingCompletedNotifier, bool>(OnboardingCompletedNotifier.new);
 
-/// Soft-update banner dismissed today (kept per session in this step).
+/// Soft-update banner dismissed today.
 class SoftUpdateDismissedNotifier extends Notifier<bool> {
   @override
   bool build() => false;
-  void dismiss() => state = true;
+
+  /// Hidden for the rest of the day (the bootstrap restores it from `soft_update_dismissed_day`).
+  void dismiss() {
+    state = true;
+    final day = ref.read(todayProvider).value;
+    ref.read(databaseProvider).setMeta('soft_update_dismissed_day', day);
+  }
 }
 
 final softUpdateDismissedProvider = NotifierProvider<SoftUpdateDismissedNotifier, bool>(SoftUpdateDismissedNotifier.new);
@@ -152,6 +181,7 @@ class LowMoodSessionNotifier extends Notifier<bool> {
   @override
   bool build() => false;
   void mark() => state = true;
+  void reset() => state = false;
 }
 
 final lowMoodSessionProvider = NotifierProvider<LowMoodSessionNotifier, bool>(LowMoodSessionNotifier.new);

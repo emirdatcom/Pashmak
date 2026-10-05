@@ -42,6 +42,15 @@ class AppDatabase extends _$AppDatabase {
         onUpgrade: (m, from, to) async => throw StateError('No migration from $from to $to'),
       );
 
+  /// Deletes every row of every table and re-seeds the singleton rows: the app then behaves like a fresh install.
+  Future<void> wipeAll() => transaction(() async {
+        for (final t in allTables.toList().reversed) {
+          await delete(t).go();
+        }
+        await into(wallet).insert(WalletCompanion.insert(id: const Value(1), updatedAt: 0));
+        await into(streakState).insert(StreakStateCompanion.insert(id: const Value(1)));
+      });
+
   // --- app_meta / user_settings key-value helpers ---------------------------------------------
   Future<String?> meta(String key) async =>
       (select(appMeta)..where((t) => t.key.equals(key))).map((r) => r.value).getSingleOrNull();

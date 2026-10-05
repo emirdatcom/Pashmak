@@ -9,6 +9,8 @@ import '../../features/checkin/presentation/checkin_screen.dart';
 import '../../features/exercises/presentation/exercises_screens.dart';
 import '../../features/habits/presentation/habits_screens.dart';
 import '../../features/home/presentation/home_screen.dart';
+import '../../features/onboarding/presentation/onboarding_screen.dart';
+import '../../features/stats/presentation/stats_screen.dart';
 import '../../features/safety/presentation/safety_screen.dart';
 import '../../features/shop/presentation/shop_screens.dart';
 import '../../features/settings/presentation/settings_screens.dart';
@@ -44,7 +46,7 @@ final routerProvider = Provider<GoRouter>((ref) {
     ),
     routes: [
       GoRoute(path: Routes.splash, builder: (_, _) => const SplashScreen()),
-      GoRoute(path: '/onboarding/:step', builder: (_, s) => ph('onboarding/${s.pathParameters['step']}')),
+      GoRoute(path: '/onboarding/:step', builder: (_, s) => OnboardingScreen(step: int.tryParse(s.pathParameters['step'] ?? '') ?? 1)),
       GoRoute(path: Routes.update, builder: (_, _) => const ForceUpdateScreen()),
       ShellRoute(
         builder: (context, state, child) => _TabShell(location: state.uri.path, child: child),
@@ -68,12 +70,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: Routes.adventure, builder: (_, _) => const AdventureScreen(), routes: [
         GoRoute(path: 'result/:id', builder: (_, s) => AdventureResultScreen(adventureId: s.pathParameters['id']!)),
       ]),
-      GoRoute(path: Routes.stats, builder: (_, _) => ph('stats')),
+      GoRoute(path: Routes.stats, builder: (_, _) => const StatsScreen()),
       GoRoute(path: '/paywall', builder: (_, s) => PaywallScreen(trigger: s.uri.queryParameters['trigger'] ?? 'settings')),
       GoRoute(path: Routes.trialEnded, builder: (_, _) => const TrialEndedScreen()),
       GoRoute(path: Routes.lockSelect, builder: (_, _) => const LockSelectionScreen()),
       GoRoute(path: Routes.settings, builder: (_, _) => const SettingsScreen(), routes: [
         GoRoute(path: 'notifications', builder: (_, _) => const NotificationSettingsScreen()),
+        GoRoute(path: 'privacy', builder: (_, _) => const PrivacyScreen()),
+        GoRoute(path: 'about', builder: (_, _) => const AboutScreen()),
         GoRoute(path: 'subscription', builder: (_, _) => const SubscriptionScreen()),
         GoRoute(path: ':section', builder: (_, s) => ph('settings/${s.pathParameters['section']}')),
       ]),

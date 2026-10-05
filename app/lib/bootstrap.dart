@@ -32,6 +32,7 @@ import 'core/notifications/local_notification_service.dart';
 import 'core/background/background_handlers.dart';
 import 'core/providers.dart';
 import 'core/time/clock.dart';
+import 'core/time/local_day.dart';
 import 'features/system/db_error_screen.dart';
 
 /// App entry shared by both flavors (see main_bazaar.dart / main_myket.dart).
@@ -121,6 +122,9 @@ Future<Object> buildOverrides(Flavor flavor) async {
   await entitlements.load();
   final onboarded = await db.meta('onboarding_completed') == 'true';
   final catName = await db.meta('cat_name') ?? '';
+  final dayStart = (int.tryParse(await db.setting('day_start_hour') ?? '') ?? 4).clamp(0, 6);
+  final themeMode = ThemeModeNotifier.parse(await db.setting('theme_mode'));
+  final softDismissed = await db.meta('soft_update_dismissed_day') == LocalDay.today(clock, dayStartHour: dayStart).value;
 
   return _Ok([
     flavorProvider.overrideWithValue(flavor),
@@ -135,6 +139,9 @@ Future<Object> buildOverrides(Flavor flavor) async {
     notificationServiceProvider.overrideWithValue(notifications),
     onboardingCompletedProvider.overrideWith(() => _PresetOnboarding(onboarded)),
     catNameProvider.overrideWith(() => _PresetCatName(catName)),
+    dayStartHourProvider.overrideWith(() => _PresetDayStart(dayStart)),
+    themeModeProvider.overrideWith(() => _PresetTheme(themeMode)),
+    softUpdateDismissedProvider.overrideWith(() => _PresetSoftUpdate(softDismissed)),
   ]);
 }
 
@@ -157,6 +164,27 @@ class _PresetOnboarding extends OnboardingCompletedNotifier {
   final bool _v;
   @override
   bool build() => _v;
+}
+
+class _PresetDayStart extends DayStartHourNotifier {
+  _PresetDayStart(this._v);
+  final int _v;
+  @override
+  int build() => _v;
+}
+
+class _PresetSoftUpdate extends SoftUpdateDismissedNotifier {
+  _PresetSoftUpdate(this._v);
+  final bool _v;
+  @override
+  bool build() => _v;
+}
+
+class _PresetTheme extends ThemeModeNotifier {
+  _PresetTheme(this._v);
+  final ThemeMode _v;
+  @override
+  ThemeMode build() => _v;
 }
 
 class _PresetCatName extends CatNameNotifier {

@@ -1,16 +1,29 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../core/analytics/analytics_event.dart';
 import '../../core/providers.dart';
 import '../../core/theme/tokens.dart';
 
 /// Hard update (`/update`, not dismissible) and soft update banner (dismissible once per session).
-class ForceUpdateScreen extends ConsumerWidget {
+class ForceUpdateScreen extends ConsumerStatefulWidget {
   const ForceUpdateScreen({super.key});
+  @override
+  ConsumerState<ForceUpdateScreen> createState() => _ForceUpdateState();
+}
+
+class _ForceUpdateState extends ConsumerState<ForceUpdateScreen> {
+  @override
+  void initState() {
+    super.initState();
+    unawaited(ref.read(analyticsProvider).track(AnalyticsEvent.forceUpdateShown, {'kind': 'hard'}));
+  }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final copy = ref.watch(copyProvider);
     return Scaffold(
       body: SafeArea(
@@ -36,10 +49,21 @@ Future<void> openStore(WidgetRef ref) async {
 }
 
 /// Dismissible bar shown when `update.recommended_version` is newer than the app.
-class SoftUpdateBanner extends ConsumerWidget {
+class SoftUpdateBanner extends ConsumerStatefulWidget {
   const SoftUpdateBanner({super.key});
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SoftUpdateBanner> createState() => _SoftUpdateState();
+}
+
+class _SoftUpdateState extends ConsumerState<SoftUpdateBanner> {
+  @override
+  void initState() {
+    super.initState();
+    unawaited(ref.read(analyticsProvider).track(AnalyticsEvent.forceUpdateShown, {'kind': 'soft'}));
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final copy = ref.watch(copyProvider);
     return MaterialBanner(
       content: Text(copy.t('update.soft')),

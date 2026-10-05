@@ -38,11 +38,15 @@ class MonetizationService {
     required this.analytics,
     required this.clock,
     required this.config,
+    this.extraHandlers = const {},
   }) : _db = db {
     outbox = OutboxWorker(db, clock, handlers);
   }
 
   final AppDatabase _db;
+
+  /// Other features' outbox kinds that share this worker (e.g. `account_delete`).
+  final Map<String, OutboxHandler> extraHandlers;
 
   final EntitlementRepository repo;
   final ApiClient api;
@@ -54,6 +58,7 @@ class MonetizationService {
   final AppConfig Function() config;
 
   Map<String, OutboxHandler> get handlers => {
+        ...extraHandlers,
         'trial_start': _trialStartHandler,
         'purchase_verify': _purchaseVerifyHandler,
         'purchase_restore': _restoreHandler,

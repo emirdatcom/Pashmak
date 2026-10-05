@@ -51,6 +51,7 @@ class _AppState extends ConsumerState<App> {
       routerConfig: ref.watch(routerProvider),
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
+      themeMode: ref.watch(themeModeProvider),
       locale: const Locale('fa', 'IR'),
       supportedLocales: const [Locale('fa', 'IR')],
       localizationsDelegates: const [
