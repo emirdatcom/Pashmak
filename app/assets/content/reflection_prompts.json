@@ -1,0 +1,69 @@
+{
+  "pack_key": "reflection_prompts",
+  "version": 1,
+  "pack_schema_version": 1,
+  "locale": "fa",
+  "min_app_version": "1.0.0",
+  "entries": [
+    {
+      "key": "energy_pick",
+      "prompt_key": "reflect.energy_pick.prompt",
+      "a_key": "reflect.energy_pick.a",
+      "b_key": "reflect.energy_pick.b"
+    },
+    {
+      "key": "time_pick",
+      "prompt_key": "reflect.time_pick.prompt",
+      "a_key": "reflect.time_pick.a",
+      "b_key": "reflect.time_pick.b"
+    },
+    {
+      "key": "mood_color",
+      "prompt_key": "reflect.mood_color.prompt",
+      "a_key": "reflect.mood_color.a",
+      "b_key": "reflect.mood_color.b"
+    },
+    {
+      "key": "need_pick",
+      "prompt_key": "reflect.need_pick.prompt",
+      "a_key": "reflect.need_pick.a",
+      "b_key": "reflect.need_pick.b"
+    },
+    {
+      "key": "place_pick",
+      "prompt_key": "reflect.place_pick.prompt",
+      "a_key": "reflect.place_pick.a",
+      "b_key": "reflect.place_pick.b"
+    },
+    {
+      "key": "step_pick",
+      "prompt_key": "reflect.step_pick.prompt",
+      "a_key": "reflect.step_pick.a",
+      "b_key": "reflect.step_pick.b"
+    },
+    {
+      "key": "drink_pick",
+      "prompt_key": "reflect.drink_pick.prompt",
+      "a_key": "reflect.drink_pick.a",
+      "b_key": "reflect.drink_pick.b"
+    },
+    {
+      "key": "talk_pick",
+      "prompt_key": "reflect.talk_pick.prompt",
+      "a_key": "reflect.talk_pick.a",
+      "b_key": "reflect.talk_pick.b"
+    },
+    {
+      "key": "body_pick",
+      "prompt_key": "reflect.body_pick.prompt",
+      "a_key": "reflect.body_pick.a",
+      "b_key": "reflect.body_pick.b"
+    },
+    {
+      "key": "proud_pick",
+      "prompt_key": "reflect.proud_pick.prompt",
+      "a_key": "reflect.proud_pick.a",
+      "b_key": "reflect.proud_pick.b"
+    }
+  ]
+}

@@ -100,3 +100,14 @@ flowchart LR
 | روز کاربر | `local_day` (`YYYY-MM-DD` میلادی، نمایش شمسی) | با `day_start_hour` |
 | اشتراک فعال | `entitlement` = `premium` | تنها entitlement فعلی |
 | روز بخشش | `streak_freeze` | ماهانه ۱ (configurable) |
+
+### افزوده‌های واژه‌نامه (پرامپت 22)
+| مفهوم | نام canonical |
+|---|---|
+| هدف (قبلاً عادت) | `goal` (جدول محلی همچنان `habits`، ستون `goal_key` جایگزین `template_key`) |
+| حوزه‌ها `area_key` | `sleep, calm, movement, nutrition, connection, focus, self_kindness, home` |
+| تب‌های پیشنهاد | `suggested, easy_wins, calm, connection, gratitude, health, sleep, movement, tidy` |
+| مراحل رشد `cat_stage` | `kitten, young, adult` |
+| حالت‌های گربه (افزوده) | `breathing, away` |
+| تب‌های تمرین | `focus, calm, morning, night, energize` |
+| packهای جدید | `goal_library, quests_daily, quests_special, discoveries, reflection_prompts` |

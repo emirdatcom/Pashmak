@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "shop_items pack",
+  "title": "quests_daily pack",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -13,7 +13,7 @@
   ],
   "properties": {
     "pack_key": {
-      "const": "shop_items"
+      "const": "quests_daily"
     },
     "version": {
       "type": "integer",
@@ -37,46 +37,42 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "item_key",
-          "name_key",
-          "slot",
-          "price_coins",
-          "premium_only",
-          "asset"
+          "key",
+          "title_key",
+          "metric",
+          "target",
+          "route"
         ],
         "properties": {
-          "item_key": {
+          "key": {
             "type": "string",
             "pattern": "^[a-z0-9_]{1,64}$"
           },
-          "name_key": {
+          "title_key": {
             "type": "string",
             "pattern": "^[a-z0-9_]+(\\.[a-z0-9_]+)+$"
           },
-          "slot": {
+          "metric": {
             "enum": [
-              "collar",
-              "hat",
-              "glasses",
-              "scarf",
-              "background",
-              "room_table",
-              "room_floor",
-              "room_wall",
-              "room_shelf"
+              "claim",
+              "checkin_today",
+              "exercise_today",
+              "goals_done_today",
+              "reflection_today",
+              "energy_today",
+              "shop_visit_today",
+              "cat_visit_today"
             ]
           },
-          "price_coins": {
+          "target": {
             "type": "integer",
-            "minimum": 0
+            "minimum": 1
           },
-          "premium_only": {
-            "type": "boolean"
+          "route": {
+            "type": "string",
+            "pattern": "^/[a-z0-9/_-]*$"
           },
-          "asset": {
-            "type": "string"
-          },
-          "always_available": {
+          "fixed": {
             "type": "boolean"
           }
         }

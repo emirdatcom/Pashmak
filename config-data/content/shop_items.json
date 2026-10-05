@@ -11,7 +11,8 @@
       "slot": "collar",
       "price_coins": 60,
       "premium_only": false,
-      "asset": "assets/shop/collar_turquoise.webp"
+      "asset": "assets/shop/collar_turquoise.webp",
+      "always_available": true
     },
     {
       "item_key": "collar_red",
@@ -27,7 +28,8 @@
       "slot": "hat",
       "price_coins": 120,
       "premium_only": false,
-      "asset": "assets/shop/hat_beanie.webp"
+      "asset": "assets/shop/hat_beanie.webp",
+      "always_available": true
     },
     {
       "item_key": "hat_flower",
@@ -43,7 +45,8 @@
       "slot": "background",
       "price_coins": 200,
       "premium_only": false,
-      "asset": "assets/shop/bg_alley_evening.webp"
+      "asset": "assets/shop/bg_alley_evening.webp",
+      "always_available": true
     },
     {
       "item_key": "bg_rooftop_night",
@@ -75,7 +78,8 @@
       "slot": "room_table",
       "price_coins": 70,
       "premium_only": false,
-      "asset": "assets/shop/tea_glass.webp"
+      "asset": "assets/shop/tea_glass.webp",
+      "always_available": true
     },
     {
       "item_key": "rug_small",
@@ -83,7 +87,8 @@
       "slot": "room_floor",
       "price_coins": 140,
       "premium_only": false,
-      "asset": "assets/shop/rug_small.webp"
+      "asset": "assets/shop/rug_small.webp",
+      "always_available": true
     },
     {
       "item_key": "blanket_floral",
@@ -100,6 +105,134 @@
       "price_coins": 90,
       "premium_only": true,
       "asset": "assets/shop/pillow_cozy.webp"
+    },
+    {
+      "item_key": "glasses_round",
+      "name_key": "shop.item.glasses_round.name",
+      "slot": "glasses",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/shop/glasses_round.webp"
+    },
+    {
+      "item_key": "glasses_star",
+      "name_key": "shop.item.glasses_star.name",
+      "slot": "glasses",
+      "price_coins": 140,
+      "premium_only": true,
+      "asset": "assets/shop/glasses_star.webp"
+    },
+    {
+      "item_key": "scarf_wool",
+      "name_key": "shop.item.scarf_wool.name",
+      "slot": "scarf",
+      "price_coins": 110,
+      "premium_only": false,
+      "asset": "assets/shop/scarf_wool.webp"
+    },
+    {
+      "item_key": "scarf_stripe",
+      "name_key": "shop.item.scarf_stripe.name",
+      "slot": "scarf",
+      "price_coins": 130,
+      "premium_only": false,
+      "asset": "assets/shop/scarf_stripe.webp"
+    },
+    {
+      "item_key": "scarf_silk",
+      "name_key": "shop.item.scarf_silk.name",
+      "slot": "scarf",
+      "price_coins": 210,
+      "premium_only": true,
+      "asset": "assets/shop/scarf_silk.webp"
+    },
+    {
+      "item_key": "hat_felt",
+      "name_key": "shop.item.hat_felt.name",
+      "slot": "hat",
+      "price_coins": 130,
+      "premium_only": false,
+      "asset": "assets/shop/hat_felt.webp"
+    },
+    {
+      "item_key": "collar_bell",
+      "name_key": "shop.item.collar_bell.name",
+      "slot": "collar",
+      "price_coins": 100,
+      "premium_only": false,
+      "asset": "assets/shop/collar_bell.webp"
+    },
+    {
+      "item_key": "shelf_books",
+      "name_key": "shop.item.shelf_books.name",
+      "slot": "room_shelf",
+      "price_coins": 170,
+      "premium_only": false,
+      "asset": "assets/shop/shelf_books.webp"
+    },
+    {
+      "item_key": "shelf_plants",
+      "name_key": "shop.item.shelf_plants.name",
+      "slot": "room_shelf",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/shop/shelf_plants.webp"
+    },
+    {
+      "item_key": "geranium_pot",
+      "name_key": "shop.item.geranium_pot.name",
+      "slot": "room_table",
+      "price_coins": 100,
+      "premium_only": false,
+      "asset": "assets/shop/geranium_pot.webp"
+    },
+    {
+      "item_key": "copper_bowl",
+      "name_key": "shop.item.copper_bowl.name",
+      "slot": "room_table",
+      "price_coins": 120,
+      "premium_only": false,
+      "asset": "assets/shop/copper_bowl.webp"
+    },
+    {
+      "item_key": "lamp_warm",
+      "name_key": "shop.item.lamp_warm.name",
+      "slot": "room_table",
+      "price_coins": 160,
+      "premium_only": true,
+      "asset": "assets/shop/lamp_warm.webp"
+    },
+    {
+      "item_key": "rug_persian",
+      "name_key": "shop.item.rug_persian.name",
+      "slot": "room_floor",
+      "price_coins": 300,
+      "premium_only": true,
+      "asset": "assets/shop/rug_persian.webp"
+    },
+    {
+      "item_key": "cushion_back",
+      "name_key": "shop.item.cushion_back.name",
+      "slot": "room_floor",
+      "price_coins": 110,
+      "premium_only": false,
+      "asset": "assets/shop/cushion_back.webp"
+    },
+    {
+      "item_key": "wall_frame",
+      "name_key": "shop.item.wall_frame.name",
+      "slot": "room_wall",
+      "price_coins": 130,
+      "premium_only": false,
+      "asset": "assets/shop/wall_frame.webp"
+    },
+    {
+      "item_key": "wall_tapestry",
+      "name_key": "shop.item.wall_tapestry.name",
+      "slot": "room_wall",
+      "price_coins": 190,
+      "premium_only": true,
+      "asset": "assets/shop/wall_tapestry.webp"
     }
   ]
 }

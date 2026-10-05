@@ -1,0 +1,80 @@
+{
+  "pack_key": "quests_daily",
+  "version": 1,
+  "pack_schema_version": 1,
+  "locale": "fa",
+  "min_app_version": "1.0.0",
+  "entries": [
+    {
+      "key": "daily_claim",
+      "title_key": "quest.daily.daily_claim.title",
+      "metric": "claim",
+      "target": 1,
+      "route": "/home",
+      "fixed": true
+    },
+    {
+      "key": "checkin_word",
+      "title_key": "quest.daily.checkin_word.title",
+      "metric": "checkin_today",
+      "target": 1,
+      "route": "/checkin"
+    },
+    {
+      "key": "breathe_once",
+      "title_key": "quest.daily.breathe_once.title",
+      "metric": "exercise_today",
+      "target": 1,
+      "route": "/exercises"
+    },
+    {
+      "key": "tick_three",
+      "title_key": "quest.daily.tick_three.title",
+      "metric": "goals_done_today",
+      "target": 3,
+      "route": "/home"
+    },
+    {
+      "key": "reflect_one",
+      "title_key": "quest.daily.reflect_one.title",
+      "metric": "reflection_today",
+      "target": 1,
+      "route": "/quests/reflect"
+    },
+    {
+      "key": "tick_one",
+      "title_key": "quest.daily.tick_one.title",
+      "metric": "goals_done_today",
+      "target": 1,
+      "route": "/home"
+    },
+    {
+      "key": "energy_ten",
+      "title_key": "quest.daily.energy_ten.title",
+      "metric": "energy_today",
+      "target": 10,
+      "route": "/home"
+    },
+    {
+      "key": "shop_peek",
+      "title_key": "quest.daily.shop_peek.title",
+      "metric": "shop_visit_today",
+      "target": 1,
+      "route": "/shop"
+    },
+    {
+      "key": "tick_five",
+      "title_key": "quest.daily.tick_five.title",
+      "metric": "goals_done_today",
+      "target": 5,
+      "route": "/home"
+    },
+    {
+      "key": "check_cat",
+      "title_key": "quest.daily.check_cat.title",
+      "metric": "cat_visit_today",
+      "target": 1,
+      "route": "/cat"
+    }
+  ]
+}

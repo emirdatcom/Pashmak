@@ -41,7 +41,9 @@
           "seconds": 5,
           "animation": "none"
         }
-      ]
+      ],
+      "tab": "calm",
+      "reward_energy": 10
     },
     {
       "key": "gratitude",
@@ -54,7 +56,9 @@
         "exercise.gratitude.prompt.1",
         "exercise.gratitude.prompt.2",
         "exercise.gratitude.prompt.3"
-      ]
+      ],
+      "tab": "calm",
+      "reward_energy": 10
     },
     {
       "key": "guided_journal",
@@ -69,7 +73,9 @@
         "exercise.guided_journal.prompt.3",
         "exercise.guided_journal.prompt.4",
         "exercise.guided_journal.prompt.5"
-      ]
+      ],
+      "tab": "focus",
+      "reward_energy": 10
     },
     {
       "key": "muscle_relax",
@@ -114,7 +120,9 @@
           "seconds": 6,
           "animation": "none"
         }
-      ]
+      ],
+      "tab": "night",
+      "reward_energy": 10
     },
     {
       "key": "afternoon_tea",
@@ -152,6 +160,288 @@
         {
           "text_key": "exercise.afternoon_tea.step.outro",
           "seconds": 8,
+          "animation": "none"
+        }
+      ],
+      "tab": "calm",
+      "reward_energy": 10
+    },
+    {
+      "key": "breathing_square",
+      "premium": false,
+      "duration_s": 71,
+      "type": "timer_steps",
+      "collection": "stress",
+      "tab": "focus",
+      "reward_energy": 10,
+      "disclaimer_key": "disclaimer.exercise",
+      "steps": [
+        {
+          "text_key": "exercise.breathing_square.step.intro",
+          "seconds": 6,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.breathing_basic.step.inhale",
+          "seconds": 4,
+          "animation": "inhale",
+          "repeat": 5
+        },
+        {
+          "text_key": "exercise.breathing_basic.step.hold",
+          "seconds": 4,
+          "animation": "hold",
+          "repeat": 5
+        },
+        {
+          "text_key": "exercise.breathing_basic.step.exhale",
+          "seconds": 4,
+          "animation": "exhale",
+          "repeat": 5
+        },
+        {
+          "text_key": "exercise.breathing_square.step.outro",
+          "seconds": 5,
+          "animation": "none"
+        }
+      ]
+    },
+    {
+      "key": "breathing_478",
+      "premium": true,
+      "duration_s": 87,
+      "type": "timer_steps",
+      "collection": "sleep",
+      "tab": "night",
+      "reward_energy": 10,
+      "disclaimer_key": "disclaimer.exercise",
+      "steps": [
+        {
+          "text_key": "exercise.breathing_478.step.intro",
+          "seconds": 6,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.breathing_basic.step.inhale",
+          "seconds": 4,
+          "animation": "inhale",
+          "repeat": 4
+        },
+        {
+          "text_key": "exercise.breathing_basic.step.hold",
+          "seconds": 7,
+          "animation": "hold",
+          "repeat": 4
+        },
+        {
+          "text_key": "exercise.breathing_basic.step.exhale",
+          "seconds": 8,
+          "animation": "exhale",
+          "repeat": 4
+        },
+        {
+          "text_key": "exercise.breathing_478.step.outro",
+          "seconds": 5,
+          "animation": "none"
+        }
+      ]
+    },
+    {
+      "key": "breathing_evening_tea",
+      "premium": true,
+      "duration_s": 83,
+      "type": "timer_steps",
+      "collection": "stress",
+      "tab": "calm",
+      "reward_energy": 10,
+      "disclaimer_key": "disclaimer.exercise",
+      "steps": [
+        {
+          "text_key": "exercise.breathing_evening_tea.step.intro",
+          "seconds": 6,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.breathing_basic.step.inhale",
+          "seconds": 4,
+          "animation": "inhale",
+          "repeat": 6
+        },
+        {
+          "text_key": "exercise.breathing_basic.step.hold",
+          "seconds": 2,
+          "animation": "hold",
+          "repeat": 6
+        },
+        {
+          "text_key": "exercise.breathing_basic.step.exhale",
+          "seconds": 6,
+          "animation": "exhale",
+          "repeat": 6
+        },
+        {
+          "text_key": "exercise.breathing_evening_tea.step.outro",
+          "seconds": 5,
+          "animation": "none"
+        }
+      ]
+    },
+    {
+      "key": "breathing_before_sleep",
+      "premium": true,
+      "duration_s": 107,
+      "type": "timer_steps",
+      "collection": "sleep",
+      "tab": "night",
+      "reward_energy": 10,
+      "disclaimer_key": "disclaimer.exercise",
+      "steps": [
+        {
+          "text_key": "exercise.breathing_before_sleep.step.intro",
+          "seconds": 6,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.breathing_basic.step.inhale",
+          "seconds": 4,
+          "animation": "inhale",
+          "repeat": 6
+        },
+        {
+          "text_key": "exercise.breathing_basic.step.hold",
+          "seconds": 4,
+          "animation": "hold",
+          "repeat": 6
+        },
+        {
+          "text_key": "exercise.breathing_basic.step.exhale",
+          "seconds": 8,
+          "animation": "exhale",
+          "repeat": 6
+        },
+        {
+          "text_key": "exercise.breathing_before_sleep.step.outro",
+          "seconds": 5,
+          "animation": "none"
+        }
+      ]
+    },
+    {
+      "key": "breathing_morning",
+      "premium": true,
+      "duration_s": 71,
+      "type": "timer_steps",
+      "collection": "focus",
+      "tab": "morning",
+      "reward_energy": 10,
+      "disclaimer_key": "disclaimer.exercise",
+      "steps": [
+        {
+          "text_key": "exercise.breathing_morning.step.intro",
+          "seconds": 6,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.breathing_basic.step.inhale",
+          "seconds": 3,
+          "animation": "inhale",
+          "repeat": 6
+        },
+        {
+          "text_key": "exercise.breathing_basic.step.hold",
+          "seconds": 2,
+          "animation": "hold",
+          "repeat": 6
+        },
+        {
+          "text_key": "exercise.breathing_basic.step.exhale",
+          "seconds": 5,
+          "animation": "exhale",
+          "repeat": 6
+        },
+        {
+          "text_key": "exercise.breathing_morning.step.outro",
+          "seconds": 5,
+          "animation": "none"
+        }
+      ]
+    },
+    {
+      "key": "breathing_energy",
+      "premium": true,
+      "duration_s": 71,
+      "type": "timer_steps",
+      "collection": "focus",
+      "tab": "energize",
+      "reward_energy": 10,
+      "disclaimer_key": "disclaimer.exercise",
+      "steps": [
+        {
+          "text_key": "exercise.breathing_energy.step.intro",
+          "seconds": 6,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.breathing_basic.step.inhale",
+          "seconds": 2,
+          "animation": "inhale",
+          "repeat": 10
+        },
+        {
+          "text_key": "exercise.breathing_basic.step.hold",
+          "seconds": 1,
+          "animation": "hold",
+          "repeat": 10
+        },
+        {
+          "text_key": "exercise.breathing_basic.step.exhale",
+          "seconds": 3,
+          "animation": "exhale",
+          "repeat": 10
+        },
+        {
+          "text_key": "exercise.breathing_energy.step.outro",
+          "seconds": 5,
+          "animation": "none"
+        }
+      ]
+    },
+    {
+      "key": "breathing_long_exhale",
+      "premium": true,
+      "duration_s": 91,
+      "type": "timer_steps",
+      "collection": "stress",
+      "tab": "calm",
+      "reward_energy": 10,
+      "disclaimer_key": "disclaimer.exercise",
+      "steps": [
+        {
+          "text_key": "exercise.breathing_long_exhale.step.intro",
+          "seconds": 6,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.breathing_basic.step.inhale",
+          "seconds": 3,
+          "animation": "inhale",
+          "repeat": 8
+        },
+        {
+          "text_key": "exercise.breathing_basic.step.hold",
+          "seconds": 1,
+          "animation": "hold",
+          "repeat": 8
+        },
+        {
+          "text_key": "exercise.breathing_basic.step.exhale",
+          "seconds": 6,
+          "animation": "exhale",
+          "repeat": 8
+        },
+        {
+          "text_key": "exercise.breathing_long_exhale.step.outro",
+          "seconds": 5,
           "animation": "none"
         }
       ]

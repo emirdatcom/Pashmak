@@ -85,3 +85,6 @@
 
 ## یادداشت پرامپت 21
 رویدادهای چت پشتیبانی فقط شمارنده‌اند (بدون متن پیام)؛ در `config-data/analytics/events.json` ثبت‌اند.
+
+## رویدادهای پرامپت 22
+`onboarding_areas_selected, goal_recommended_accepted, goal_created, goal_completed, quest_claimed, discovery_found, cat_stage_up, shop_refreshed, item_sold, pause_mode_toggled` (بدون پاسخ پرسش‌نامه و `energy_level`). `habit_*` برای یک دوره نسخه در allowlist می‌ماند.

@@ -1,0 +1,1502 @@
+{
+  "pack_key": "goal_library",
+  "version": 1,
+  "pack_schema_version": 1,
+  "locale": "fa",
+  "min_app_version": "1.0.0",
+  "entries": [
+    {
+      "key": "sleep_window_open",
+      "title_key": "goal.sleep_window_open.title",
+      "icon": "wb_sunny",
+      "area_key": "sleep",
+      "tabs": [
+        "health",
+        "sleep",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 2,
+      "default_time_of_day": "morning",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_sleep",
+        "mid_sleep"
+      ]
+    },
+    {
+      "key": "sleep_phone_away",
+      "title_key": "goal.sleep_phone_away.title",
+      "icon": "phone_off",
+      "area_key": "sleep",
+      "tabs": [
+        "sleep",
+        "health"
+      ],
+      "difficulty": 2,
+      "minutes": 30,
+      "default_time_of_day": "evening",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_sleep"
+      ]
+    },
+    {
+      "key": "sleep_fixed_wake",
+      "title_key": "goal.sleep_fixed_wake.title",
+      "icon": "alarm",
+      "area_key": "sleep",
+      "tabs": [
+        "sleep",
+        "health"
+      ],
+      "difficulty": 2,
+      "minutes": 5,
+      "default_time_of_day": "morning",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_sleep"
+      ]
+    },
+    {
+      "key": "sleep_warm_drink",
+      "title_key": "goal.sleep_warm_drink.title",
+      "icon": "local_cafe",
+      "area_key": "sleep",
+      "tabs": [
+        "sleep",
+        "calm"
+      ],
+      "difficulty": 1,
+      "minutes": 10,
+      "default_time_of_day": "evening",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_sleep",
+        "mid_sleep"
+      ]
+    },
+    {
+      "key": "sleep_dim_lights",
+      "title_key": "goal.sleep_dim_lights.title",
+      "icon": "light_mode",
+      "area_key": "sleep",
+      "tabs": [
+        "sleep",
+        "calm"
+      ],
+      "difficulty": 1,
+      "minutes": 5,
+      "default_time_of_day": "evening",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_sleep",
+        "mid_sleep"
+      ]
+    },
+    {
+      "key": "sleep_no_late_tea",
+      "title_key": "goal.sleep_no_late_tea.title",
+      "icon": "free_breakfast",
+      "area_key": "sleep",
+      "tabs": [
+        "sleep",
+        "health"
+      ],
+      "difficulty": 2,
+      "minutes": 1,
+      "default_time_of_day": "afternoon",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_sleep"
+      ]
+    },
+    {
+      "key": "sleep_stretch_bed",
+      "title_key": "goal.sleep_stretch_bed.title",
+      "icon": "self_improvement",
+      "area_key": "sleep",
+      "tabs": [
+        "sleep",
+        "movement"
+      ],
+      "difficulty": 1,
+      "minutes": 5,
+      "default_time_of_day": "evening",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_sleep",
+        "mid_sleep"
+      ]
+    },
+    {
+      "key": "sleep_tomorrow_list",
+      "title_key": "goal.sleep_tomorrow_list.title",
+      "icon": "edit_note",
+      "area_key": "sleep",
+      "tabs": [
+        "sleep",
+        "tidy"
+      ],
+      "difficulty": 1,
+      "minutes": 5,
+      "default_time_of_day": "evening",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_sleep",
+        "mid_sleep"
+      ]
+    },
+    {
+      "key": "sleep_nap_short",
+      "title_key": "goal.sleep_nap_short.title",
+      "icon": "bedtime",
+      "area_key": "sleep",
+      "tabs": [
+        "sleep",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 10,
+      "default_time_of_day": "afternoon",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_sleep",
+        "mid_sleep"
+      ]
+    },
+    {
+      "key": "sleep_bed_ready",
+      "title_key": "goal.sleep_bed_ready.title",
+      "icon": "bed",
+      "area_key": "sleep",
+      "tabs": [
+        "sleep",
+        "tidy"
+      ],
+      "difficulty": 1,
+      "minutes": 3,
+      "default_time_of_day": "evening",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_sleep",
+        "mid_sleep"
+      ]
+    },
+    {
+      "key": "sleep_screen_free_morning",
+      "title_key": "goal.sleep_screen_free_morning.title",
+      "icon": "smartphone",
+      "area_key": "sleep",
+      "tabs": [
+        "sleep",
+        "calm"
+      ],
+      "difficulty": 3,
+      "minutes": 30,
+      "default_time_of_day": "morning",
+      "default_repeat": "daily",
+      "need_tags": []
+    },
+    {
+      "key": "sleep_early_dinner",
+      "title_key": "goal.sleep_early_dinner.title",
+      "icon": "dinner_dining",
+      "area_key": "sleep",
+      "tabs": [
+        "sleep",
+        "health"
+      ],
+      "difficulty": 2,
+      "minutes": 30,
+      "default_time_of_day": "evening",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_sleep"
+      ]
+    },
+    {
+      "key": "calm_five_breaths",
+      "title_key": "goal.calm_five_breaths.title",
+      "icon": "air",
+      "area_key": "calm",
+      "tabs": [
+        "calm",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 2,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_calm",
+        "mid_calm"
+      ]
+    },
+    {
+      "key": "calm_tea_slow",
+      "title_key": "goal.calm_tea_slow.title",
+      "icon": "emoji_food_beverage",
+      "area_key": "calm",
+      "tabs": [
+        "calm",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 10,
+      "default_time_of_day": "afternoon",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_calm",
+        "mid_calm"
+      ]
+    },
+    {
+      "key": "calm_quiet_minute",
+      "title_key": "goal.calm_quiet_minute.title",
+      "icon": "hearing",
+      "area_key": "calm",
+      "tabs": [
+        "calm",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 2,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_calm",
+        "mid_calm"
+      ]
+    },
+    {
+      "key": "calm_music_one",
+      "title_key": "goal.calm_music_one.title",
+      "icon": "music_note",
+      "area_key": "calm",
+      "tabs": [
+        "calm"
+      ],
+      "difficulty": 1,
+      "minutes": 5,
+      "default_time_of_day": "evening",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_calm",
+        "mid_calm"
+      ]
+    },
+    {
+      "key": "calm_slow_shower",
+      "title_key": "goal.calm_slow_shower.title",
+      "icon": "shower",
+      "area_key": "calm",
+      "tabs": [
+        "calm",
+        "health"
+      ],
+      "difficulty": 2,
+      "minutes": 10,
+      "default_time_of_day": "evening",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_calm"
+      ]
+    },
+    {
+      "key": "calm_shoulder_drop",
+      "title_key": "goal.calm_shoulder_drop.title",
+      "icon": "accessibility_new",
+      "area_key": "calm",
+      "tabs": [
+        "calm",
+        "movement",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 1,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_calm",
+        "mid_calm"
+      ]
+    },
+    {
+      "key": "calm_worry_paper",
+      "title_key": "goal.calm_worry_paper.title",
+      "icon": "draw",
+      "area_key": "calm",
+      "tabs": [
+        "calm",
+        "gratitude"
+      ],
+      "difficulty": 2,
+      "minutes": 10,
+      "default_time_of_day": "evening",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_calm"
+      ]
+    },
+    {
+      "key": "calm_green_look",
+      "title_key": "goal.calm_green_look.title",
+      "icon": "park",
+      "area_key": "calm",
+      "tabs": [
+        "calm",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 2,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_calm",
+        "mid_calm"
+      ]
+    },
+    {
+      "key": "calm_single_task",
+      "title_key": "goal.calm_single_task.title",
+      "icon": "center_focus_strong",
+      "area_key": "calm",
+      "tabs": [
+        "calm"
+      ],
+      "difficulty": 2,
+      "minutes": 15,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_calm"
+      ]
+    },
+    {
+      "key": "calm_unplug_meal",
+      "title_key": "goal.calm_unplug_meal.title",
+      "icon": "restaurant",
+      "area_key": "calm",
+      "tabs": [
+        "calm",
+        "health"
+      ],
+      "difficulty": 2,
+      "minutes": 15,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_calm"
+      ]
+    },
+    {
+      "key": "calm_face_wash",
+      "title_key": "goal.calm_face_wash.title",
+      "icon": "water_drop",
+      "area_key": "calm",
+      "tabs": [
+        "calm",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 2,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_calm",
+        "mid_calm"
+      ]
+    },
+    {
+      "key": "move_walk_alley",
+      "title_key": "goal.move_walk_alley.title",
+      "icon": "directions_walk",
+      "area_key": "movement",
+      "tabs": [
+        "movement",
+        "health",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 10,
+      "default_time_of_day": "afternoon",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_movement",
+        "mid_movement"
+      ]
+    },
+    {
+      "key": "move_stairs",
+      "title_key": "goal.move_stairs.title",
+      "icon": "stairs",
+      "area_key": "movement",
+      "tabs": [
+        "movement",
+        "health"
+      ],
+      "difficulty": 2,
+      "minutes": 3,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_movement"
+      ]
+    },
+    {
+      "key": "move_stretch_morning",
+      "title_key": "goal.move_stretch_morning.title",
+      "icon": "self_improvement",
+      "area_key": "movement",
+      "tabs": [
+        "movement",
+        "health"
+      ],
+      "difficulty": 1,
+      "minutes": 5,
+      "default_time_of_day": "morning",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_movement",
+        "mid_movement"
+      ]
+    },
+    {
+      "key": "move_walk_phone",
+      "title_key": "goal.move_walk_phone.title",
+      "icon": "call",
+      "area_key": "movement",
+      "tabs": [
+        "movement",
+        "connection"
+      ],
+      "difficulty": 2,
+      "minutes": 10,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_movement"
+      ]
+    },
+    {
+      "key": "move_dance_one",
+      "title_key": "goal.move_dance_one.title",
+      "icon": "nightlife",
+      "area_key": "movement",
+      "tabs": [
+        "movement",
+        "easy_wins"
+      ],
+      "difficulty": 2,
+      "minutes": 4,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_movement"
+      ]
+    },
+    {
+      "key": "move_neck_roll",
+      "title_key": "goal.move_neck_roll.title",
+      "icon": "sync",
+      "area_key": "movement",
+      "tabs": [
+        "movement",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 1,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_movement",
+        "mid_movement"
+      ]
+    },
+    {
+      "key": "move_walk_twenty",
+      "title_key": "goal.move_walk_twenty.title",
+      "icon": "hiking",
+      "area_key": "movement",
+      "tabs": [
+        "movement",
+        "health"
+      ],
+      "difficulty": 3,
+      "minutes": 20,
+      "default_time_of_day": "afternoon",
+      "default_repeat": "daily",
+      "need_tags": []
+    },
+    {
+      "key": "move_stand_hour",
+      "title_key": "goal.move_stand_hour.title",
+      "icon": "accessibility",
+      "area_key": "movement",
+      "tabs": [
+        "movement",
+        "health"
+      ],
+      "difficulty": 2,
+      "minutes": 2,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_movement"
+      ]
+    },
+    {
+      "key": "move_yoga_few",
+      "title_key": "goal.move_yoga_few.title",
+      "icon": "spa",
+      "area_key": "movement",
+      "tabs": [
+        "movement",
+        "calm"
+      ],
+      "difficulty": 2,
+      "minutes": 10,
+      "default_time_of_day": "morning",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_movement"
+      ]
+    },
+    {
+      "key": "move_bike_short",
+      "title_key": "goal.move_bike_short.title",
+      "icon": "pedal_bike",
+      "area_key": "movement",
+      "tabs": [
+        "movement"
+      ],
+      "difficulty": 3,
+      "minutes": 20,
+      "default_time_of_day": "afternoon",
+      "default_repeat": "weekdays:0,2,4",
+      "need_tags": []
+    },
+    {
+      "key": "move_balcony_air",
+      "title_key": "goal.move_balcony_air.title",
+      "icon": "deck",
+      "area_key": "movement",
+      "tabs": [
+        "movement",
+        "calm",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 5,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_movement",
+        "mid_movement"
+      ]
+    },
+    {
+      "key": "food_water_glass",
+      "title_key": "goal.food_water_glass.title",
+      "icon": "water_drop",
+      "area_key": "nutrition",
+      "tabs": [
+        "health",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 1,
+      "default_time_of_day": "morning",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_nutrition",
+        "mid_nutrition"
+      ]
+    },
+    {
+      "key": "food_water_four",
+      "title_key": "goal.food_water_four.title",
+      "icon": "local_drink",
+      "area_key": "nutrition",
+      "tabs": [
+        "health"
+      ],
+      "difficulty": 2,
+      "minutes": 1,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_nutrition"
+      ]
+    },
+    {
+      "key": "food_fruit_one",
+      "title_key": "goal.food_fruit_one.title",
+      "icon": "apple",
+      "area_key": "nutrition",
+      "tabs": [
+        "health",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 5,
+      "default_time_of_day": "afternoon",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_nutrition",
+        "mid_nutrition"
+      ]
+    },
+    {
+      "key": "food_breakfast",
+      "title_key": "goal.food_breakfast.title",
+      "icon": "free_breakfast",
+      "area_key": "nutrition",
+      "tabs": [
+        "health"
+      ],
+      "difficulty": 2,
+      "minutes": 15,
+      "default_time_of_day": "morning",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_nutrition"
+      ]
+    },
+    {
+      "key": "food_veggie_side",
+      "title_key": "goal.food_veggie_side.title",
+      "icon": "eco",
+      "area_key": "nutrition",
+      "tabs": [
+        "health"
+      ],
+      "difficulty": 2,
+      "minutes": 5,
+      "default_time_of_day": "afternoon",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_nutrition"
+      ]
+    },
+    {
+      "key": "food_slow_bites",
+      "title_key": "goal.food_slow_bites.title",
+      "icon": "restaurant",
+      "area_key": "nutrition",
+      "tabs": [
+        "health",
+        "calm"
+      ],
+      "difficulty": 2,
+      "minutes": 10,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_nutrition"
+      ]
+    },
+    {
+      "key": "food_nuts_handful",
+      "title_key": "goal.food_nuts_handful.title",
+      "icon": "grain",
+      "area_key": "nutrition",
+      "tabs": [
+        "health",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 2,
+      "default_time_of_day": "afternoon",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_nutrition",
+        "mid_nutrition"
+      ]
+    },
+    {
+      "key": "food_plan_meal",
+      "title_key": "goal.food_plan_meal.title",
+      "icon": "menu_book",
+      "area_key": "nutrition",
+      "tabs": [
+        "health",
+        "tidy"
+      ],
+      "difficulty": 2,
+      "minutes": 5,
+      "default_time_of_day": "evening",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_nutrition"
+      ]
+    },
+    {
+      "key": "food_dessert_mindful",
+      "title_key": "goal.food_dessert_mindful.title",
+      "icon": "cookie",
+      "area_key": "nutrition",
+      "tabs": [
+        "health",
+        "calm"
+      ],
+      "difficulty": 1,
+      "minutes": 5,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_nutrition",
+        "mid_nutrition"
+      ]
+    },
+    {
+      "key": "food_home_cooked",
+      "title_key": "goal.food_home_cooked.title",
+      "icon": "soup_kitchen",
+      "area_key": "nutrition",
+      "tabs": [
+        "health"
+      ],
+      "difficulty": 3,
+      "minutes": 30,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": []
+    },
+    {
+      "key": "food_lunch_on_time",
+      "title_key": "goal.food_lunch_on_time.title",
+      "icon": "schedule",
+      "area_key": "nutrition",
+      "tabs": [
+        "health"
+      ],
+      "difficulty": 2,
+      "minutes": 20,
+      "default_time_of_day": "afternoon",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_nutrition"
+      ]
+    },
+    {
+      "key": "conn_short_message",
+      "title_key": "goal.conn_short_message.title",
+      "icon": "chat",
+      "area_key": "connection",
+      "tabs": [
+        "connection",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 3,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_connection",
+        "mid_connection"
+      ]
+    },
+    {
+      "key": "conn_call_dear",
+      "title_key": "goal.conn_call_dear.title",
+      "icon": "call",
+      "area_key": "connection",
+      "tabs": [
+        "connection"
+      ],
+      "difficulty": 3,
+      "minutes": 15,
+      "default_time_of_day": "evening",
+      "default_repeat": "weekdays:4",
+      "need_tags": []
+    },
+    {
+      "key": "conn_thank_someone",
+      "title_key": "goal.conn_thank_someone.title",
+      "icon": "volunteer_activism",
+      "area_key": "connection",
+      "tabs": [
+        "connection",
+        "gratitude",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 2,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_connection",
+        "mid_connection"
+      ]
+    },
+    {
+      "key": "conn_family_tea",
+      "title_key": "goal.conn_family_tea.title",
+      "icon": "groups",
+      "area_key": "connection",
+      "tabs": [
+        "connection",
+        "calm"
+      ],
+      "difficulty": 2,
+      "minutes": 20,
+      "default_time_of_day": "evening",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_connection"
+      ]
+    },
+    {
+      "key": "conn_compliment",
+      "title_key": "goal.conn_compliment.title",
+      "icon": "sentiment_satisfied",
+      "area_key": "connection",
+      "tabs": [
+        "connection",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 2,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_connection",
+        "mid_connection"
+      ]
+    },
+    {
+      "key": "conn_voice_note",
+      "title_key": "goal.conn_voice_note.title",
+      "icon": "mic",
+      "area_key": "connection",
+      "tabs": [
+        "connection"
+      ],
+      "difficulty": 2,
+      "minutes": 3,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_connection"
+      ]
+    },
+    {
+      "key": "conn_neighbor_hello",
+      "title_key": "goal.conn_neighbor_hello.title",
+      "icon": "waving_hand",
+      "area_key": "connection",
+      "tabs": [
+        "connection",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 1,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_connection",
+        "mid_connection"
+      ]
+    },
+    {
+      "key": "conn_listen_fully",
+      "title_key": "goal.conn_listen_fully.title",
+      "icon": "hearing",
+      "area_key": "connection",
+      "tabs": [
+        "connection",
+        "calm"
+      ],
+      "difficulty": 2,
+      "minutes": 10,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_connection"
+      ]
+    },
+    {
+      "key": "conn_plan_meet",
+      "title_key": "goal.conn_plan_meet.title",
+      "icon": "event",
+      "area_key": "connection",
+      "tabs": [
+        "connection"
+      ],
+      "difficulty": 3,
+      "minutes": 10,
+      "default_time_of_day": "any",
+      "default_repeat": "weekdays:3",
+      "need_tags": []
+    },
+    {
+      "key": "conn_old_photo",
+      "title_key": "goal.conn_old_photo.title",
+      "icon": "photo",
+      "area_key": "connection",
+      "tabs": [
+        "connection",
+        "gratitude"
+      ],
+      "difficulty": 1,
+      "minutes": 3,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_connection",
+        "mid_connection"
+      ]
+    },
+    {
+      "key": "focus_top_three",
+      "title_key": "goal.focus_top_three.title",
+      "icon": "checklist",
+      "area_key": "focus",
+      "tabs": [
+        "tidy",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 5,
+      "default_time_of_day": "morning",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_focus",
+        "mid_focus"
+      ]
+    },
+    {
+      "key": "focus_timer_twenty",
+      "title_key": "goal.focus_timer_twenty.title",
+      "icon": "timer",
+      "area_key": "focus",
+      "tabs": [
+        "calm"
+      ],
+      "difficulty": 2,
+      "minutes": 20,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_focus"
+      ]
+    },
+    {
+      "key": "focus_small_step",
+      "title_key": "goal.focus_small_step.title",
+      "icon": "flag",
+      "area_key": "focus",
+      "tabs": [
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 5,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_focus",
+        "mid_focus"
+      ]
+    },
+    {
+      "key": "focus_desk_clear",
+      "title_key": "goal.focus_desk_clear.title",
+      "icon": "desk",
+      "area_key": "focus",
+      "tabs": [
+        "tidy",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 3,
+      "default_time_of_day": "morning",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_focus",
+        "mid_focus"
+      ]
+    },
+    {
+      "key": "focus_notifs_off",
+      "title_key": "goal.focus_notifs_off.title",
+      "icon": "notifications_off",
+      "area_key": "focus",
+      "tabs": [
+        "calm"
+      ],
+      "difficulty": 2,
+      "minutes": 60,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_focus"
+      ]
+    },
+    {
+      "key": "focus_review_day",
+      "title_key": "goal.focus_review_day.title",
+      "icon": "fact_check",
+      "area_key": "focus",
+      "tabs": [
+        "gratitude",
+        "tidy"
+      ],
+      "difficulty": 1,
+      "minutes": 5,
+      "default_time_of_day": "evening",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_focus",
+        "mid_focus"
+      ]
+    },
+    {
+      "key": "focus_one_page",
+      "title_key": "goal.focus_one_page.title",
+      "icon": "menu_book",
+      "area_key": "focus",
+      "tabs": [
+        "calm"
+      ],
+      "difficulty": 1,
+      "minutes": 5,
+      "default_time_of_day": "evening",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_focus",
+        "mid_focus"
+      ]
+    },
+    {
+      "key": "focus_learn_small",
+      "title_key": "goal.focus_learn_small.title",
+      "icon": "school",
+      "area_key": "focus",
+      "tabs": [
+        "easy_wins"
+      ],
+      "difficulty": 2,
+      "minutes": 10,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_focus"
+      ]
+    },
+    {
+      "key": "focus_break_walk",
+      "title_key": "goal.focus_break_walk.title",
+      "icon": "coffee",
+      "area_key": "focus",
+      "tabs": [
+        "calm",
+        "movement"
+      ],
+      "difficulty": 1,
+      "minutes": 5,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_focus",
+        "mid_focus"
+      ]
+    },
+    {
+      "key": "focus_finish_one",
+      "title_key": "goal.focus_finish_one.title",
+      "icon": "task_alt",
+      "area_key": "focus",
+      "tabs": [
+        "tidy"
+      ],
+      "difficulty": 2,
+      "minutes": 15,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_focus"
+      ]
+    },
+    {
+      "key": "kind_good_sentence",
+      "title_key": "goal.kind_good_sentence.title",
+      "icon": "favorite",
+      "area_key": "self_kindness",
+      "tabs": [
+        "gratitude",
+        "calm",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 1,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_self_kindness",
+        "mid_self_kindness"
+      ]
+    },
+    {
+      "key": "kind_three_good",
+      "title_key": "goal.kind_three_good.title",
+      "icon": "celebration",
+      "area_key": "self_kindness",
+      "tabs": [
+        "gratitude"
+      ],
+      "difficulty": 2,
+      "minutes": 5,
+      "default_time_of_day": "evening",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_self_kindness"
+      ]
+    },
+    {
+      "key": "kind_treat_small",
+      "title_key": "goal.kind_treat_small.title",
+      "icon": "card_giftcard",
+      "area_key": "self_kindness",
+      "tabs": [
+        "gratitude",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 10,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_self_kindness",
+        "mid_self_kindness"
+      ]
+    },
+    {
+      "key": "kind_mirror_smile",
+      "title_key": "goal.kind_mirror_smile.title",
+      "icon": "face",
+      "area_key": "self_kindness",
+      "tabs": [
+        "gratitude",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 1,
+      "default_time_of_day": "morning",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_self_kindness",
+        "mid_self_kindness"
+      ]
+    },
+    {
+      "key": "kind_forgive_one",
+      "title_key": "goal.kind_forgive_one.title",
+      "icon": "healing",
+      "area_key": "self_kindness",
+      "tabs": [
+        "gratitude",
+        "calm"
+      ],
+      "difficulty": 2,
+      "minutes": 5,
+      "default_time_of_day": "evening",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_self_kindness"
+      ]
+    },
+    {
+      "key": "kind_proud_note",
+      "title_key": "goal.kind_proud_note.title",
+      "icon": "military_tech",
+      "area_key": "self_kindness",
+      "tabs": [
+        "gratitude"
+      ],
+      "difficulty": 2,
+      "minutes": 5,
+      "default_time_of_day": "evening",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_self_kindness"
+      ]
+    },
+    {
+      "key": "kind_no_comparison",
+      "title_key": "goal.kind_no_comparison.title",
+      "icon": "balance",
+      "area_key": "self_kindness",
+      "tabs": [
+        "gratitude",
+        "calm"
+      ],
+      "difficulty": 3,
+      "minutes": 1,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": []
+    },
+    {
+      "key": "kind_say_no",
+      "title_key": "goal.kind_say_no.title",
+      "icon": "block",
+      "area_key": "self_kindness",
+      "tabs": [
+        "calm"
+      ],
+      "difficulty": 3,
+      "minutes": 2,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": []
+    },
+    {
+      "key": "kind_hand_heart",
+      "title_key": "goal.kind_hand_heart.title",
+      "icon": "volunteer_activism",
+      "area_key": "self_kindness",
+      "tabs": [
+        "calm",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 1,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_self_kindness",
+        "mid_self_kindness"
+      ]
+    },
+    {
+      "key": "kind_gratitude_view",
+      "title_key": "goal.kind_gratitude_view.title",
+      "icon": "park",
+      "area_key": "self_kindness",
+      "tabs": [
+        "gratitude",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 1,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_self_kindness",
+        "mid_self_kindness"
+      ]
+    },
+    {
+      "key": "kind_rest_guilt_free",
+      "title_key": "goal.kind_rest_guilt_free.title",
+      "icon": "weekend",
+      "area_key": "self_kindness",
+      "tabs": [
+        "calm",
+        "sleep"
+      ],
+      "difficulty": 1,
+      "minutes": 10,
+      "default_time_of_day": "afternoon",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_self_kindness",
+        "mid_self_kindness"
+      ]
+    },
+    {
+      "key": "home_bed_make",
+      "title_key": "goal.home_bed_make.title",
+      "icon": "bed",
+      "area_key": "home",
+      "tabs": [
+        "tidy",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 3,
+      "default_time_of_day": "morning",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_home",
+        "mid_home"
+      ]
+    },
+    {
+      "key": "home_dishes_few",
+      "title_key": "goal.home_dishes_few.title",
+      "icon": "cleaning_services",
+      "area_key": "home",
+      "tabs": [
+        "tidy",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 5,
+      "default_time_of_day": "evening",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_home",
+        "mid_home"
+      ]
+    },
+    {
+      "key": "home_one_corner",
+      "title_key": "goal.home_one_corner.title",
+      "icon": "cleaning_services",
+      "area_key": "home",
+      "tabs": [
+        "tidy"
+      ],
+      "difficulty": 2,
+      "minutes": 10,
+      "default_time_of_day": "any",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_home"
+      ]
+    },
+    {
+      "key": "home_fresh_air",
+      "title_key": "goal.home_fresh_air.title",
+      "icon": "window",
+      "area_key": "home",
+      "tabs": [
+        "tidy",
+        "calm",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 5,
+      "default_time_of_day": "morning",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_home",
+        "mid_home"
+      ]
+    },
+    {
+      "key": "home_plant_water",
+      "title_key": "goal.home_plant_water.title",
+      "icon": "local_florist",
+      "area_key": "home",
+      "tabs": [
+        "tidy",
+        "calm",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 3,
+      "default_time_of_day": "morning",
+      "default_repeat": "weekdays:0,3",
+      "need_tags": [
+        "low_home",
+        "mid_home"
+      ]
+    },
+    {
+      "key": "home_trash_out",
+      "title_key": "goal.home_trash_out.title",
+      "icon": "delete",
+      "area_key": "home",
+      "tabs": [
+        "tidy",
+        "easy_wins"
+      ],
+      "difficulty": 1,
+      "minutes": 2,
+      "default_time_of_day": "evening",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_home",
+        "mid_home"
+      ]
+    },
+    {
+      "key": "home_clothes_fold",
+      "title_key": "goal.home_clothes_fold.title",
+      "icon": "checkroom",
+      "area_key": "home",
+      "tabs": [
+        "tidy"
+      ],
+      "difficulty": 1,
+      "minutes": 10,
+      "default_time_of_day": "evening",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_home",
+        "mid_home"
+      ]
+    },
+    {
+      "key": "home_five_minute_tidy",
+      "title_key": "goal.home_five_minute_tidy.title",
+      "icon": "timer",
+      "area_key": "home",
+      "tabs": [
+        "tidy"
+      ],
+      "difficulty": 2,
+      "minutes": 5,
+      "default_time_of_day": "evening",
+      "default_repeat": "daily",
+      "need_tags": [
+        "mid_home"
+      ]
+    },
+    {
+      "key": "home_light_candle",
+      "title_key": "goal.home_light_candle.title",
+      "icon": "light",
+      "area_key": "home",
+      "tabs": [
+        "calm",
+        "tidy"
+      ],
+      "difficulty": 1,
+      "minutes": 1,
+      "default_time_of_day": "evening",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_home",
+        "mid_home"
+      ]
+    },
+    {
+      "key": "home_bag_ready",
+      "title_key": "goal.home_bag_ready.title",
+      "icon": "backpack",
+      "area_key": "home",
+      "tabs": [
+        "tidy"
+      ],
+      "difficulty": 1,
+      "minutes": 5,
+      "default_time_of_day": "evening",
+      "default_repeat": "daily",
+      "need_tags": [
+        "low_home",
+        "mid_home"
+      ]
+    },
+    {
+      "key": "home_drawer_one",
+      "title_key": "goal.home_drawer_one.title",
+      "icon": "inventory_2",
+      "area_key": "home",
+      "tabs": [
+        "tidy"
+      ],
+      "difficulty": 2,
+      "minutes": 10,
+      "default_time_of_day": "any",
+      "default_repeat": "once",
+      "need_tags": [
+        "mid_home"
+      ]
+    }
+  ]
+}

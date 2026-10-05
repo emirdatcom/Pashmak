@@ -497,6 +497,135 @@
       "name": "support_conversation_deleted",
       "props": {},
       "server_side": false
+    },
+    {
+      "name": "onboarding_areas_selected",
+      "props": {
+        "areas_count": {
+          "type": "int"
+        },
+        "area_keys": {
+          "type": "string",
+          "max_len": 200
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "goal_recommended_accepted",
+      "props": {
+        "accepted_count": {
+          "type": "int"
+        },
+        "replaced_count": {
+          "type": "int"
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "goal_created",
+      "props": {
+        "source": {
+          "type": "string",
+          "enum": [
+            "suggested",
+            "tab",
+            "custom"
+          ]
+        },
+        "area_key": {
+          "type": "string",
+          "max_len": 64
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "goal_completed",
+      "props": {
+        "goal_key": {
+          "type": "string",
+          "max_len": 64
+        },
+        "source": {
+          "type": "string",
+          "enum": [
+            "app",
+            "widget",
+            "notification"
+          ]
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "quest_claimed",
+      "props": {
+        "quest_key": {
+          "type": "string",
+          "max_len": 64
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "daily",
+            "special"
+          ]
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "discovery_found",
+      "props": {
+        "category": {
+          "type": "string",
+          "max_len": 64
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "cat_stage_up",
+      "props": {
+        "stage": {
+          "type": "string",
+          "enum": [
+            "young",
+            "adult"
+          ]
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "shop_refreshed",
+      "props": {
+        "paid": {
+          "type": "bool"
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "item_sold",
+      "props": {
+        "item_key": {
+          "type": "string",
+          "max_len": 64
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "pause_mode_toggled",
+      "props": {
+        "on": {
+          "type": "bool"
+        }
+      },
+      "server_side": false
     }
   ]
 }

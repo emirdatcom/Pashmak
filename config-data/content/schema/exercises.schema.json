@@ -45,13 +45,8 @@
         ],
         "properties": {
           "key": {
-            "enum": [
-              "breathing_basic",
-              "gratitude",
-              "guided_journal",
-              "muscle_relax",
-              "afternoon_tea"
-            ]
+            "type": "string",
+            "pattern": "^[a-z0-9_]{1,64}$"
           },
           "premium": {
             "type": "boolean"
@@ -120,6 +115,19 @@
               "type": "string",
               "pattern": "^[a-z0-9_]+(\\.[a-z0-9_]+)+$"
             }
+          },
+          "tab": {
+            "enum": [
+              "focus",
+              "calm",
+              "morning",
+              "night",
+              "energize"
+            ]
+          },
+          "reward_energy": {
+            "type": "integer",
+            "minimum": 0
           }
         },
         "allOf": [

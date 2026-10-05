@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "shop_items pack",
+  "title": "reflection_prompts pack",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -13,7 +13,7 @@
   ],
   "properties": {
     "pack_key": {
-      "const": "shop_items"
+      "const": "reflection_prompts"
     },
     "version": {
       "type": "integer",
@@ -37,47 +37,27 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "item_key",
-          "name_key",
-          "slot",
-          "price_coins",
-          "premium_only",
-          "asset"
+          "key",
+          "prompt_key",
+          "a_key",
+          "b_key"
         ],
         "properties": {
-          "item_key": {
+          "key": {
             "type": "string",
             "pattern": "^[a-z0-9_]{1,64}$"
           },
-          "name_key": {
+          "prompt_key": {
             "type": "string",
             "pattern": "^[a-z0-9_]+(\\.[a-z0-9_]+)+$"
           },
-          "slot": {
-            "enum": [
-              "collar",
-              "hat",
-              "glasses",
-              "scarf",
-              "background",
-              "room_table",
-              "room_floor",
-              "room_wall",
-              "room_shelf"
-            ]
+          "a_key": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+(\\.[a-z0-9_]+)+$"
           },
-          "price_coins": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "premium_only": {
-            "type": "boolean"
-          },
-          "asset": {
-            "type": "string"
-          },
-          "always_available": {
-            "type": "boolean"
+          "b_key": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+(\\.[a-z0-9_]+)+$"
           }
         }
       }

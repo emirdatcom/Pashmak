@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "shop_items pack",
+  "title": "discoveries pack",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -13,7 +13,7 @@
   ],
   "properties": {
     "pack_key": {
-      "const": "shop_items"
+      "const": "discoveries"
     },
     "version": {
       "type": "integer",
@@ -37,15 +37,12 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "item_key",
+          "key",
           "name_key",
-          "slot",
-          "price_coins",
-          "premium_only",
-          "asset"
+          "category"
         ],
         "properties": {
-          "item_key": {
+          "key": {
             "type": "string",
             "pattern": "^[a-z0-9_]{1,64}$"
           },
@@ -53,31 +50,14 @@
             "type": "string",
             "pattern": "^[a-z0-9_]+(\\.[a-z0-9_]+)+$"
           },
-          "slot": {
+          "category": {
             "enum": [
-              "collar",
-              "hat",
-              "glasses",
-              "scarf",
-              "background",
-              "room_table",
-              "room_floor",
-              "room_wall",
-              "room_shelf"
+              "food",
+              "plant",
+              "antique",
+              "sound",
+              "sky"
             ]
-          },
-          "price_coins": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "premium_only": {
-            "type": "boolean"
-          },
-          "asset": {
-            "type": "string"
-          },
-          "always_available": {
-            "type": "boolean"
           }
         }
       }

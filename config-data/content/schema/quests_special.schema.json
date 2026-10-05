@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "shop_items pack",
+  "title": "quests_special pack",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -13,7 +13,7 @@
   ],
   "properties": {
     "pack_key": {
-      "const": "shop_items"
+      "const": "quests_special"
     },
     "version": {
       "type": "integer",
@@ -37,47 +37,49 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "item_key",
-          "name_key",
-          "slot",
-          "price_coins",
-          "premium_only",
-          "asset"
+          "key",
+          "title_key",
+          "hint_key",
+          "metric",
+          "target",
+          "reward_coins",
+          "route"
         ],
         "properties": {
-          "item_key": {
+          "key": {
             "type": "string",
             "pattern": "^[a-z0-9_]{1,64}$"
           },
-          "name_key": {
+          "title_key": {
             "type": "string",
             "pattern": "^[a-z0-9_]+(\\.[a-z0-9_]+)+$"
           },
-          "slot": {
+          "hint_key": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+(\\.[a-z0-9_]+)+$"
+          },
+          "metric": {
             "enum": [
-              "collar",
-              "hat",
-              "glasses",
-              "scarf",
-              "background",
-              "room_table",
-              "room_floor",
-              "room_wall",
-              "room_shelf"
+              "adventures_count",
+              "owned_outfit",
+              "owned_furniture",
+              "locations_visited",
+              "streak_days",
+              "discoveries_count",
+              "goals_done_total"
             ]
           },
-          "price_coins": {
+          "target": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "reward_coins": {
             "type": "integer",
             "minimum": 0
           },
-          "premium_only": {
-            "type": "boolean"
-          },
-          "asset": {
-            "type": "string"
-          },
-          "always_available": {
-            "type": "boolean"
+          "route": {
+            "type": "string",
+            "pattern": "^/[a-z0-9/_-]*$"
           }
         }
       }

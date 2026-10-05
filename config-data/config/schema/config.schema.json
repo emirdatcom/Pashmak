@@ -5,7 +5,7 @@
   "description": "Every key has a bundled default in config-data/config/default.json. Unknown keys are rejected so typos fail at publish time.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["limits", "pricing", "trial", "paywall", "entitlement", "economy", "adventure", "streak", "notifications", "safety", "features", "support", "update"],
+  "required": ["limits", "pricing", "trial", "paywall", "entitlement", "economy", "adventure", "growth", "quests", "shop", "onboarding", "streak", "notifications", "safety", "features", "support", "update"],
   "$defs": {
     "productId": {"type": "string", "pattern": "^[a-z0-9_]{1,64}$"},
     "key": {"type": "string", "pattern": "^[a-z0-9_]{1,64}$"},
@@ -84,9 +84,9 @@
     },
     "economy": {
       "type": "object", "additionalProperties": false,
-      "required": ["energy_per_habit", "energy_per_checkin", "energy_per_exercise", "exercise_rewards_per_day", "energy_cap"],
+      "required": ["energy_per_goal", "energy_per_checkin", "energy_per_exercise", "exercise_rewards_per_day", "energy_cap"],
       "properties": {
-        "energy_per_habit": {"$ref": "#/$defs/nonNegInt"},
+        "energy_per_goal": {"$ref": "#/$defs/nonNegInt"},
         "energy_per_checkin": {"$ref": "#/$defs/nonNegInt"},
         "energy_per_exercise": {"$ref": "#/$defs/nonNegInt"},
         "exercise_rewards_per_day": {"$ref": "#/$defs/nonNegInt"},
@@ -94,8 +94,9 @@
       }
     },
     "adventure": {
-      "type": "object", "additionalProperties": false, "required": ["locations"],
+      "type": "object", "additionalProperties": false, "required": ["locations", "daily_energy_target"],
       "properties": {
+        "daily_energy_target": {"$ref": "#/$defs/posInt"},
         "locations": {
           "type": "array", "minItems": 1,
           "items": {
@@ -111,6 +112,30 @@
             }
           }
         }
+      }
+    },
+    "growth": {
+      "type": "object", "additionalProperties": false, "required": ["thresholds"],
+      "properties": {"thresholds": {"type": "object", "additionalProperties": false, "required": ["young", "adult"],
+        "properties": {"young": {"$ref": "#/$defs/posInt"}, "adult": {"$ref": "#/$defs/posInt"}}}}
+    },
+    "quests": {
+      "type": "object", "additionalProperties": false, "required": ["daily_count", "daily_reward_coins"],
+      "properties": {"daily_count": {"type": "integer", "minimum": 1, "maximum": 6}, "daily_reward_coins": {"$ref": "#/$defs/nonNegInt"}}
+    },
+    "shop": {
+      "type": "object", "additionalProperties": false, "required": ["rotation_size", "refresh_cost", "sell_ratio"],
+      "properties": {"rotation_size": {"$ref": "#/$defs/posInt"}, "refresh_cost": {"$ref": "#/$defs/nonNegInt"},
+        "sell_ratio": {"type": "number", "minimum": 0, "maximum": 1}}
+    },
+    "onboarding": {
+      "type": "object", "additionalProperties": false, "required": ["recommend_count_free", "recommend_count_trial", "recommender"],
+      "properties": {
+        "recommend_count_free": {"$ref": "#/$defs/posInt"}, "recommend_count_trial": {"$ref": "#/$defs/posInt"},
+        "recommender": {"type": "object", "additionalProperties": false,
+          "required": ["area_selected", "answer_rarely", "answer_sometimes", "need_weight", "tag_weight", "difficulty_penalty", "chronotype_bonus"],
+          "properties": {"area_selected": {"$ref": "#/$defs/nonNegInt"}, "answer_rarely": {"$ref": "#/$defs/nonNegInt"}, "answer_sometimes": {"$ref": "#/$defs/nonNegInt"},
+            "need_weight": {"$ref": "#/$defs/nonNegInt"}, "tag_weight": {"$ref": "#/$defs/nonNegInt"}, "difficulty_penalty": {"$ref": "#/$defs/nonNegInt"}, "chronotype_bonus": {"$ref": "#/$defs/nonNegInt"}}}
       }
     },
     "streak": {
@@ -145,10 +170,10 @@
     },
     "features": {
       "type": "object", "additionalProperties": false,
-      "required": ["rive_cat", "widgets", "backup", "phone_link", "seasonal_packs", "stats_deep"],
+      "required": ["rive_cat", "widgets", "backup", "phone_link", "seasonal_packs", "stats_deep", "pause_mode"],
       "properties": {
         "rive_cat": {"type": "boolean"}, "widgets": {"type": "boolean"}, "backup": {"type": "boolean"},
-        "phone_link": {"type": "boolean"}, "seasonal_packs": {"type": "boolean"}, "stats_deep": {"type": "boolean"}
+        "phone_link": {"type": "boolean"}, "seasonal_packs": {"type": "boolean"}, "stats_deep": {"type": "boolean"}, "pause_mode": {"type": "boolean"}
       }
     },
     "support": {
