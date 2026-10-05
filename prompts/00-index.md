@@ -18,6 +18,7 @@
 | 15 | `15-frontend-onboarding-polish.md` | MVP | 11–14 | — |
 | 16 | `16-frontend-phase2.md` (backup، اتصال شماره، آمار عمیق، فصلی، Rive) | فاز ۲ | 15، 05 | — |
 | 22 | `22-finch-style-ux-onboarding-goals.md` (بازطراحی تجربه: تم، ۵ تب، آنبوردینگ ۱۱ گام، اهداف، مأموریت، فروشگاه چرخشی) | MVP/۲ | 11–16، 21 | — |
+| 23 | `23-visual-fidelity-and-fixes.md` (مقایسه با مرجع، فونت، اصلاحات باقی‌مانده) | قبل از انتشار | 22 | — |
 | 21 | `21-decisions-alignment-and-support-chat.md` (تصمیم‌های D-1..D-9 و چت پشتیبانی) | MVP/۲ | 05، 16 | — |
 | 20 | `20-integration-and-release.md` | MVP (و تکرار در هر فاز) | همه MVP | — |
 | 21 | `21-decisions-alignment-and-support-chat.md` (تصمیم‌های قطعی مالک + چت پشتیبانی) | قبل از انتشار | 01–20 | — |
