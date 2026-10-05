@@ -47,24 +47,25 @@ class MenuScreen extends ConsumerWidget {
           ]),
         ),
         const SizedBox(height: 12),
-        GridView.count(
-          crossAxisCount: 2,
+        GridView(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          mainAxisSpacing: 10,
-          crossAxisSpacing: 10,
-          childAspectRatio: 1.0,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisSpacing: 10, crossAxisSpacing: 10, mainAxisExtent: 100 * MediaQuery.textScalerOf(context).scale(1).clamp(1.0, 2.0)),
           children: [
             for (final t in tiles)
               RoundCard(
                 color: t.$4 ? DS.neutralButton : DS.card,
                 onTap: t.$4 ? null : () => context.push(t.$3),
                 semanticLabel: t.$4 ? '${copy.t(t.$1)} ${copy.t('menu.soon')}' : copy.t(t.$1),
-                child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                child: Row(children: [
                   Icon(t.$2, size: 32, color: t.$4 ? DS.textSecondary : DS.premiumBadge),
-                  const SizedBox(height: 6),
-                  Text(copy.t(t.$1), textAlign: TextAlign.center, style: const TextStyle(color: DS.textPrimary, fontWeight: FontWeight.w700)),
-                  if (t.$4) Text(copy.t('menu.soon'), style: const TextStyle(color: DS.textSecondary, fontSize: 12)),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text(copy.t(t.$1), maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: DS.textPrimary, fontWeight: FontWeight.w700)),
+                      if (t.$4) Text(copy.t('menu.soon'), style: const TextStyle(color: DS.textSecondary, fontSize: 12)),
+                    ]),
+                  ),
                 ]),
               ),
           ],

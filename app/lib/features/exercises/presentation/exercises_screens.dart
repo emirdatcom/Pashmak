@@ -266,38 +266,41 @@ class _ExerciseRunState extends ConsumerState<ExerciseRunScreen> with SingleTick
     final sub = switch (phase.animation) { 'inhale' => copy.t('exercise.breath.nose'), 'exhale' => copy.t('exercise.breath.mouth'), _ => '' };
     final overall = r.total == 0 ? 0 : (s.elapsedSeconds / r.total * r.total).round();
     return Column(children: [
-      ProgressPill(value: overall, max: r.total, height: 10, showText: false, label: copy.t('exercise.duration', {'n': (r.total / 60).ceil()})),
       Expanded(
-        child: Center(
-          child: SizedBox(
-            width: 260,
-            height: 260,
-            child: Stack(alignment: Alignment.center, children: [
-              Container(width: 260 * scale, height: 260 * scale, decoration: BoxDecoration(shape: BoxShape.circle, color: DS.card.withValues(alpha: 0.35))),
-              Container(width: 190 * scale, height: 190 * scale, decoration: BoxDecoration(shape: BoxShape.circle, color: DS.card.withValues(alpha: 0.55))),
-              Column(mainAxisSize: MainAxisSize.min, children: [
-                Semantics(liveRegion: true, child: Text(copy.t(phase.textKey), textAlign: TextAlign.center, style: const TextStyle(color: DS.textPrimary, fontSize: 22, fontWeight: FontWeight.w800))),
-                if (sub.isNotEmpty) Text(sub, style: const TextStyle(color: DS.textPrimary, fontSize: 15)),
-                Text(toPersianDigits(math.max(0, s.remainingInPhase.ceil())), style: const TextStyle(color: DS.textPrimary)),
+        child: LayoutBuilder(builder: (context, box) {
+          // Concentric circles like the reference: a fixed outer ring and an inner disc that breathes.
+          final outer = math.min(box.maxWidth, box.maxHeight) * 0.96;
+          return Center(
+            child: SizedBox(
+              width: outer,
+              height: outer,
+              child: Stack(alignment: Alignment.center, children: [
+                Container(width: outer, height: outer, decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: DS.card.withValues(alpha: 0.6), width: 4))),
+                Container(width: outer * 0.62 * scale, height: outer * 0.62 * scale, decoration: BoxDecoration(shape: BoxShape.circle, color: DS.card.withValues(alpha: 0.35))),
+                Container(width: outer * 0.5 * scale, height: outer * 0.5 * scale, decoration: BoxDecoration(shape: BoxShape.circle, color: DS.card.withValues(alpha: 0.6))),
+                SizedBox(width: outer * 0.6, child: Column(mainAxisSize: MainAxisSize.min, children: [
+                  Semantics(liveRegion: true, child: Text(copy.t(phase.textKey), textAlign: TextAlign.center, style: TextStyle(color: DS.textPrimary, fontSize: copy.t(phase.textKey).length > 12 ? 18 : 28, fontWeight: FontWeight.w800))),
+                  if (sub.isNotEmpty) Text(sub, style: const TextStyle(color: DS.textPrimary, fontSize: 18)),
+                  Text(toPersianDigits(math.max(0, s.remainingInPhase.ceil())), style: const TextStyle(color: DS.textPrimary)),
+                ])),
               ]),
-            ]),
-          ),
-        ),
+            ),
+          );
+        }),
       ),
       Transform.translate(
         offset: Offset(0, switch (phase.animation) { 'inhale' => -14 * progress, 'exhale' => -14 * (1 - progress), 'hold' => -14.0, _ => 0.0 }),
-        child: const SizedBox(height: 120, child: ExcludeSemantics(child: _BreathingFace())),
+        child: SizedBox(height: 220, child: ClipRect(child: Transform.scale(scale: 1.7, alignment: Alignment.bottomCenter, child: const ExcludeSemantics(child: _BreathingFace())))),
       ),
       const SizedBox(height: AppSpacing.sm),
-      Row(children: [
-        Expanded(
-          child: ChunkyButton.neutral(
-            icon: r.paused ? Icons.play_arrow : Icons.pause,
-            label: copy.t(r.paused ? 'exercise.resume' : 'exercise.pause'),
-            onPressed: () => setState(() => r.paused ? r.resume(ref.read(clockProvider).now()) : r.pause(ref.read(clockProvider).now())),
-          ),
-        ),
-      ]),
+      ProgressPill(value: overall, max: r.total, height: 12, showText: false, label: copy.t('exercise.duration', {'n': (r.total / 60).ceil()})),
+      IconButton(
+        iconSize: 40,
+        constraints: const BoxConstraints(minWidth: 56, minHeight: 56),
+        tooltip: copy.t(r.paused ? 'exercise.resume' : 'exercise.pause'),
+        icon: Icon(r.paused ? Icons.play_arrow_rounded : Icons.pause_rounded, color: DS.textPrimary),
+        onPressed: () => setState(() => r.paused ? r.resume(ref.read(clockProvider).now()) : r.pause(ref.read(clockProvider).now())),
+      ),
     ]);
   }
 

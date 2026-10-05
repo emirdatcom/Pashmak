@@ -124,3 +124,8 @@ flutter:
         - asset: assets/fonts/Vazirmatn-Regular.ttf
         - asset: assets/fonts/Vazirmatn-Bold.ttf
           weight: 700
+    # Headline face (prompt 23 §4): Baloo Bhaijaan 2 ExtraBold, OFL, subset to Persian + digits + basic Latin
+    - family: BalooBhaijaan2
+      fonts:
+        - asset: assets/fonts/BalooBhaijaan2-ExtraBold.ttf
+          weight: 800

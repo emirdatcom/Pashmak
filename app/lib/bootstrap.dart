@@ -16,6 +16,7 @@ import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
 import 'app.dart';
+import 'core/demo/demo_seed.dart';
 import 'core/auth/device_identity.dart';
 import 'core/auth/token_store.dart';
 import 'core/config/asset_source.dart';
@@ -67,7 +68,18 @@ Future<void> _start(Flavor flavor) async {
   }
   unawaited(registerWidgetCallback().catchError((Object e, StackTrace s) => AppLogger.error(e, s, 'widget callback')));
   unawaited(registerBackgroundTasks().catchError((Object e, StackTrace s) => AppLogger.error(e, s, 'register tasks')));
-  runApp(ProviderScope(overrides: (overrides as _Ok).overrides, child: const App()));
+  final ok = (overrides as _Ok).overrides;
+  if (demoSeedActive()) {
+    final container = ProviderContainer(overrides: ok);
+    try {
+      await applyDemoSeed(container);
+    } catch (e, s) {
+      AppLogger.error(e, s, 'demo seed');
+    }
+    runApp(UncontrolledProviderScope(container: container, child: const App()));
+    return;
+  }
+  runApp(ProviderScope(overrides: ok, child: const App()));
 }
 
 class _Ok {

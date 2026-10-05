@@ -12,7 +12,7 @@
 ## آنچه اندازه‌گیری شد (assets و وابستگی‌ها)
 | مورد | حجم |
 |---|---|
-| `assets/fonts` (Vazirmatn Regular + Bold، subset) | ۱۴۰KB |
+| `assets/fonts` (Vazirmatn Regular + Bold + Baloo Bhaijaan 2 ExtraBold، subset) | ≈۲۰۰KB |
 | `assets/content` (۷ pack) | ۶۴KB |
 | `assets/config` | ۸KB |
 | تصاویر گربه (WebP) | هنوز نیست؛ `StaticCatRenderer` با placeholder رسم‌شده (CustomPainter) کار می‌کند |

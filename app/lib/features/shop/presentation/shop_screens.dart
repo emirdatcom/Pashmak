@@ -55,7 +55,7 @@ class ShopScreen extends ConsumerWidget {
       backgroundColor: DS.bgShopPanel,
       body: SafeArea(
         child: ListView(padding: const EdgeInsets.all(16), children: [
-          Text(copy.t('shop.shops.title'), style: const TextStyle(color: DS.onDark, fontSize: 24, fontWeight: FontWeight.w800)),
+          Text(copy.t('shop.shops.title'), style: const TextStyle(color: DS.onDark, fontSize: 24, fontWeight: FontWeight.w800, fontFamily: AppText.headline, fontFamilyFallback: AppText.headlineFallback)),
           const SizedBox(height: 12),
           const _CoinsBar(),
           const SizedBox(height: 16),
@@ -170,15 +170,16 @@ class _ShopDetailState extends ConsumerState<ShopDetailScreen> {
     final messenger = ScaffoldMessenger.of(context);
 
     Widget grid(List<ShopItem> list) => GridView.count(
-          crossAxisCount: 2,
+          crossAxisCount: 3,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           mainAxisSpacing: 10,
           crossAxisSpacing: 10,
-          childAspectRatio: 0.95,
+          childAspectRatio: 0.82,
           children: [
             for (final it in list)
               ItemTile(
+                onPanel: true,
                 key: ValueKey('tile-${it.itemKey}-$_version'),
                 name: copy.t(it.nameKey),
                 art: ItemArt(item: it),

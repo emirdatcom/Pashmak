@@ -34,20 +34,20 @@ class QuestsScreen extends ConsumerWidget {
       backgroundColor: DS.bgQuests,
       body: SafeArea(
         child: ListView(padding: const EdgeInsets.fromLTRB(16, 12, 16, 24), children: [
-          Text(copy.t('quest.screen.title'), style: const TextStyle(color: DS.onDark, fontSize: 24, fontWeight: FontWeight.w800)),
+          Text(copy.t('quest.screen.title'), style: const TextStyle(color: DS.textDeep, fontSize: 24, fontWeight: FontWeight.w800, fontFamily: AppText.headline, fontFamilyFallback: AppText.headlineFallback)),
           const SizedBox(height: 12),
           _SeasonBanner(today: today),
           Row(children: [
-            Expanded(child: Text(copy.t('quest.daily.title'), style: const TextStyle(color: DS.onDark, fontWeight: FontWeight.w700, fontSize: 16))),
-            if (!paused) CountdownChip(label: formatRemaining(copy, untilNext)),
+            Expanded(child: Text(copy.t('quest.daily.title'), style: const TextStyle(color: DS.textDeep, fontWeight: FontWeight.w700, fontSize: 16))),
+            if (!paused) CountdownChip(label: formatRemaining(copy, untilNext), onDark: false),
           ]),
           const SizedBox(height: 4),
           if (paused)
-            Padding(padding: const EdgeInsets.all(12), child: Text(copy.t('quest.paused'), style: const TextStyle(color: DS.onDark)))
+            Padding(padding: const EdgeInsets.all(12), child: Text(copy.t('quest.paused'), style: const TextStyle(color: DS.textDeep)))
           else
             QuestTimeline(rows: [for (final q in daily) (q.state == QuestState.claimed, _QuestCard(view: q, special: false))]),
           const SizedBox(height: 16),
-          Text(copy.t('quest.special.title'), style: const TextStyle(color: DS.onDark, fontWeight: FontWeight.w700, fontSize: 16)),
+          Text(copy.t('quest.special.title'), style: const TextStyle(color: DS.textDeep, fontWeight: FontWeight.w700, fontSize: 16)),
           const SizedBox(height: 8),
           for (final q in special) Padding(padding: const EdgeInsets.only(bottom: 10), child: _QuestCard(view: q, special: true)),
         ]),
@@ -80,12 +80,19 @@ class _SeasonBanner extends ConsumerWidget {
     final days = upcoming.first.startDate.difference(today.date).inDays;
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: RoundCard(
-        color: DS.neutralButton,
-        child: Row(children: [
-          const Icon(Icons.lock, color: DS.textSecondary),
-          const SizedBox(width: 10),
-          Expanded(child: Text('${upcoming.first.name} · ${copy.t('quest.season.locked', {'n': days})}', style: const TextStyle(color: DS.textPrimary, fontWeight: FontWeight.w700))),
+      child: Container(
+        constraints: const BoxConstraints(minHeight: 190),
+        decoration: BoxDecoration(color: DS.bgShopPanel, borderRadius: BorderRadius.circular(DS.radiusCard)),
+        padding: const EdgeInsets.all(16),
+        child: Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Text(upcoming.first.name, style: const TextStyle(color: DS.onDark, fontSize: 22, fontWeight: FontWeight.w800, fontFamily: AppText.headline, fontFamilyFallback: AppText.headlineFallback)),
+          const Padding(padding: EdgeInsets.symmetric(vertical: 8), child: Icon(Icons.lock, color: DS.lockYellow, size: 64)),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            decoration: BoxDecoration(color: DS.primaryGreen, borderRadius: BorderRadius.circular(10)),
+            child: Text(copy.t('quest.season.locked', {'n': days}), textAlign: TextAlign.center, style: const TextStyle(color: DS.onPrimary, fontWeight: FontWeight.w800)),
+          ),
         ]),
       ),
     );
@@ -184,7 +191,7 @@ class ReflectScreen extends ConsumerWidget {
     final p = prompts.isEmpty ? null : prompts[(today.year * 400 + today.month * 31 + today.day) % prompts.length];
     return Scaffold(
       backgroundColor: DS.bgQuests,
-      appBar: AppBar(title: Text(copy.t('quest.reflect.title')), backgroundColor: DS.bgQuests, foregroundColor: DS.onDark),
+      appBar: AppBar(title: Text(copy.t('quest.reflect.title')), backgroundColor: DS.bgQuests, foregroundColor: DS.textDeep),
       body: p == null
           ? const SizedBox.shrink()
           : Padding(
@@ -205,7 +212,7 @@ class ReflectScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 10),
                 ],
-                Text(copy.t('quest.reflect.private'), textAlign: TextAlign.center, style: const TextStyle(color: DS.onDark)),
+                Text(copy.t('quest.reflect.private'), textAlign: TextAlign.center, style: const TextStyle(color: DS.textDeep)),
               ]),
             ),
     );

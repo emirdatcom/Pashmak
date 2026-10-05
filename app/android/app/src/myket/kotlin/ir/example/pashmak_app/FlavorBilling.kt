@@ -1,6 +1,6 @@
 package ir.example.pashmak_app
 
-import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import ir.myket.billingclient.IabHelper
@@ -13,7 +13,7 @@ import ir.myket.billingclient.util.Purchase
  * 1.19); not compiled or run against a real Myket account in the authoring environment.
  */
 object FlavorBilling {
-    fun register(activity: FlutterActivity, engine: FlutterEngine) {
+    fun register(activity: FlutterFragmentActivity, engine: FlutterEngine) {
         val channel = MethodChannel(engine.dartExecutor.binaryMessenger, "app/billing")
         var helper: IabHelper? = null
         val known = HashMap<String, Purchase>() // token -> purchase, needed by consumeAsync

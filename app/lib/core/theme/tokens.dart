@@ -32,9 +32,12 @@ class AppRadius {
 class AppText {
   const AppText._();
   static const family = 'Vazirmatn';
+  /// Round, wide, heavy face for titles and big numbers; Vazirmatn covers anything the subset lacks.
+  static const headline = 'BalooBhaijaan2';
+  static const headlineFallback = [family];
   static const textTheme = TextTheme(
-    headlineMedium: TextStyle(fontSize: 26, fontWeight: FontWeight.w700, height: 1.4),
-    titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, height: 1.4),
+    headlineMedium: TextStyle(fontSize: 26, fontWeight: FontWeight.w800, height: 1.4, fontFamily: headline, fontFamilyFallback: headlineFallback),
+    titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, height: 1.4, fontFamily: headline, fontFamilyFallback: headlineFallback),
     titleMedium: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, height: 1.4),
     bodyLarge: TextStyle(fontSize: 16, height: 1.6),
     bodyMedium: TextStyle(fontSize: 14, height: 1.6),
@@ -42,36 +45,52 @@ class AppText {
   );
 }
 
-/// Design-system tokens of the redesign (prompt 22, docs/design-system.md). Sampled from the reference look and
-/// nudged where needed so text on them reaches WCAG AA (checked in test/theme_test.dart). No colour literals
+/// Design-system tokens of the redesign (prompt 22/23, docs/design-system.md). Backgrounds are sampled from the
+/// reference screenshots (app/tool/visual_compare/sample_colors.py); AA is reached by choosing the text colour
+/// (white / textDeep / textPrimary), never by moving a background (checked in test/theme_test.dart). No colour literals
 /// outside this file.
 class DS {
   const DS._();
   // tab backgrounds
-  static const bgQuests = Color(0xFF946A47);
-  static const bgShopPanel = Color(0xFF5E3F33);
-  static const bgShopScene = Color(0xFF7FA04B);
-  static const bgBag = Color(0xFFF2A93B);
-  static const bgCat = Color(0xFFEAD9B0);
-  static const cardCat = Color(0xFFFFF8EE);
-  static const bgSettings = Color(0xFFD5E1EE);
-  static const bgExercises = Color(0xFF6D51BE);
-  static const bgBreathing = Color(0xFF98DFB2);
-  static const bgHomeGround = Color(0xFF7DB85C);
+  static const bgQuests = Color(0xFFAF7E56);
+  static const bgShopPanel = Color(0xFF633F2F);
+  static const shopTile = Color(0xFF9B614B);
+  static const bgShopScene = Color(0xFF87A045);
+  static const bgBag = Color(0xFFF4A838);
+  static const bgBagScene = Color(0xFF3F3D6E);
+  static const bgBagLocked = Color(0xFFEC910D);
+  static const bgCat = Color(0xFFE9D3A1);
+  static const cardCat = Color(0xFFFFF6ED);
+  static const bgSettings = Color(0xFFD3E1EE);
+  static const bgExercises = Color(0xFF6F52BC);
+  static const bgBreathing = Color(0xFF96DFB2);
+  static const bgHomeGround = Color(0xFF7BB65C);
   static const bgHomeSky = Color(0xFFBFE3F2);
   static const bgHomeSkyEvening = Color(0xFFF4C79A);
   static const bgHomeSkyNight = Color(0xFF2F3E6B);
+  // courtyard scene layers (depth like the reference forest: far hills, mid wall + tree, pond and pots, ground)
+  static const sceneHillFar = Color(0xFFA9D18B);
+  static const sceneHillNear = Color(0xFF8FC46F);
+  static const sceneWall = Color(0xFFD9A77A);
+  static const sceneWallShade = Color(0xFFC48E63);
+  static const sceneTrunk = Color(0xFF9B6A4A);
+  static const sceneLeaf = Color(0xFF3F9A55);
+  static const sceneLeafDark = Color(0xFF2E7D4A);
+  static const scenePond = Color(0xFF7CC4E8);
+  static const scenePondRim = Color(0xFFE9D3A1);
+  static const scenePot = Color(0xFFD9774A);
+  static const sceneSun = Color(0xFFFFD36B);
 
   // actions and states
-  static const primaryGreen = Color(0xFF2B7F3A);
-  static const primaryGreenEdge = Color(0xFF1E5C29);
+  static const primaryGreen = Color(0xFF55B752);
+  static const primaryGreenEdge = Color(0xFF3E9440);
   static const neutralButton = Color(0xFFE3E7EA);
   static const neutralButtonEdge = Color(0xFFB9C1C6);
   static const progressYellow = Color(0xFFFFC845);
   static const progressRail = Color(0xFFEFEFEF);
-  static const doneBg = Color(0xFFE9E8C2);
+  static const doneBg = Color(0xFFE8E9C1);
   static const doneText = Color(0xFF256D2A);
-  static const premiumBadge = Color(0xFF4A5FC9);
+  static const premiumBadge = Color(0xFF566FD6);
   static const lockYellow = Color(0xFFFFC845);
   static const energy = Color(0xFFF5A623);
   static const coin = Color(0xFFE8A317);
@@ -79,8 +98,11 @@ class DS {
   // surfaces and text
   static const card = Color(0xFFFFFFFF);
   static const textPrimary = Color(0xFF2E3A3F);
-  static const textSecondary = Color(0xFF5F6C74);
+  static const textSecondary = Color(0xFF47535A);
   static const onDark = Color(0xFFFFFFFF);
+  /// Darkest text: used on mid-tone backgrounds (green, brown, grass) where white fails AA; also the label colour of green buttons.
+  static const textDeep = Color(0xFF1A2226);
+  static const onPrimary = textDeep;
   static const scrim = Color(0x66000000);
   static const shadow = Color(0x1F000000);
 

@@ -38,6 +38,7 @@
 - ⬜ متن «شرایط استفاده» و «حریم خصوصی» نوشته شود (`/settings/terms` هنوز placeholder)
 - ✅ پشتیبانی = چت درون‌برنامه‌ای (`support_contact: in_app_chat`)
 - ⬜ شماره‌های ۱۱۵/۱۲۳/۱۴۸۰ تأیید مالک و `verified_at` پر شود (V9)
+- ⬜ مالک: تأیید ۱۱۵، ۱۲۳، ۱۴۸۰ و پر کردن `verified_at` در `config-data/content/safety.json` و `app/assets/content/safety.json`
 - ⬜ چک دستی نشت SDK (افزودن عمدی وابستگی مارکت دیگر ← CI باید رد کند)؛ فقط self-test مصنوعی اجرا شده
 
 ## سناریوهای E2E روی staging (prompt 20 §3) — هیچ‌کدام هنوز اجرا نشده

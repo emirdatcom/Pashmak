@@ -72,4 +72,4 @@ flowchart TD
 - فاز ۳: `PushProvider` interface (Pushe/Najva/…) فقط برای پیام‌های اعلانی غیرحیاتی، با opt-in.
 
 ## حالت استراحت (پرامپت 22)
-وقتی `user_settings.pause_mode=true` است `NotificationPlanner` هیچ نوتیفی جز `trial` برنامه‌ریزی نمی‌کند و مأموریت روزانه تولید نمی‌شود.
+وقتی `user_settings.pause_mode=true` است `NotificationPlanner` هیچ نوتیفی جز `trial` و `support_reply` برنامه‌ریزی نمی‌کند (پاسخ پشتیبانی مجاز است چون پیام‌رسانی را خود کاربر شروع کرده) و مأموریت روزانه تولید نمی‌شود.

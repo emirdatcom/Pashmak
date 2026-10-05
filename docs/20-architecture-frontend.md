@@ -15,7 +15,7 @@
 | ویجت | `home_widget` + AppWidgetProvider بومی Kotlin (RemoteViews) | سبک، پشتیبانی RTL | Glance (حجم بیشتر) |
 | انیمیشن | `CatRenderer` abstraction؛ MVP: WebP + `AnimationController`؛ فاز۲: `rive` | حجم و هزینه آرت | Lottie |
 | پرداخت | `PaymentGateway` + پلاگین per flavor | چند مارکت | — |
-| فونت | Vazirmatn subset (Regular، Bold) | سبک، OFL | — |
+| فونت | Vazirmatn subset (Regular، Bold) برای متن؛ Baloo Bhaijaan 2 ExtraBold برای تیتر | سبک، OFL | — |
 | لینت | `flutter_lints` + `very_good_analysis` (زیرمجموعه) | — | — |
 
 > وجود و نگهداری پلاگین Flutter برای Poolakey و Myket **[نیاز به راستی‌آزمایی]** (V4). اگر نبود: `MethodChannel` با کد Kotlin در `android/` per flavor.

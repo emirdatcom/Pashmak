@@ -24,7 +24,7 @@ class DiscoveriesScreen extends ConsumerWidget {
         Semantics(
           label: copy.t('discoveries.count', {'n': found.length}),
           child: ExcludeSemantics(
-            child: Center(child: Text('${toPersianDigits(found.length)} / ${toPersianDigits(entries.length)}', style: const TextStyle(color: DS.textPrimary, fontSize: 22, fontWeight: FontWeight.w800))),
+            child: Center(child: Text('${toPersianDigits(found.length)} / ${toPersianDigits(entries.length)}', style: const TextStyle(color: DS.textPrimary, fontSize: 22, fontWeight: FontWeight.w800, fontFamily: AppText.headline, fontFamilyFallback: AppText.headlineFallback))),
           ),
         ),
         const SizedBox(height: 12),

@@ -195,18 +195,18 @@ void main() {
       expect((await l.streak.snapshot()).current, 2, reason: 'continues instead of restarting');
     });
 
-    test('the planner only keeps trial notifications while resting', () {
-      const settings = PlannerSettings(enabled: {'morning': true, 'evening_checkin': true, 'trial': true, 'habit_reminder': true});
+    test('the planner only keeps trial and support_reply notifications while resting', () {
+      const settings = PlannerSettings(enabled: {'morning': true, 'evening_checkin': true, 'trial': true, 'habit_reminder': true, 'support_reply': true});
       final input = PlanInput(
         now: DateTime(2026, 10, 5, 8),
         settings: settings,
         trial: PlanTrial(active: true, startedAt: DateTime(2026, 10, 1), purchased: false),
         habits: const [PlanHabit(id: 'h', reminderMinutes: 600, scheduleType: 'daily', weekdaysMask: 127)],
+        supportReplyAt: DateTime(2026, 10, 5, 12),
         paused: true,
       );
       final plan = planNotifications(input);
-      expect(plan, isNotEmpty);
-      expect(plan.every((p) => p.type == 'trial'), isTrue);
+      expect(plan.map((p) => p.type).toSet(), {'trial', 'support_reply'});
       expect(planNotifications(PlanInput(now: input.now, settings: settings, habits: input.habits)).any((p) => p.type == 'morning'), isTrue);
     });
 

@@ -222,7 +222,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           const SizedBox(height: 8),
           const Center(child: _Basket()),
           const SizedBox(height: AppSpacing.lg),
-          Text(copy.t('onboarding.welcome.title'), style: const TextStyle(color: DS.textPrimary, fontSize: 24, fontWeight: FontWeight.w800), textAlign: TextAlign.center),
+          Text(copy.t('onboarding.welcome.title'), style: const TextStyle(color: DS.textPrimary, fontSize: 24, fontWeight: FontWeight.w800, fontFamily: AppText.headline, fontFamilyFallback: AppText.headlineFallback), textAlign: TextAlign.center),
           const SizedBox(height: AppSpacing.sm),
           Text(copy.t('onboarding.welcome.body'), textAlign: TextAlign.center, style: const TextStyle(color: DS.textPrimary)),
           const SizedBox(height: AppSpacing.md),
@@ -233,7 +233,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         ], action: ChunkyButton(onPressed: () => _go(2), label: copy.t('common.next')));
       case 2:
         body = _page(children: [
-          Text(copy.t('onboarding.user_name.title'), style: const TextStyle(color: DS.textPrimary, fontSize: 22, fontWeight: FontWeight.w800)),
+          Text(copy.t('onboarding.user_name.title'), style: const TextStyle(color: DS.textPrimary, fontSize: 22, fontWeight: FontWeight.w800, fontFamily: AppText.headline, fontFamilyFallback: AppText.headlineFallback)),
           const SizedBox(height: 4),
           Text(copy.t('onboarding.user_name.body'), style: const TextStyle(color: DS.textSecondary)),
           const SizedBox(height: AppSpacing.md),
@@ -256,7 +256,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         body = _page(children: [
           const Center(child: _Basket(open: true)),
           const SizedBox(height: 8),
-          Text(copy.t('onboarding.arrival.title'), style: const TextStyle(color: DS.textPrimary, fontSize: 22, fontWeight: FontWeight.w800), textAlign: TextAlign.center),
+          Text(copy.t('onboarding.arrival.title'), style: const TextStyle(color: DS.textPrimary, fontSize: 22, fontWeight: FontWeight.w800, fontFamily: AppText.headline, fontFamilyFallback: AppText.headlineFallback), textAlign: TextAlign.center),
           Text(copy.t('onboarding.arrival.body'), textAlign: TextAlign.center, style: const TextStyle(color: DS.textPrimary)),
           const SizedBox(height: 12),
           SizedBox(height: 200, child: Center(child: ref.watch(catRendererProvider).build(context, CatVisualState(fur: _fur, stage: CatStage.kitten)))),
@@ -283,7 +283,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         body = _planPage(copy);
       case 10:
         body = _page(children: [
-          Text(copy.t('onboarding.notif.title'), style: const TextStyle(color: DS.textPrimary, fontSize: 22, fontWeight: FontWeight.w800)),
+          Text(copy.t('onboarding.notif.title'), style: const TextStyle(color: DS.textPrimary, fontSize: 22, fontWeight: FontWeight.w800, fontFamily: AppText.headline, fontFamilyFallback: AppText.headlineFallback)),
           const SizedBox(height: AppSpacing.sm),
           Text(copy.t('onboarding.notif.body'), style: const TextStyle(color: DS.textPrimary)),
           const SizedBox(height: AppSpacing.md),
@@ -297,7 +297,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             : ChunkyButton(onPressed: () => _go(11), label: copy.t('common.next')));
       default:
         body = _page(children: [
-          Text(copy.t('onboarding.trial.title'), style: const TextStyle(color: DS.textPrimary, fontSize: 22, fontWeight: FontWeight.w800)),
+          Text(copy.t('onboarding.trial.title'), style: const TextStyle(color: DS.textPrimary, fontSize: 22, fontWeight: FontWeight.w800, fontFamily: AppText.headline, fontFamilyFallback: AppText.headlineFallback)),
           const SizedBox(height: AppSpacing.sm),
           Text(copy.t('onboarding.trial.body'), style: const TextStyle(color: DS.textPrimary)),
         ], action: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -342,7 +342,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   Widget _planPage(CopyLike copy) {
     final rec = ref.read(goalRecommenderProvider);
     return _page(children: [
-      Text(copy.t('onboarding.plan.title'), style: const TextStyle(color: DS.textPrimary, fontSize: 22, fontWeight: FontWeight.w800)),
+      Text(copy.t('onboarding.plan.title'), style: const TextStyle(color: DS.textPrimary, fontSize: 22, fontWeight: FontWeight.w800, fontFamily: AppText.headline, fontFamilyFallback: AppText.headlineFallback)),
       const SizedBox(height: 4),
       Text(copy.t('onboarding.plan.body'), style: const TextStyle(color: DS.textSecondary)),
       const SizedBox(height: 12),

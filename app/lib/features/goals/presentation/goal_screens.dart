@@ -50,7 +50,7 @@ class GoalsScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(copy.t('goal.list.title')), backgroundColor: DS.bgSettings),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: DS.primaryGreen,
-        foregroundColor: DS.onDark,
+        foregroundColor: DS.onPrimary,
         onPressed: () => context.push(Routes.goalNew),
         icon: const Icon(Icons.add),
         label: Text(copy.t('goal.add')),
@@ -237,8 +237,8 @@ class _GoalEditorState extends ConsumerState<GoalEditorScreen> {
     final repeatLabel = copy.t('goal.editor.repeat.$_repeat');
     final titleText = _goalKey != null ? goalTitle(copy, _goalKey, null) : '';
     return Scaffold(
-      backgroundColor: DS.bgSettings,
-      appBar: AppBar(title: Text(copy.t(editing ? 'goal.editor.edit' : 'goal.editor.new')), backgroundColor: DS.bgSettings),
+      backgroundColor: DS.bgHomeGround,
+      appBar: AppBar(title: Text(copy.t(editing ? 'goal.editor.edit' : 'goal.editor.new')), backgroundColor: DS.bgHomeGround),
       body: ListView(padding: const EdgeInsets.all(16), children: [
         RoundCard(
           child: Column(children: [

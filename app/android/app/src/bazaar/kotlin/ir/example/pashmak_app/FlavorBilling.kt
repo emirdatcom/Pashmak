@@ -1,6 +1,6 @@
 package ir.example.pashmak_app
 
-import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import ir.cafebazaar.poolakey.Connection
@@ -18,7 +18,7 @@ import ir.cafebazaar.poolakey.request.PurchaseRequest
  * authoring environment (no Android SDK / market access). Validate with a real low-value purchase.
  */
 object FlavorBilling {
-    fun register(activity: FlutterActivity, engine: FlutterEngine) {
+    fun register(activity: FlutterFragmentActivity, engine: FlutterEngine) {
         val channel = MethodChannel(engine.dartExecutor.binaryMessenger, "app/billing")
         var payment: Payment? = null
         var connection: Connection? = null

@@ -111,7 +111,7 @@ class PlanInput {
   /// When a support reply notification should fire (set by the `support_poll` task when it found a new reply).
   final DateTime? supportReplyAt;
 
-  /// Rest mode (prompt 22): nothing is planned except the trial reminders.
+  /// Rest mode (prompt 22): nothing is planned except the trial reminders and a support reply.
   final bool paused;
 }
 
@@ -222,8 +222,8 @@ List<PlanItem> planNotifications(PlanInput i) {
     }
   }
 
-  // Rest mode keeps only the trial reminders (a purchase deadline the user must not miss silently).
-  if (i.paused) cands.removeWhere((c) => c.type != 'trial');
+  // Rest mode keeps only the trial reminders (a purchase deadline the user must not miss silently) and the support reply (the user started that conversation).
+  if (i.paused) cands.removeWhere((c) => c.type != 'trial' && c.type != 'support_reply');
 
   // 1. quiet hours: move to the end of the quiet window; the cat's return is dropped instead.
   final moved = <PlanItem>[];
