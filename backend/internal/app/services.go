@@ -10,8 +10,8 @@ import (
 	"github.com/emirdatcom/pashmak/backend/internal/modules/admin"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/analytics"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/auth"
-	"github.com/emirdatcom/pashmak/backend/internal/modules/auth/sms/kavenegar"
 	smslog "github.com/emirdatcom/pashmak/backend/internal/modules/auth/sms/log"
+	"github.com/emirdatcom/pashmak/backend/internal/modules/auth/sms/smsir"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/backup"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/billing"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/content"
@@ -125,12 +125,7 @@ func BuildServices(ctx context.Context, cfg config.Config, pool *db.Pool, clk cl
 	if err != nil {
 		return nil, fmt.Errorf("billing: %w", err)
 	}
-	var blobs backup.BlobStore
-	if cfg.BackupStorage == "s3" {
-		blobs = &backup.S3{Endpoint: cfg.S3Endpoint, Region: cfg.S3Region, Bucket: cfg.S3Bucket,
-			AccessKey: cfg.S3AccessKey, SecretKey: cfg.S3SecretKey}
-	}
-	sv.Backup = backup.NewService(pool, clk, blobs)
+	sv.Backup = backup.NewService(pool, clk, cfg.BackupMaxBytes)
 	sv.User.AddHook(sv.Backup)
 	if cfg.SMSProvider != "" {
 		key := cfg.DataEncKey
@@ -143,8 +138,8 @@ func BuildServices(ctx context.Context, cfg config.Config, pool *db.Pool, clk cl
 		}
 		var sender auth.SMSSender
 		switch cfg.SMSProvider {
-		case "kavenegar":
-			sender = kavenegar.New(kavenegar.Config{APIKey: cfg.KavenegarAPIKey, Template: cfg.KavenegarTemplate}, nil)
+		case "smsir":
+			sender = smsir.New(smsir.Config{APIKey: cfg.SMSIRAPIKey, TemplateID: cfg.SMSIRTemplateID, ParamName: cfg.SMSIRParamName, LineNumber: cfg.SMSIRLineNumber}, nil)
 		default:
 			sender = smslog.Adapter{}
 		}

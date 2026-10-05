@@ -36,15 +36,13 @@ type Config struct {
 	MyketPackageName     string
 	MyketAccessToken     string
 
-	SMSProvider       string // "", "log" (dev) or "kavenegar"
-	KavenegarAPIKey   string
-	KavenegarTemplate string
-	BackupStorage     string // "db" (default) or "s3"
-	S3Endpoint        string
-	S3Region          string
-	S3Bucket          string
-	S3AccessKey       string
-	S3SecretKey       string
+	SMSProvider     string // "", "log" (dev) or "smsir"
+	SMSIRAPIKey     string
+	SMSIRTemplateID string
+	SMSIRParamName  string
+	SMSIRLineNumber string // service line for operational alerts
+	AlertPhones     []string
+	BackupMaxBytes  int
 }
 
 // IsProd reports whether APP_ENV is prod.
@@ -83,15 +81,12 @@ func LoadFrom(get func(string) string) (Config, error) {
 		MyketPackageName:     get("MYKET_PACKAGE_NAME"),
 		MyketAccessToken:     get("MYKET_ACCESS_TOKEN"),
 
-		SMSProvider:       get("SMS_PROVIDER"),
-		KavenegarAPIKey:   get("KAVENEGAR_API_KEY"),
-		KavenegarTemplate: get("KAVENEGAR_TEMPLATE"),
-		BackupStorage:     str("BACKUP_STORAGE", "db"),
-		S3Endpoint:        get("S3_ENDPOINT"),
-		S3Region:          str("S3_REGION", "us-east-1"),
-		S3Bucket:          get("S3_BUCKET"),
-		S3AccessKey:       get("S3_ACCESS_KEY"),
-		S3SecretKey:       get("S3_SECRET_KEY"),
+		SMSProvider:     get("SMS_PROVIDER"),
+		SMSIRAPIKey:     get("SMSIR_API_KEY"),
+		SMSIRTemplateID: get("SMSIR_OTP_TEMPLATE_ID"),
+		SMSIRParamName:  str("SMSIR_OTP_PARAM_NAME", "CODE"),
+		SMSIRLineNumber: get("SMSIR_LINE_NUMBER"),
+		AlertPhones:     splitCSV(get("ALERT_PHONES")),
 	}
 	var errs []error
 	switch c.AppEnv {
@@ -122,21 +117,21 @@ func LoadFrom(get func(string) string) (Config, error) {
 		}
 	}
 	switch c.SMSProvider {
-	case "", "log", "kavenegar":
+	case "", "log", "smsir":
 	default:
-		errs = append(errs, fmt.Errorf("SMS_PROVIDER must be empty, log or kavenegar, got %q", c.SMSProvider))
+		errs = append(errs, fmt.Errorf("SMS_PROVIDER must be empty, log or smsir, got %q", c.SMSProvider))
 	}
-	if c.SMSProvider == "kavenegar" && (c.KavenegarAPIKey == "" || c.KavenegarTemplate == "") {
-		errs = append(errs, errors.New("KAVENEGAR_API_KEY and KAVENEGAR_TEMPLATE are required when SMS_PROVIDER=kavenegar"))
+	if c.SMSProvider == "smsir" && (c.SMSIRAPIKey == "" || c.SMSIRTemplateID == "") {
+		errs = append(errs, errors.New("SMSIR_API_KEY and SMSIR_OTP_TEMPLATE_ID are required when SMS_PROVIDER=smsir"))
 	}
-	switch c.BackupStorage {
-	case "db":
-	case "s3":
-		if c.S3Endpoint == "" || c.S3Bucket == "" || c.S3AccessKey == "" || c.S3SecretKey == "" {
-			errs = append(errs, errors.New("S3_ENDPOINT, S3_BUCKET, S3_ACCESS_KEY and S3_SECRET_KEY are required when BACKUP_STORAGE=s3"))
+	c.BackupMaxBytes = 5 << 20
+	if v := get("BACKUP_MAX_BYTES"); v != "" {
+		n, err := strconv.Atoi(v)
+		if err != nil || n < 1<<10 || n > 64<<20 {
+			errs = append(errs, fmt.Errorf("BACKUP_MAX_BYTES must be between 1024 and 67108864, got %q", v))
+		} else {
+			c.BackupMaxBytes = n
 		}
-	default:
-		errs = append(errs, fmt.Errorf("BACKUP_STORAGE must be db or s3, got %q", c.BackupStorage))
 	}
 	if c.DatabaseURL == "" {
 		errs = append(errs, errors.New("DATABASE_URL is required"))
@@ -165,4 +160,15 @@ func LoadFrom(get func(string) string) (Config, error) {
 		}
 	}
 	return c, errors.Join(errs...)
+}
+
+// splitCSV splits a comma-separated env value, trimming spaces and dropping empties.
+func splitCSV(v string) []string {
+	var out []string
+	for _, p := range strings.Split(v, ",") {
+		if p = strings.TrimSpace(p); p != "" {
+			out = append(out, p)
+		}
+	}
+	return out
 }

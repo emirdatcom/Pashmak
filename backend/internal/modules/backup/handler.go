@@ -24,7 +24,7 @@ func (s *Service) handlePut(w http.ResponseWriter, r *http.Request) {
 		httpx.WriteError(w, r, httpx.CodeUnauthenticated, "authentication required")
 		return
 	}
-	data, err := io.ReadAll(io.LimitReader(r.Body, MaxBlobBytes+1))
+	data, err := io.ReadAll(io.LimitReader(r.Body, int64(s.maxBytes)+1))
 	if err != nil {
 		httpx.WriteError(w, r, httpx.CodeInvalidInput, "could not read the body")
 		return

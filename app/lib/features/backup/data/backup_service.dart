@@ -69,7 +69,7 @@ class BackupService {
   static const _kEnabled = 'backup_enabled';
   static const _kLast = 'backup_last_at';
   static const _kKdf = 'backup_kdf';
-  static const maxBlobBytes = 10 * 1024 * 1024;
+  static const maxBlobBytes = 5 * 1024 * 1024;
   static const meteredLimitBytes = 1024 * 1024;
 
   Future<bool> isEnabled() async => await _db.meta(_kEnabled) == 'true' && await _secrets.read(_kCode) != null;

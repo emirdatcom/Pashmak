@@ -1,0 +1,29 @@
+groups:
+  - name: pashmak
+    rules:
+      - alert: ApiDown
+        expr: up{job="api"} == 0
+        for: 2m
+        annotations: {summary: "api is down"}
+      - alert: High5xxRate
+        expr: sum(rate(http_requests_total{status=~"5.."}[5m])) / clamp_min(sum(rate(http_requests_total[5m])), 1e-9) > 0.02
+        for: 5m
+        annotations: {summary: "5xx above 2% for 5 minutes"}
+      - alert: MarketVerifyErrors
+        expr: sum(rate(market_verify_total{result="error"}[10m])) / clamp_min(sum(rate(market_verify_total[10m])), 1e-9) > 0.2
+        for: 10m
+        annotations: {summary: "market purchase verification failing (>20%)"}
+      - alert: DiskAlmostFull
+        expr: 1 - (node_filesystem_avail_bytes{mountpoint="/",fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes{mountpoint="/",fstype!~"tmpfs|overlay"}) > 0.8
+        for: 10m
+        annotations: {summary: "disk above 80%"}
+      - alert: BackupMissing
+        # pg_backup.sh writes this metric through the node-exporter textfile collector after each success
+        expr: time() - backup_last_success_timestamp_seconds > 26 * 3600 or absent(backup_last_success_timestamp_seconds)
+        for: 10m
+        annotations: {summary: "no database backup in the last 26 hours"}
+      - alert: SupportUnanswered
+        # gauge exported by the api: age of the oldest unanswered user message, 0 outside working hours or when nothing waits
+        expr: support_oldest_unanswered_seconds > 30 * 60
+        for: 5m
+        annotations: {summary: "support conversations unanswered for over 30 minutes"}

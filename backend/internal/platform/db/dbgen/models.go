@@ -21,8 +21,6 @@ type AdminAudit struct {
 
 type Backup struct {
 	UserID        uuid.UUID
-	Storage       string
-	BlobRef       string
 	Blob          []byte
 	SizeBytes     int32
 	SchemaVersion int32

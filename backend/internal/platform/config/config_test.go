@@ -48,3 +48,36 @@ func TestProdRequiresSecrets(t *testing.T) {
 		t.Fatalf("bad parse: %+v", c)
 	}
 }
+
+func TestSMSIRAndBackupLimitEnv(t *testing.T) {
+	base := map[string]string{"DATABASE_URL": "postgres://x", "DEVICE_HASH_SALT": "s"}
+	with := func(extra map[string]string) (Config, error) {
+		m := map[string]string{}
+		for k, v := range base {
+			m[k] = v
+		}
+		for k, v := range extra {
+			m[k] = v
+		}
+		return LoadFrom(func(k string) string { return m[k] })
+	}
+	c, err := with(map[string]string{"SMS_PROVIDER": "smsir", "SMSIR_API_KEY": "k", "SMSIR_OTP_TEMPLATE_ID": "7", "ALERT_PHONES": " +989121111111, ,09122222222 "})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if c.SMSIRParamName != "CODE" || len(c.AlertPhones) != 2 || c.AlertPhones[1] != "09122222222" || c.BackupMaxBytes != 5<<20 {
+		t.Fatalf("defaults: %+v", c)
+	}
+	if _, err := with(map[string]string{"SMS_PROVIDER": "smsir"}); err == nil {
+		t.Fatal("smsir without key/template must be rejected")
+	}
+	if _, err := with(map[string]string{"SMS_PROVIDER": "kavenegar"}); err == nil {
+		t.Fatal("the removed provider must be rejected")
+	}
+	if c, err := with(map[string]string{"BACKUP_MAX_BYTES": "1048576"}); err != nil || c.BackupMaxBytes != 1<<20 {
+		t.Fatalf("custom limit: %v %v", c.BackupMaxBytes, err)
+	}
+	if _, err := with(map[string]string{"BACKUP_MAX_BYTES": "12"}); err == nil {
+		t.Fatal("absurd limit must be rejected")
+	}
+}

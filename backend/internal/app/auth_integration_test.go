@@ -166,7 +166,7 @@ func newEnv(t *testing.T) *env {
 	}
 	sms := &recordingSMS{}
 	ph := auth.NewPhoneService(pool, a, box, sms, clk, bs)
-	bk := backup.NewService(pool, clk, nil)
+	bk := backup.NewService(pool, clk, 0)
 	u.AddHook(bk)
 	_, h := app.Handler(app.Deps{DB: pool, Metrics: metrics.New(), Clock: clk, Auth: a, User: u, Entitle: ent, Billing: bs,
 		RemoteConfig: rc, Content: ct, Analytics: an, Admin: adm, Phone: ph, Backup: bk})

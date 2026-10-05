@@ -40,6 +40,44 @@ services:
     ports: ["80:80", "443:443"]
     volumes: ["./Caddyfile:/etc/caddy/Caddyfile:ro", "caddy_data:/data"]
     depends_on: [api]
+  # --- monitoring (internal network only; nothing here publishes a port) ---
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    restart: unless-stopped
+    volumes: ["./prometheus:/etc/prometheus:ro", "promdata:/prometheus"]
+    depends_on: [api]
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    restart: unless-stopped
+    volumes: ["./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro", "./secrets/alert_relay_token:/run/secrets/alert_relay_token:ro"]
+    depends_on: [alert-relay]
+  alert-relay:
+    build: {context: ../.., dockerfile: backend/deploy/Dockerfile}
+    entrypoint: ["/app/alert-relay"]
+    restart: unless-stopped
+    env_file: .env
+    environment: {ALERT_RELAY_ADDR: ":9095"}
+  node-exporter:
+    image: prom/node-exporter:v1.8.2
+    restart: unless-stopped
+    command: ["--path.rootfs=/host", "--collector.textfile.directory=/textfile"]
+    volumes: ["/:/host:ro,rslave", "textfile:/textfile:ro"]
+  # --- nightly pg_dump → age → local volume → rsync offsite (no object storage, decision D-3) ---
+  backup:
+    build: {context: ./backup}
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      PGHOST: postgres
+      PGUSER: app
+      PGDATABASE: app
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      BACKUP_DIR: /backups
+      TEXTFILE_DIR: /textfile
+    volumes: ["backups:/backups", "textfile:/textfile", "./keys-offsite:/offsite:ro"]
+    depends_on: {postgres: {condition: service_healthy}}
 volumes:
-  pgdata:
+  promdata:
+  backups:
+  textfile:
   caddy_data:

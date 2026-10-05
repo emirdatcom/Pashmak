@@ -21,19 +21,8 @@ import (
 	"github.com/emirdatcom/pashmak/backend/internal/platform/httpx"
 )
 
-// MaxBlobBytes is the largest accepted backup (10 MB, docs/10 §6.1).
-const MaxBlobBytes = 10 << 20
-
-// ErrNotFound is returned by blob stores for missing objects.
-var ErrNotFound = errors.New("backup: not found")
-
-// BlobStore is an optional external object store (S3-compatible). Without one, blobs live in the
-// database row (BACKUP_STORAGE=db).
-type BlobStore interface {
-	Put(ctx context.Context, key string, data []byte) error
-	Get(ctx context.Context, key string) ([]byte, error)
-	Delete(ctx context.Context, key string) error
-}
+// DefaultMaxBytes is the default largest accepted backup (5 MB); BACKUP_MAX_BYTES overrides it.
+const DefaultMaxBytes = 5 << 20
 
 // Meta is the backup metadata exposed through headers.
 type Meta struct {
@@ -46,15 +35,22 @@ type Meta struct {
 
 // Service implements backup storage.
 type Service struct {
-	pool  *db.Pool
-	clk   clock.Clock
-	blobs BlobStore // nil = database storage
+	pool     *db.Pool
+	clk      clock.Clock
+	maxBytes int
 }
 
-// NewService builds a Service. blobs may be nil.
-func NewService(pool *db.Pool, clk clock.Clock, blobs BlobStore) *Service {
-	return &Service{pool: pool, clk: clk, blobs: blobs}
+// NewService builds a Service. Blobs are stored in the database row (decision D-3: no object storage).
+// maxBytes <= 0 means DefaultMaxBytes.
+func NewService(pool *db.Pool, clk clock.Clock, maxBytes int) *Service {
+	if maxBytes <= 0 {
+		maxBytes = DefaultMaxBytes
+	}
+	return &Service{pool: pool, clk: clk, maxBytes: maxBytes}
 }
+
+// MaxBytes reports the effective size limit (the HTTP layer needs it to cap the request body).
+func (s *Service) MaxBytes() int { return s.maxBytes }
 
 func invalid(msg string) error { return httpx.NewError(httpx.CodeInvalidInput, msg) }
 
@@ -79,8 +75,8 @@ func (s *Service) Put(ctx context.Context, userID uuid.UUID, schema int, sha, kd
 	if len(data) == 0 {
 		return time.Time{}, invalid("empty backup")
 	}
-	if len(data) > MaxBlobBytes {
-		return time.Time{}, httpx.NewError(httpx.CodeBackupTooLarge, "backup is too large (max 10 MB)")
+	if len(data) > s.maxBytes {
+		return time.Time{}, httpx.NewError(httpx.CodeBackupTooLarge, fmt.Sprintf("backup is too large (max %d bytes)", s.maxBytes))
 	}
 	if schema < 1 {
 		return time.Time{}, invalid("X-Backup-Schema must be a positive integer")
@@ -94,15 +90,8 @@ func (s *Service) Put(ctx context.Context, userID uuid.UUID, schema int, sha, kd
 		return time.Time{}, err
 	}
 	now := s.clk.Now()
-	p := dbgen.UpsertBackupParams{UserID: userID, Storage: "db", Blob: data, SizeBytes: int32(len(data)), // #nosec G115 -- ≤10MB
+	p := dbgen.UpsertBackupParams{UserID: userID, Blob: data, SizeBytes: int32(len(data)), // #nosec G115 -- ≤ maxBytes
 		SchemaVersion: int32(schema), Sha256: strings.ToLower(sha), KdfParams: kdfRaw, UpdatedAt: now} // #nosec G115
-	if s.blobs != nil {
-		key := "backups/" + userID.String()
-		if err := s.blobs.Put(ctx, key, data); err != nil {
-			return time.Time{}, fmt.Errorf("store blob: %w", err)
-		}
-		p.Storage, p.BlobRef, p.Blob = "s3", key, nil
-	}
 	if err := dbgen.New(s.pool).UpsertBackup(ctx, p); err != nil {
 		return time.Time{}, fmt.Errorf("save backup: %w", err)
 	}
@@ -119,35 +108,12 @@ func (s *Service) Get(ctx context.Context, userID uuid.UUID) (Meta, []byte, erro
 		return Meta{}, nil, fmt.Errorf("get backup: %w", err)
 	}
 	data := b.Blob
-	if b.Storage == "s3" {
-		if s.blobs == nil {
-			return Meta{}, nil, errors.New("backup is stored in S3 but no blob store is configured")
-		}
-		if data, err = s.blobs.Get(ctx, b.BlobRef); err != nil {
-			if errors.Is(err, ErrNotFound) {
-				return Meta{}, nil, httpx.NewError(httpx.CodeNotFound, "no backup")
-			}
-			return Meta{}, nil, fmt.Errorf("load blob: %w", err)
-		}
-	}
 	return Meta{SchemaVersion: int(b.SchemaVersion), SHA256: b.Sha256, KDFParams: b.KdfParams, UpdatedAt: b.UpdatedAt, Size: len(data)}, data, nil
 }
 
 // Delete removes the backup (idempotent).
 func (s *Service) Delete(ctx context.Context, userID uuid.UUID) error {
 	q := dbgen.New(s.pool)
-	b, err := q.GetBackup(ctx, userID)
-	if errors.Is(err, pgx.ErrNoRows) {
-		return nil
-	}
-	if err != nil {
-		return fmt.Errorf("get backup: %w", err)
-	}
-	if b.Storage == "s3" && s.blobs != nil {
-		if err := s.blobs.Delete(ctx, b.BlobRef); err != nil {
-			return fmt.Errorf("delete blob: %w", err)
-		}
-	}
 	if _, err := q.DeleteBackup(ctx, userID); err != nil {
 		return fmt.Errorf("delete backup: %w", err)
 	}
