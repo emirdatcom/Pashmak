@@ -46,8 +46,13 @@ func Generate(dir, kid string) error {
 	return nil
 }
 
-// Load reads keys from dir. The active kid is the content of `active_kid`, else the last private key by name.
-func Load(dir string) (*Signer, error) {
+// Load reads all keys from dir. The active kid is the content of `active_kid`, else the last private key by name.
+func Load(dir string) (*Signer, error) { return LoadWithPrefix(dir, "") }
+
+// LoadWithPrefix is Load restricted to kids starting with prefix (e.g. "at-" for access tokens,
+// "ent-" for entitlement signatures), so each purpose uses a separate key set.
+// With a prefix the override file is named by activeFile.
+func LoadWithPrefix(dir, prefix string) (*Signer, error) {
 	s := &Signer{priv: map[string]ed25519.PrivateKey{}, pub: map[string]ed25519.PublicKey{}}
 	entries, err := os.ReadDir(dir)
 	if err != nil {
@@ -57,7 +62,7 @@ func Load(dir string) (*Signer, error) {
 	for _, e := range entries {
 		name := e.Name()
 		switch {
-		case strings.HasSuffix(name, ".key"):
+		case strings.HasSuffix(name, ".key") && strings.HasPrefix(name, prefix):
 			kid := strings.TrimSuffix(name, ".key")
 			raw, err := os.ReadFile(filepath.Join(dir, name)) // #nosec G304 -- operator-controlled dir
 			if err != nil {
@@ -71,7 +76,7 @@ func Load(dir string) (*Signer, error) {
 			s.priv[kid] = k
 			s.pub[kid] = k.Public().(ed25519.PublicKey)
 			privKids = append(privKids, kid)
-		case strings.HasSuffix(name, ".pub"):
+		case strings.HasSuffix(name, ".pub") && strings.HasPrefix(name, prefix):
 			kid := strings.TrimSuffix(name, ".pub")
 			raw, err := os.ReadFile(filepath.Join(dir, name)) // #nosec G304
 			if err != nil {
@@ -91,7 +96,7 @@ func Load(dir string) (*Signer, error) {
 	}
 	sort.Strings(privKids)
 	s.activeKid = privKids[len(privKids)-1]
-	if raw, err := os.ReadFile(filepath.Join(dir, "active_kid")); err == nil { // #nosec G304
+	if raw, err := os.ReadFile(filepath.Join(dir, activeFile(prefix))); err == nil { // #nosec G304
 		kid := strings.TrimSpace(string(raw))
 		if _, ok := s.priv[kid]; !ok {
 			return nil, fmt.Errorf("active_kid %q has no private key", kid)
@@ -99,6 +104,14 @@ func Load(dir string) (*Signer, error) {
 		s.activeKid = kid
 	}
 	return s, nil
+}
+
+// activeFile is `active_kid` without a prefix, else `active_kid_<prefix without trailing dash>`.
+func activeFile(prefix string) string {
+	if prefix == "" {
+		return "active_kid"
+	}
+	return "active_kid_" + strings.TrimRight(prefix, "-")
 }
 
 // ActiveKid returns the kid used for signing.

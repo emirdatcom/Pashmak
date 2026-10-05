@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/emirdatcom/pashmak/backend/internal/modules/auth"
+	"github.com/emirdatcom/pashmak/backend/internal/modules/user"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/clock"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/httpx"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/metrics"
@@ -24,6 +26,8 @@ type Deps struct {
 	DB      Pinger
 	Metrics *metrics.Metrics
 	Clock   clock.Clock
+	Auth    *auth.Service // optional in health-only tests
+	User    *user.Service
 }
 
 // Handler builds the router with the global middleware chain:
@@ -43,6 +47,12 @@ func Handler(d Deps) (*httpx.Router, http.Handler) {
 		}
 		httpx.WriteJSON(w, http.StatusOK, map[string]string{"status": "ok", "db": "ok"})
 	})
+	if d.Auth != nil {
+		auth.Register(r, d.Auth, d.Clock)
+		if d.User != nil {
+			user.Register(r, d.User, d.Auth.RequireAuth())
+		}
+	}
 	// Generous global per-IP limit; stricter per-route limits are added by modules.
 	global := httpx.NewRateLimiter(d.Clock, 120, 6000)
 	h := httpx.Chain(r,

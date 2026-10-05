@@ -12,8 +12,86 @@ paths:
       responses:
         "200": {description: ready, content: {application/json: {schema: {type: object, properties: {status: {type: string}, db: {type: string}}}}}}
         "503": {description: db down}
+  /v1/auth/device:
+    post:
+      operationId: authDevice
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [install_id, device_hash_raw, market, app_version, os_version, model]
+              properties:
+                install_id: {type: string, format: uuid}
+                device_hash_raw: {type: string, minLength: 1, maxLength: 128}
+                market: {type: string, enum: [bazaar, myket]}
+                app_version: {type: string}
+                os_version: {type: string}
+                model: {type: string}
+      responses:
+        "200": {description: session, content: {application/json: {schema: {$ref: "#/components/schemas/Session"}}}}
+        "400": {$ref: "#/components/responses/Error"}
+        "429": {$ref: "#/components/responses/Error"}
+  /v1/auth/refresh:
+    post:
+      operationId: authRefresh
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [refresh_token]
+              properties:
+                refresh_token: {type: string}
+      responses:
+        "200": {description: session, content: {application/json: {schema: {$ref: "#/components/schemas/Session"}}}}
+        "400": {$ref: "#/components/responses/Error"}
+        "401": {$ref: "#/components/responses/Error"}
+  /v1/me:
+    get:
+      operationId: getMe
+      security: [{bearer: []}]
+      responses:
+        "200":
+          description: profile
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [user_id, created_at, phone_linked]
+                properties:
+                  user_id: {type: string, format: uuid}
+                  created_at: {type: string, format: date-time}
+                  phone_linked: {type: boolean}
+        "401": {$ref: "#/components/responses/Error"}
+    delete:
+      operationId: deleteMe
+      security: [{bearer: []}]
+      responses:
+        "204": {description: deleted}
+        "401": {$ref: "#/components/responses/Error"}
 components:
+  securitySchemes:
+    bearer: {type: http, scheme: bearer, bearerFormat: JWT}
+  responses:
+    Error:
+      description: error
+      content: {application/json: {schema: {$ref: "#/components/schemas/Error"}}}
   schemas:
+    Session:
+      type: object
+      required: [user_id, access_token, access_expires_at, refresh_token]
+      properties:
+        user_id: {type: string, format: uuid}
+        access_token: {type: string}
+        access_expires_at: {type: string, format: date-time}
+        refresh_token: {type: string}
     Error:
       type: object
       required: [error]

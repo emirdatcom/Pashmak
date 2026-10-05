@@ -13,11 +13,14 @@ import (
 	"time"
 
 	"github.com/emirdatcom/pashmak/backend/internal/app"
+	"github.com/emirdatcom/pashmak/backend/internal/modules/auth"
+	"github.com/emirdatcom/pashmak/backend/internal/modules/user"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/clock"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/config"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/db"
 	plog "github.com/emirdatcom/pashmak/backend/internal/platform/log"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/metrics"
+	"github.com/emirdatcom/pashmak/backend/internal/platform/signer"
 )
 
 func main() {
@@ -45,7 +48,14 @@ func run() error {
 
 	m := metrics.New()
 	m.RegisterDBPool(func() metrics.DBStats { return pool.Stat() })
-	_, handler := app.Handler(app.Deps{DB: pool, Metrics: m, Clock: clock.Real{}})
+	atSigner, err := signer.LoadWithPrefix(cfg.SigningKeysDir, "at-")
+	if err != nil {
+		return fmt.Errorf("access-token signer (keys with prefix at-): %w", err)
+	}
+	clk := clock.Real{}
+	authSvc := auth.NewService(auth.NewPGStore(pool), atSigner, clk, cfg.DeviceHashSalt)
+	userSvc := user.NewService(user.NewPGStore(pool), authSvc, clk)
+	_, handler := app.Handler(app.Deps{DB: pool, Metrics: m, Clock: clk, Auth: authSvc, User: userSvc})
 
 	api := &http.Server{Addr: cfg.HTTPAddr, Handler: handler, ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout: 15 * time.Second, WriteTimeout: 30 * time.Second, IdleTimeout: 60 * time.Second}
