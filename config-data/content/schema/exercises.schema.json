@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "exercises pack",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "pack_key",
+    "version",
+    "pack_schema_version",
+    "locale",
+    "min_app_version",
+    "entries"
+  ],
+  "properties": {
+    "pack_key": {
+      "const": "exercises"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "pack_schema_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "locale": {
+      "const": "fa"
+    },
+    "min_app_version": {
+      "type": "string",
+      "pattern": "^[0-9]+(\\.[0-9]+){0,2}$"
+    },
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "key",
+          "premium",
+          "duration_s",
+          "type",
+          "disclaimer_key"
+        ],
+        "properties": {
+          "key": {
+            "enum": [
+              "breathing_basic",
+              "gratitude",
+              "guided_journal",
+              "muscle_relax",
+              "afternoon_tea"
+            ]
+          },
+          "premium": {
+            "type": "boolean"
+          },
+          "duration_s": {
+            "type": "integer",
+            "minimum": 60,
+            "maximum": 300
+          },
+          "type": {
+            "enum": [
+              "timer_steps",
+              "journal_prompt"
+            ]
+          },
+          "collection": {
+            "enum": [
+              "stress",
+              "sleep",
+              "focus"
+            ]
+          },
+          "disclaimer_key": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+(\\.[a-z0-9_]+)+$"
+          },
+          "steps": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "text_key",
+                "seconds",
+                "animation"
+              ],
+              "properties": {
+                "text_key": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9_]+(\\.[a-z0-9_]+)+$"
+                },
+                "seconds": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "animation": {
+                  "enum": [
+                    "inhale",
+                    "hold",
+                    "exhale",
+                    "none"
+                  ]
+                },
+                "repeat": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            }
+          },
+          "prompts": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9_]+(\\.[a-z0-9_]+)+$"
+            }
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "timer_steps"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "steps"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "journal_prompt"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "prompts"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

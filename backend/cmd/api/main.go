@@ -13,15 +13,11 @@ import (
 	"time"
 
 	"github.com/emirdatcom/pashmak/backend/internal/app"
-	"github.com/emirdatcom/pashmak/backend/internal/modules/auth"
-	"github.com/emirdatcom/pashmak/backend/internal/modules/entitlement"
-	"github.com/emirdatcom/pashmak/backend/internal/modules/user"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/clock"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/config"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/db"
 	plog "github.com/emirdatcom/pashmak/backend/internal/platform/log"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/metrics"
-	"github.com/emirdatcom/pashmak/backend/internal/platform/signer"
 )
 
 func main() {
@@ -49,24 +45,12 @@ func run() error {
 
 	m := metrics.New()
 	m.RegisterDBPool(func() metrics.DBStats { return pool.Stat() })
-	atSigner, err := signer.LoadWithPrefix(cfg.SigningKeysDir, "at-")
-	if err != nil {
-		return fmt.Errorf("access-token signer (keys with prefix at-): %w", err)
-	}
 	clk := clock.Real{}
-	authSvc := auth.NewService(auth.NewPGStore(pool), atSigner, clk, cfg.DeviceHashSalt)
-	entSigner, err := signer.LoadWithPrefix(cfg.SigningKeysDir, "ent-")
+	svc, err := app.BuildServices(ctx, cfg, pool, clk, m, app.BuildOptions{NeedSigners: true})
 	if err != nil {
-		return fmt.Errorf("entitlement signer (keys with prefix ent-): %w", err)
+		return err
 	}
-	entSvc := entitlement.NewService(pool, entSigner, clk, nil) // remoteconfig reader replaces nil in prompt 04
-	billingSvc, err := app.NewBilling(cfg, pool, clk, m, entSvc, nil)
-	if err != nil {
-		return fmt.Errorf("billing: %w", err)
-	}
-	userSvc := user.NewService(user.NewPGStore(pool), authSvc, clk, entSvc)
-	_, handler := app.Handler(app.Deps{DB: pool, Metrics: m, Clock: clk, Auth: authSvc, User: userSvc,
-		Entitle: entSvc, Billing: billingSvc})
+	_, handler := app.Handler(svc.Deps(pool, m, clk))
 
 	api := &http.Server{Addr: cfg.HTTPAddr, Handler: handler, ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout: 15 * time.Second, WriteTimeout: 30 * time.Second, IdleTimeout: 60 * time.Second}

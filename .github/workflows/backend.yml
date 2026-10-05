@@ -1,7 +1,7 @@
 name: backend
 on:
-  push: {paths: ["backend/**", ".github/workflows/backend.yml"]}
-  pull_request: {paths: ["backend/**"]}
+  push: {paths: ["backend/**", "config-data/**", ".github/workflows/backend.yml"]}
+  pull_request: {paths: ["backend/**", "config-data/**"]}
 defaults:
   run: {working-directory: backend}
 jobs:
@@ -24,6 +24,10 @@ jobs:
       - run: go test ./... -race
       - run: go install golang.org/x/vuln/cmd/govulncheck@latest && govulncheck ./...
       - uses: sqlc-dev/setup-sqlc@v4
-        with: {sqlc-version: "1.27.0"}
+        with: {sqlc-version: "1.31.1"}
       - run: sqlc diff
-      - run: docker build -f deploy/Dockerfile -t backend:ci .
+      - name: content-lint (config, content packs, analytics catalog)
+        run: go run ./cmd/content-lint -dir ../config-data
+      - name: docker build
+        working-directory: .
+        run: docker build -f backend/deploy/Dockerfile -t backend:ci .

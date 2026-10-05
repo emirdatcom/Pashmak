@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/schemas/config.schema.json",
+  "title": "Remote config payload",
+  "description": "Every key has a bundled default in config-data/config/default.json. Unknown keys are rejected so typos fail at publish time.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["limits", "pricing", "trial", "paywall", "entitlement", "economy", "adventure", "streak", "notifications", "safety", "features", "update"],
+  "$defs": {
+    "productId": {"type": "string", "pattern": "^[a-z0-9_]{1,64}$"},
+    "key": {"type": "string", "pattern": "^[a-z0-9_]{1,64}$"},
+    "hhmm": {"type": "string", "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"},
+    "version": {"type": "string", "pattern": "^[0-9]+(\\.[0-9]+){0,2}$"},
+    "posInt": {"type": "integer", "minimum": 1},
+    "nonNegInt": {"type": "integer", "minimum": 0}
+  },
+  "properties": {
+    "limits": {
+      "type": "object", "additionalProperties": false,
+      "required": ["free_active_habits", "free_custom_habits", "free_exercises", "free_adventure_locations"],
+      "properties": {
+        "free_active_habits": {"$ref": "#/$defs/nonNegInt", "description": "Active habits free users may keep (docs/60 §3)."},
+        "free_custom_habits": {"$ref": "#/$defs/nonNegInt"},
+        "free_exercises": {"type": "array", "items": {"$ref": "#/$defs/key"}, "uniqueItems": true},
+        "free_adventure_locations": {"type": "array", "items": {"$ref": "#/$defs/key"}, "uniqueItems": true}
+      }
+    },
+    "pricing": {
+      "type": "object", "additionalProperties": false,
+      "required": ["plans", "monthly_anchor_product"],
+      "properties": {
+        "plans": {
+          "type": "array", "minItems": 1,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["product_id", "market_sku", "display_price_toman", "badge_key", "highlight"],
+            "properties": {
+              "product_id": {"$ref": "#/$defs/productId"},
+              "market_sku": {
+                "type": "object", "additionalProperties": false, "required": ["bazaar", "myket"],
+                "properties": {"bazaar": {"type": "string", "minLength": 1}, "myket": {"type": "string", "minLength": 1}}
+              },
+              "display_price_toman": {"$ref": "#/$defs/posInt"},
+              "badge_key": {"type": "string"},
+              "highlight": {"type": "boolean"}
+            }
+          }
+        },
+        "monthly_anchor_product": {"$ref": "#/$defs/productId"}
+      }
+    },
+    "trial": {
+      "type": "object", "additionalProperties": false, "required": ["enabled", "days", "reminder_day"],
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "days": {"type": "integer", "minimum": 1, "maximum": 30},
+        "reminder_day": {"type": "integer", "minimum": 1, "maximum": 30}
+      }
+    },
+    "paywall": {
+      "type": "object", "additionalProperties": false, "required": ["variant", "triggers", "cooldown_hours"],
+      "properties": {
+        "variant": {"$ref": "#/$defs/key"},
+        "triggers": {
+          "type": "object", "additionalProperties": false,
+          "required": ["fourth_habit", "custom_habit", "premium_exercise", "premium_location", "premium_item", "stats_deep", "trial_end", "settings"],
+          "properties": {
+            "fourth_habit": {"type": "boolean"}, "custom_habit": {"type": "boolean"},
+            "premium_exercise": {"type": "boolean"}, "premium_location": {"type": "boolean"},
+            "premium_item": {"type": "boolean"}, "stats_deep": {"type": "boolean"},
+            "trial_end": {"type": "boolean"}, "settings": {"type": "boolean"}
+          }
+        },
+        "cooldown_hours": {"$ref": "#/$defs/nonNegInt"}
+      }
+    },
+    "entitlement": {
+      "type": "object", "additionalProperties": false, "required": ["grace_days", "offline_validity_days", "pending_verification_hours"],
+      "properties": {
+        "grace_days": {"$ref": "#/$defs/nonNegInt"},
+        "offline_validity_days": {"$ref": "#/$defs/posInt"},
+        "pending_verification_hours": {"$ref": "#/$defs/posInt"}
+      }
+    },
+    "economy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["energy_per_habit", "energy_per_checkin", "energy_per_exercise", "exercise_rewards_per_day", "energy_cap"],
+      "properties": {
+        "energy_per_habit": {"$ref": "#/$defs/nonNegInt"},
+        "energy_per_checkin": {"$ref": "#/$defs/nonNegInt"},
+        "energy_per_exercise": {"$ref": "#/$defs/nonNegInt"},
+        "exercise_rewards_per_day": {"$ref": "#/$defs/nonNegInt"},
+        "energy_cap": {"$ref": "#/$defs/posInt"}
+      }
+    },
+    "adventure": {
+      "type": "object", "additionalProperties": false, "required": ["locations"],
+      "properties": {
+        "locations": {
+          "type": "array", "minItems": 1,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["location_key", "energy_cost", "duration_minutes", "coins_min", "coins_max", "item_drop_rate"],
+            "properties": {
+              "location_key": {"$ref": "#/$defs/key"},
+              "energy_cost": {"$ref": "#/$defs/nonNegInt"},
+              "duration_minutes": {"$ref": "#/$defs/posInt"},
+              "coins_min": {"$ref": "#/$defs/nonNegInt"},
+              "coins_max": {"$ref": "#/$defs/nonNegInt"},
+              "item_drop_rate": {"type": "number", "minimum": 0, "maximum": 1}
+            }
+          }
+        }
+      }
+    },
+    "streak": {
+      "type": "object", "additionalProperties": false, "required": ["freezes_per_month"],
+      "properties": {"freezes_per_month": {"$ref": "#/$defs/nonNegInt"}}
+    },
+    "notifications": {
+      "type": "object", "additionalProperties": false,
+      "required": ["max_per_day", "default_morning_time", "default_evening_time", "default_quiet", "comeback_days", "ignore_threshold", "types_enabled"],
+      "properties": {
+        "max_per_day": {"$ref": "#/$defs/nonNegInt"},
+        "default_morning_time": {"$ref": "#/$defs/hhmm"},
+        "default_evening_time": {"$ref": "#/$defs/hhmm"},
+        "default_quiet": {
+          "type": "object", "additionalProperties": false, "required": ["start", "end"],
+          "properties": {"start": {"$ref": "#/$defs/hhmm"}, "end": {"$ref": "#/$defs/hhmm"}}
+        },
+        "comeback_days": {"type": "array", "items": {"$ref": "#/$defs/posInt"}, "uniqueItems": true},
+        "ignore_threshold": {"$ref": "#/$defs/posInt"},
+        "types_enabled": {"type": "object", "additionalProperties": {"type": "boolean"}, "description": "Remote kill switch per notification type."}
+      }
+    },
+    "safety": {
+      "type": "object", "additionalProperties": false,
+      "required": ["low_mood_level", "low_mood_count", "low_mood_window_days", "card_cooldown_hours"],
+      "properties": {
+        "low_mood_level": {"type": "integer", "minimum": 1, "maximum": 5},
+        "low_mood_count": {"$ref": "#/$defs/posInt"},
+        "low_mood_window_days": {"$ref": "#/$defs/posInt"},
+        "card_cooldown_hours": {"$ref": "#/$defs/nonNegInt"}
+      }
+    },
+    "features": {
+      "type": "object", "additionalProperties": false,
+      "required": ["rive_cat", "widgets", "backup", "phone_link", "seasonal_packs", "stats_deep"],
+      "properties": {
+        "rive_cat": {"type": "boolean"}, "widgets": {"type": "boolean"}, "backup": {"type": "boolean"},
+        "phone_link": {"type": "boolean"}, "seasonal_packs": {"type": "boolean"}, "stats_deep": {"type": "boolean"}
+      }
+    },
+    "update": {
+      "type": "object", "additionalProperties": false, "required": ["min_supported_version", "recommended_version"],
+      "properties": {
+        "min_supported_version": {"$ref": "#/$defs/version"},
+        "recommended_version": {"$ref": "#/$defs/version"}
+      }
+    }
+  }
+}

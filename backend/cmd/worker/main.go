@@ -13,12 +13,10 @@ import (
 
 	jobspkg "github.com/emirdatcom/pashmak/backend/cmd/worker/jobs"
 	"github.com/emirdatcom/pashmak/backend/internal/app"
-	"github.com/emirdatcom/pashmak/backend/internal/modules/entitlement"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/clock"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/config"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/db"
 	plog "github.com/emirdatcom/pashmak/backend/internal/platform/log"
-	"github.com/emirdatcom/pashmak/backend/internal/platform/signer"
 )
 
 // Job is a periodic task. Later prompts (04, 05) register more jobs in run().
@@ -51,19 +49,16 @@ func run() error {
 	defer pool.Close()
 	clk := clock.Real{}
 
-	// The worker never signs states; entitlement.Service only needs grant methods here.
-	var entSign entitlement.Signer
-	if s, serr := signer.LoadWithPrefix(cfg.SigningKeysDir, "ent-"); serr == nil {
-		entSign = s
-	}
-	entSvc := entitlement.NewService(pool, entSign, clk, nil)
-	billingSvc, err := app.NewBilling(cfg, pool, clk, nil, entSvc, nil)
+	// The worker never signs tokens or states, so signing keys are optional here.
+	svc, err := app.BuildServices(ctx, cfg, pool, clk, nil, app.BuildOptions{})
 	if err != nil {
-		return fmt.Errorf("billing: %w", err)
+		return err
 	}
-
 	jobs := []Job{
-		{Name: "reverify_subscriptions", Interval: jobspkg.ReverifyInterval, Run: jobspkg.Reverify(billingSvc)},
+		{Name: "reverify_subscriptions", Interval: jobspkg.ReverifyInterval, Run: jobspkg.Reverify(svc.Billing)},
+		{Name: "create_partitions", Interval: jobspkg.PartitionsInterval, Run: jobspkg.CreatePartitions(svc.Analytics)},
+		{Name: "rollup_daily", Interval: jobspkg.RollupInterval, Run: jobspkg.RollupDaily(svc.Analytics)},
+		{Name: "prune_events", Interval: jobspkg.PruneInterval, Run: jobspkg.PruneEvents(svc.Analytics)},
 	}
 	slog.Info("worker started", "jobs", len(jobs))
 	for _, j := range jobs {

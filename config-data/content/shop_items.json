@@ -1,0 +1,105 @@
+{
+  "pack_key": "shop_items",
+  "version": 1,
+  "pack_schema_version": 1,
+  "locale": "fa",
+  "min_app_version": "1.0.0",
+  "entries": [
+    {
+      "item_key": "collar_turquoise",
+      "name_key": "shop.item.collar_turquoise.name",
+      "slot": "collar",
+      "price_coins": 60,
+      "premium_only": false,
+      "asset": "assets/shop/collar_turquoise.webp"
+    },
+    {
+      "item_key": "collar_red",
+      "name_key": "shop.item.collar_red.name",
+      "slot": "collar",
+      "price_coins": 80,
+      "premium_only": false,
+      "asset": "assets/shop/collar_red.webp"
+    },
+    {
+      "item_key": "hat_beanie",
+      "name_key": "shop.item.hat_beanie.name",
+      "slot": "hat",
+      "price_coins": 120,
+      "premium_only": false,
+      "asset": "assets/shop/hat_beanie.webp"
+    },
+    {
+      "item_key": "hat_flower",
+      "name_key": "shop.item.hat_flower.name",
+      "slot": "hat",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/shop/hat_flower.webp"
+    },
+    {
+      "item_key": "bg_alley_evening",
+      "name_key": "shop.item.bg_alley_evening.name",
+      "slot": "background",
+      "price_coins": 200,
+      "premium_only": false,
+      "asset": "assets/shop/bg_alley_evening.webp"
+    },
+    {
+      "item_key": "bg_rooftop_night",
+      "name_key": "shop.item.bg_rooftop_night.name",
+      "slot": "background",
+      "price_coins": 220,
+      "premium_only": false,
+      "asset": "assets/shop/bg_rooftop_night.webp"
+    },
+    {
+      "item_key": "bg_garden_spring",
+      "name_key": "shop.item.bg_garden_spring.name",
+      "slot": "background",
+      "price_coins": 260,
+      "premium_only": true,
+      "asset": "assets/shop/bg_garden_spring.webp"
+    },
+    {
+      "item_key": "samovar",
+      "name_key": "shop.item.samovar.name",
+      "slot": "room_table",
+      "price_coins": 180,
+      "premium_only": false,
+      "asset": "assets/shop/samovar.webp"
+    },
+    {
+      "item_key": "tea_glass",
+      "name_key": "shop.item.tea_glass.name",
+      "slot": "room_table",
+      "price_coins": 70,
+      "premium_only": false,
+      "asset": "assets/shop/tea_glass.webp"
+    },
+    {
+      "item_key": "rug_small",
+      "name_key": "shop.item.rug_small.name",
+      "slot": "room_floor",
+      "price_coins": 140,
+      "premium_only": false,
+      "asset": "assets/shop/rug_small.webp"
+    },
+    {
+      "item_key": "blanket_floral",
+      "name_key": "shop.item.blanket_floral.name",
+      "slot": "room_floor",
+      "price_coins": 160,
+      "premium_only": false,
+      "asset": "assets/shop/blanket_floral.webp"
+    },
+    {
+      "item_key": "pillow_cozy",
+      "name_key": "shop.item.pillow_cozy.name",
+      "slot": "room_floor",
+      "price_coins": 90,
+      "premium_only": true,
+      "asset": "assets/shop/pillow_cozy.webp"
+    }
+  ]
+}

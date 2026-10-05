@@ -1,13 +1,22 @@
 // Command admin-cli provides operator tooling.
 //
 //	admin-cli keygen <kid> [dir]            generate an Ed25519 keypair (kid prefix at- or ent-)
+//	admin-cli hash-password                 read a password from stdin, print the bcrypt hash for ADMIN_PASSWORD_HASH
 //	admin-cli seed-products [products.json] upsert products (needs DATABASE_URL)
+//	admin-cli publish-config [-activate] [-min-app-version v] <file>   (needs ADMIN_URL/USER/PASSWORD)
+//	admin-cli activate-config <version>
+//	admin-cli publish-content <dir>
+//	admin-cli experiment put <file>
 package main
 
 import (
 	"context"
 	"fmt"
+	"io"
 	"os"
+	"strings"
+
+	"golang.org/x/crypto/bcrypt"
 
 	"github.com/emirdatcom/pashmak/backend/internal/modules/billing"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/db"
@@ -23,16 +32,42 @@ func main() {
 
 func run(args []string) error {
 	if len(args) == 0 {
-		return fmt.Errorf("usage: admin-cli keygen <kid> [dir] | seed-products [file]")
+		return fmt.Errorf("usage: admin-cli keygen|seed-products|publish-config|activate-config|publish-content|experiment (see source header)")
 	}
 	switch args[0] {
 	case "keygen":
 		return keygen(args[1:])
+	case "hash-password":
+		return hashPassword()
 	case "seed-products":
 		return seedProducts(args[1:])
+	case "publish-config":
+		return publishConfig(args[1:])
+	case "activate-config":
+		return activateConfig(args[1:])
+	case "publish-content":
+		return publishContent(args[1:])
+	case "experiment":
+		if len(args) > 1 && args[1] == "put" {
+			return putExperiment(args[2:])
+		}
+		return fmt.Errorf("usage: admin-cli experiment put <file>")
 	default:
 		return fmt.Errorf("unknown command %q", args[0])
 	}
+}
+
+func hashPassword() error {
+	pw, err := io.ReadAll(io.LimitReader(os.Stdin, 1024))
+	if err != nil {
+		return fmt.Errorf("read stdin: %w", err)
+	}
+	h, err := bcrypt.GenerateFromPassword([]byte(strings.TrimRight(string(pw), "\r\n")), 12)
+	if err != nil {
+		return fmt.Errorf("bcrypt: %w", err)
+	}
+	fmt.Println(string(h))
+	return nil
 }
 
 func keygen(args []string) error {

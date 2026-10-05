@@ -1,0 +1,58 @@
+{
+  "pack_key": "habit_templates",
+  "version": 1,
+  "pack_schema_version": 1,
+  "locale": "fa",
+  "min_app_version": "1.0.0",
+  "entries": [
+    {
+      "key": "water",
+      "icon": "water_drop",
+      "title_key": "habit.template.water.title",
+      "schedule_type": "daily",
+      "default_reminder_minutes": 600
+    },
+    {
+      "key": "sleep",
+      "icon": "bedtime",
+      "title_key": "habit.template.sleep.title",
+      "schedule_type": "daily",
+      "default_reminder_minutes": null
+    },
+    {
+      "key": "short_break",
+      "icon": "self_improvement",
+      "title_key": "habit.template.short_break.title",
+      "schedule_type": "daily",
+      "default_reminder_minutes": null
+    },
+    {
+      "key": "walk",
+      "icon": "directions_walk",
+      "title_key": "habit.template.walk.title",
+      "schedule_type": "daily",
+      "default_reminder_minutes": 1020
+    },
+    {
+      "key": "healthy_food",
+      "icon": "restaurant",
+      "title_key": "habit.template.healthy_food.title",
+      "schedule_type": "daily",
+      "default_reminder_minutes": 780
+    },
+    {
+      "key": "medicine",
+      "icon": "medication",
+      "title_key": "habit.template.medicine.title",
+      "schedule_type": "daily",
+      "default_reminder_minutes": 480
+    },
+    {
+      "key": "loved_ones",
+      "icon": "favorite",
+      "title_key": "habit.template.loved_ones.title",
+      "schedule_type": "daily",
+      "default_reminder_minutes": null
+    }
+  ]
+}

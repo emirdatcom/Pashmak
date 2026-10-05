@@ -2,8 +2,10 @@ package app_test
 
 import (
 	"bytes"
+	"compress/gzip"
 	"context"
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -17,14 +19,21 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/emirdatcom/pashmak/backend/internal/app"
+	"golang.org/x/crypto/bcrypt"
+
+	"github.com/emirdatcom/pashmak/backend/internal/modules/admin"
+	"github.com/emirdatcom/pashmak/backend/internal/modules/analytics"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/auth"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/billing"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/billing/fake"
+	"github.com/emirdatcom/pashmak/backend/internal/modules/content"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/entitlement"
+	"github.com/emirdatcom/pashmak/backend/internal/modules/remoteconfig"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/user"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/clock"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/db"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/metrics"
+	"github.com/emirdatcom/pashmak/backend/internal/platform/schemas"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/signer"
 	"github.com/emirdatcom/pashmak/backend/internal/testutil"
 )
@@ -39,7 +48,14 @@ type env struct {
 	bill *billing.Service
 	fake *fake.Adapter
 	sink *recordingSink
+	an   *analytics.Service
 }
+
+const (
+	configDataDir = "../../../config-data"
+	adminPass     = "s3cret-pass"
+	adminIP       = "10.200.1.1"
+)
 
 type recordingSink struct {
 	mu     sync.Mutex
@@ -95,7 +111,25 @@ func newEnv(t *testing.T) *env {
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, h := app.Handler(app.Deps{DB: pool, Metrics: metrics.New(), Clock: clk, Auth: a, User: u, Entitle: ent, Billing: bs})
+	sch, err := schemas.Load(configDataDir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	cat, err := schemas.LoadCatalog(configDataDir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	an := analytics.NewService(pool, cat, clk)
+	rc := remoteconfig.NewService(pool, sch, clk)
+	ct := content.NewService(pool, sch, clk)
+	hash, _ := bcrypt.GenerateFromPassword([]byte(adminPass), bcrypt.MinCost)
+	adm, err := admin.New(admin.Options{Pool: pool, Config: rc, Content: ct, Grants: ent, Clock: clk,
+		User: "admin", PasswordHash: string(hash), Allowlist: []string{"10.200.0.0/16"}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, h := app.Handler(app.Deps{DB: pool, Metrics: metrics.New(), Clock: clk, Auth: a, User: u, Entitle: ent, Billing: bs,
+		RemoteConfig: rc, Content: ct, Analytics: an, Admin: adm})
 	doc, err := openapi3.NewLoader().LoadFromFile("../../api/openapi.yaml")
 	if err != nil {
 		t.Fatal(err)
@@ -103,11 +137,18 @@ func newEnv(t *testing.T) *env {
 	if err := doc.Validate(context.Background()); err != nil {
 		t.Fatalf("openapi invalid: %v", err)
 	}
-	return &env{h: h, clk: clk, t: t, doc: doc, pool: pool, ent: ent, bill: bs, fake: f, sink: sink}
+	u.AddHook(an)
+	return &env{h: h, clk: clk, t: t, doc: doc, pool: pool, ent: ent, bill: bs, fake: f, sink: sink, an: an}
 }
 
 // call performs a request, validates the response against openapi.yaml and returns status + body.
 func (e *env) call(method, path, token string, body any, ip string) (int, map[string]any) {
+	st, _, m := e.callH(method, path, token, body, ip, nil)
+	return st, m
+}
+
+// callH is call with extra request headers; it also returns the response headers.
+func (e *env) callH(method, path, token string, body any, ip string, hdr map[string]string) (int, http.Header, map[string]any) {
 	e.t.Helper()
 	var rdr *bytes.Reader
 	if body != nil {
@@ -123,6 +164,13 @@ func (e *env) call(method, path, token string, body any, ip string) (int, map[st
 	}
 	if ip != "" {
 		req.RemoteAddr = ip + ":1234"
+	}
+	for k, v := range hdr {
+		if k == "Authorization" {
+			req.Header.Set(k, v)
+			continue
+		}
+		req.Header.Set(k, v)
 	}
 	rec := httptest.NewRecorder()
 	e.h.ServeHTTP(rec, req)
@@ -141,14 +189,26 @@ func (e *env) call(method, path, token string, body any, ip string) (int, map[st
 				Options: &openapi3filter.Options{AuthenticationFunc: openapi3filter.NoopAuthenticationFunc}},
 			Status: rec.Code, Header: rec.Header(), Options: &openapi3filter.Options{IncludeResponseStatus: true},
 		}
-		in.SetBodyBytes(rec.Body.Bytes())
+		vb := rec.Body.Bytes()
+		if rec.Header().Get("Content-Encoding") == "gzip" {
+			if zr, err := gzip.NewReader(bytes.NewReader(vb)); err == nil {
+				vb, _ = io.ReadAll(zr)
+			}
+		}
+		in.SetBodyBytes(vb)
 		if verr := openapi3filter.ValidateResponse(context.Background(), in); verr != nil {
 			e.t.Errorf("%s %s -> %d violates openapi: %v\nbody=%s", method, path, rec.Code, verr, rec.Body)
 		}
 	}
 	var out map[string]any
-	_ = json.Unmarshal(rec.Body.Bytes(), &out)
-	return rec.Code, out
+	rb := rec.Body.Bytes()
+	if rec.Header().Get("Content-Encoding") == "gzip" {
+		if zr, err := gzip.NewReader(bytes.NewReader(rb)); err == nil {
+			rb, _ = io.ReadAll(zr)
+		}
+	}
+	_ = json.Unmarshal(rb, &out)
+	return rec.Code, rec.Header(), out
 }
 
 func deviceBody(install string) map[string]any {

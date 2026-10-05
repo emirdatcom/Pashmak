@@ -10,10 +10,12 @@ import (
 
 // Metrics bundles the shared collectors.
 type Metrics struct {
-	Registry     *prometheus.Registry
-	HTTPRequests *prometheus.CounterVec
-	HTTPDuration *prometheus.HistogramVec
-	MarketVerify *prometheus.CounterVec
+	Registry       *prometheus.Registry
+	HTTPRequests   *prometheus.CounterVec
+	HTTPDuration   *prometheus.HistogramVec
+	MarketVerify   *prometheus.CounterVec
+	EventsIngested prometheus.Counter
+	EventsRejected *prometheus.CounterVec
 }
 
 // DBStats is the subset of pool statistics we export.
@@ -40,7 +42,11 @@ func New() *Metrics {
 	m.MarketVerify = prometheus.NewCounterVec(prometheus.CounterOpts{
 		Name: "market_verify_total", Help: "Market purchase verifications by market and result.",
 	}, []string{"market", "result"})
-	reg.MustRegister(m.HTTPRequests, m.HTTPDuration, m.MarketVerify)
+	m.EventsIngested = prometheus.NewCounter(prometheus.CounterOpts{
+		Name: "events_ingested_total", Help: "Analytics events accepted."})
+	m.EventsRejected = prometheus.NewCounterVec(prometheus.CounterOpts{
+		Name: "events_rejected_total", Help: "Analytics events rejected by reason."}, []string{"reason"})
+	reg.MustRegister(m.HTTPRequests, m.HTTPDuration, m.MarketVerify, m.EventsIngested, m.EventsRejected)
 	return m
 }
 

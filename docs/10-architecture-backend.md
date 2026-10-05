@@ -150,10 +150,10 @@ erDiagram
 | POST | `/v1/trial/start` | bearer | `provisional_started_at` (اختیاری، اگر آفلاین شروع شده) | `EntitlementState` | `TRIAL_ALREADY_USED`, `TRIAL_DISABLED` |
 | POST | `/v1/purchases/verify` | bearer | `market`, `product_id`, `market_sku`, `purchase_token`, `order_id` | `purchase_state`, `EntitlementState`, `coins_granted` | `PURCHASE_INVALID`, `PURCHASE_ALREADY_CLAIMED`, `MARKET_UNAVAILABLE` (503، کلاینت retry) |
 | POST | `/v1/purchases/restore` | bearer | `market`, `purchases: [{product_id, market_sku, purchase_token, order_id}]` | `EntitlementState` | `MARKET_UNAVAILABLE` |
-| GET | `/v1/config` | bearer یا public با `X-Install-Id` | query: `known_version` | `ConfigResponse`؛ `304` با `ETag` | — |
+| GET | `/v1/config` | bearer یا public با `X-Install-Id` | query: `known_version` | `ConfigResponse` (gzip)؛ `304` با `ETag`؛ `404` اگر هنوز config فعالی منتشر نشده | — |
 | GET | `/v1/content/manifest` | public | — | `{packs: [{pack_key, version, sha256, size, min_app_version, url}]}` + ETag | — |
 | GET | `/v1/content/packs/{pack_key}/{version}` | public | — | payload pack (gzip، cache طولانی، immutable) | 404 |
-| POST | `/v1/events` | bearer | `{events: [Event], sent_at}` حداکثر ۲۰۰ رویداد / ۲۵۶KB | `{accepted, rejected}` | `PAYLOAD_TOO_LARGE` |
+| POST | `/v1/events` | bearer | `{events: [Event], sent_at}` حداکثر ۲۰۰ رویداد / ۲۵۶KB | `{accepted, rejected, rejected_reasons}` (تکراری‌ها accepted حساب می‌شوند) | `PAYLOAD_TOO_LARGE`, `INVALID_INPUT` |
 | PUT | `/v1/backup` (فاز۲) | bearer | body: blob باینری؛ هدر `X-Backup-Schema`, `X-Backup-Sha256`, `X-Kdf-Params` | `{updated_at}` | `BACKUP_TOO_LARGE` (حداکثر ۱۰MB) |
 | GET | `/v1/backup` (فاز۲) | bearer | — | blob + هدرها | 404 |
 | DELETE | `/v1/backup` (فاز۲) | bearer | — | 204 | — |

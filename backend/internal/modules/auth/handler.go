@@ -78,3 +78,19 @@ func (s *Service) RequireAuth() httpx.Middleware {
 		})
 	}
 }
+
+// OptionalAuth is RequireAuth that lets anonymous requests (no Authorization header) through.
+// A present but invalid token is still rejected so clients refresh it.
+func (s *Service) OptionalAuth() httpx.Middleware {
+	require := s.RequireAuth()
+	return func(next http.Handler) http.Handler {
+		authed := require(next)
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.Header.Get("Authorization") == "" {
+				next.ServeHTTP(w, r)
+				return
+			}
+			authed.ServeHTTP(w, r)
+		})
+	}
+}

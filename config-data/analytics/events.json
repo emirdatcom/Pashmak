@@ -1,0 +1,409 @@
+{
+  "_comment": "Single source of truth for analytics (docs/70 §3). The Go allowlist and the Dart AnalyticsEvent enum are checked against this file. Phase-2 events are added by prompt 16.",
+  "common_props": {
+    "app_version": {
+      "type": "string",
+      "max_len": 64
+    },
+    "market": {
+      "type": "string",
+      "enum": [
+        "bazaar",
+        "myket"
+      ]
+    },
+    "install_age_days": {
+      "type": "int"
+    },
+    "is_premium": {
+      "type": "bool"
+    },
+    "trial_state": {
+      "type": "string",
+      "enum": [
+        "none",
+        "active",
+        "ended",
+        "converted"
+      ]
+    },
+    "session_id": {
+      "type": "string",
+      "max_len": 64
+    }
+  },
+  "common_prop_prefixes": [
+    "exp_"
+  ],
+  "forbidden_props": [
+    "mood_level",
+    "note",
+    "text",
+    "title",
+    "phone"
+  ],
+  "events": [
+    {
+      "name": "app_installed",
+      "props": {},
+      "server_side": false
+    },
+    {
+      "name": "app_opened",
+      "props": {
+        "source": {
+          "type": "string",
+          "enum": [
+            "launcher",
+            "notification",
+            "widget"
+          ]
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "onboarding_step_viewed",
+      "props": {
+        "step": {
+          "type": "int",
+          "min": 1,
+          "max": 4
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "onboarding_completed",
+      "props": {
+        "habits_selected_count": {
+          "type": "int"
+        },
+        "notif_permission": {
+          "type": "string",
+          "enum": [
+            "granted",
+            "denied",
+            "skipped"
+          ]
+        },
+        "cat_name_changed": {
+          "type": "bool"
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "habit_created",
+      "props": {
+        "template_key": {
+          "type": "string",
+          "max_len": 64
+        },
+        "has_reminder": {
+          "type": "bool"
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "first_habit_created",
+      "props": {
+        "template_key": {
+          "type": "string",
+          "max_len": 64
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "habit_completed",
+      "props": {
+        "template_key": {
+          "type": "string",
+          "max_len": 64
+        },
+        "source": {
+          "type": "string",
+          "enum": [
+            "app",
+            "widget",
+            "notification"
+          ]
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "checkin_completed",
+      "props": {
+        "has_note": {
+          "type": "bool"
+        },
+        "source": {
+          "type": "string",
+          "enum": [
+            "app",
+            "widget",
+            "notification"
+          ]
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "exercise_started",
+      "props": {
+        "exercise_key": {
+          "type": "string",
+          "max_len": 64
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "exercise_completed",
+      "props": {
+        "exercise_key": {
+          "type": "string",
+          "max_len": 64
+        },
+        "duration_s": {
+          "type": "int"
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "adventure_started",
+      "props": {
+        "location_key": {
+          "type": "string",
+          "max_len": 64
+        },
+        "duration_minutes": {
+          "type": "int"
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "adventure_claimed",
+      "props": {
+        "location_key": {
+          "type": "string",
+          "max_len": 64
+        },
+        "coins": {
+          "type": "int"
+        },
+        "got_item": {
+          "type": "bool"
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "shop_item_purchased",
+      "props": {
+        "item_key": {
+          "type": "string",
+          "max_len": 64
+        },
+        "price_coins": {
+          "type": "int"
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "item_equipped",
+      "props": {
+        "item_key": {
+          "type": "string",
+          "max_len": 64
+        },
+        "slot": {
+          "type": "string",
+          "max_len": 64
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "streak_updated",
+      "props": {
+        "current": {
+          "type": "int"
+        },
+        "freeze_used": {
+          "type": "bool"
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "paywall_viewed",
+      "props": {
+        "trigger": {
+          "type": "string",
+          "max_len": 64
+        },
+        "variant": {
+          "type": "string",
+          "max_len": 64
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "paywall_plan_selected",
+      "props": {
+        "product_id": {
+          "type": "string",
+          "max_len": 64
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "paywall_closed",
+      "props": {
+        "trigger": {
+          "type": "string",
+          "max_len": 64
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "trial_started",
+      "props": {
+        "provisional": {
+          "type": "bool"
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "trial_ended",
+      "props": {
+        "converted": {
+          "type": "bool"
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "purchase_started",
+      "props": {
+        "product_id": {
+          "type": "string",
+          "max_len": 64
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "purchase_completed",
+      "props": {
+        "product_id": {
+          "type": "string",
+          "max_len": 64
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "subscription",
+            "pass",
+            "consumable"
+          ]
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "purchase_failed",
+      "props": {
+        "product_id": {
+          "type": "string",
+          "max_len": 64
+        },
+        "reason": {
+          "type": "string",
+          "enum": [
+            "user_canceled",
+            "market_error",
+            "verify_failed"
+          ]
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "subscription_canceled",
+      "props": {
+        "product_id": {
+          "type": "string",
+          "max_len": 64
+        }
+      },
+      "server_side": true
+    },
+    {
+      "name": "restore_completed",
+      "props": {
+        "restored_count": {
+          "type": "int"
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "notification_opened",
+      "props": {
+        "type": {
+          "type": "string",
+          "max_len": 64
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "safety_screen_viewed",
+      "props": {
+        "source": {
+          "type": "string",
+          "enum": [
+            "settings",
+            "auto_card"
+          ]
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "settings_changed",
+      "props": {
+        "key": {
+          "type": "string",
+          "max_len": 64
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "force_update_shown",
+      "props": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "soft",
+            "hard"
+          ]
+        }
+      },
+      "server_side": false
+    }
+  ]
+}

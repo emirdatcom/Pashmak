@@ -24,6 +24,7 @@ type Config struct {
 	SigningKeysDir    string
 	DeviceHashSalt    string
 	DataEncKey        []byte
+	ConfigDataDir     string // directory holding schemas and the events catalog (config-data/)
 
 	BillingBazaarEnabled bool
 	BillingMyketEnabled  bool
@@ -60,6 +61,7 @@ func LoadFrom(get func(string) string) (Config, error) {
 		AdminPasswordHash: get("ADMIN_PASSWORD_HASH"),
 		SigningKeysDir:    str("SIGNING_KEYS_DIR", "./keys"),
 		DeviceHashSalt:    get("DEVICE_HASH_SALT"),
+		ConfigDataDir:     str("CONFIG_DATA_DIR", "../config-data"),
 
 		BillingBazaarEnabled: get("BILLING_BAZAAR_ENABLED") == "true",
 		BillingMyketEnabled:  get("BILLING_MYKET_ENABLED") == "true",

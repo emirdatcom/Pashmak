@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "safety pack",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "pack_key",
+    "version",
+    "pack_schema_version",
+    "locale",
+    "min_app_version",
+    "entries"
+  ],
+  "properties": {
+    "pack_key": {
+      "const": "safety"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "pack_schema_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "locale": {
+      "const": "fa"
+    },
+    "min_app_version": {
+      "type": "string",
+      "pattern": "^[0-9]+(\\.[0-9]+){0,2}$"
+    },
+    "entries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "not_medical_disclaimer_key",
+        "title_key",
+        "body_key",
+        "hotlines",
+        "keywords"
+      ],
+      "properties": {
+        "not_medical_disclaimer_key": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+(\\.[a-z0-9_]+)+$"
+        },
+        "title_key": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+(\\.[a-z0-9_]+)+$"
+        },
+        "body_key": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+(\\.[a-z0-9_]+)+$"
+        },
+        "hotlines": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "label_key",
+              "number",
+              "hours_key",
+              "verified_at"
+            ],
+            "properties": {
+              "label_key": {
+                "type": "string",
+                "pattern": "^[a-z0-9_]+(\\.[a-z0-9_]+)+$"
+              },
+              "number": {
+                "type": "string",
+                "pattern": "^[0-9]{2,15}$"
+              },
+              "hours_key": {
+                "type": "string",
+                "pattern": "^[a-z0-9_]+(\\.[a-z0-9_]+)+$"
+              },
+              "verified_at": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 2
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "pack_key": "safety",
+  "version": 1,
+  "pack_schema_version": 1,
+  "locale": "fa",
+  "min_app_version": "1.0.0",
+  "entries": {
+    "not_medical_disclaimer_key": "disclaimer.not_medical",
+    "title_key": "safety.title",
+    "body_key": "safety.body",
+    "hotlines": [
+      {
+        "label_key": "safety.hotline.social_emergency",
+        "number": "123",
+        "hours_key": "safety.hours.always",
+        "verified_at": null
+      },
+      {
+        "label_key": "safety.hotline.counseling",
+        "number": "1480",
+        "hours_key": "safety.hours.always",
+        "verified_at": null
+      },
+      {
+        "label_key": "safety.hotline.medical_emergency",
+        "number": "115",
+        "hours_key": "safety.hours.always",
+        "verified_at": null
+      }
+    ],
+    "keywords": [
+      "نمی‌خوام زنده باشم",
+      "دلم می‌خواد بمیرم",
+      "خودکشی",
+      "به خودم آسیب",
+      "دیگه تحمل ندارم"
+    ]
+  }
+}

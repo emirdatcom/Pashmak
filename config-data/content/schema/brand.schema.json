@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "brand pack",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "pack_key",
+    "version",
+    "pack_schema_version",
+    "locale",
+    "min_app_version",
+    "entries"
+  ],
+  "properties": {
+    "pack_key": {
+      "const": "brand"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "pack_schema_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "locale": {
+      "const": "fa"
+    },
+    "min_app_version": {
+      "type": "string",
+      "pattern": "^[0-9]+(\\.[0-9]+){0,2}$"
+    },
+    "entries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "app_name",
+        "cat_default_name",
+        "support_contact"
+      ],
+      "properties": {
+        "app_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cat_default_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "support_contact": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "email",
+            "channel_url"
+          ],
+          "properties": {
+            "email": {
+              "type": "string"
+            },
+            "channel_url": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

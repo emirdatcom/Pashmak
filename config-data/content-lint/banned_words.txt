@@ -1,0 +1,12 @@
+# Words that must not appear in user-facing copy (docs/40 §4). One per line; '#' starts a comment.
+# The packs `safety` and copy keys under `disclaimer.`, `safety.`, `help.`, `legal.` are exempt
+# (they must state "not therapy"), and `safety.keywords` is exempt because it lists detection patterns.
+درمان
+درمانگر
+تشخیص
+اختلال
+افسردگی
+اضطراب
+بیمار
+بیماری
+روان‌درمانی

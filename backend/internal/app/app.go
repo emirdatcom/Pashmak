@@ -6,9 +6,13 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/emirdatcom/pashmak/backend/internal/modules/admin"
+	"github.com/emirdatcom/pashmak/backend/internal/modules/analytics"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/auth"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/billing"
+	"github.com/emirdatcom/pashmak/backend/internal/modules/content"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/entitlement"
+	"github.com/emirdatcom/pashmak/backend/internal/modules/remoteconfig"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/user"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/clock"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/httpx"
@@ -32,6 +36,11 @@ type Deps struct {
 	User    *user.Service
 	Entitle *entitlement.Service
 	Billing *billing.Service
+
+	RemoteConfig *remoteconfig.Service
+	Content      *content.Service
+	Analytics    *analytics.Service
+	Admin        *admin.Service
 }
 
 // Handler builds the router with the global middleware chain:
@@ -63,6 +72,18 @@ func Handler(d Deps) (*httpx.Router, http.Handler) {
 		if d.Billing != nil {
 			billing.Register(r, d.Billing, requireAuth, d.Clock)
 		}
+		if d.RemoteConfig != nil {
+			remoteconfig.Register(r, d.RemoteConfig, d.Auth.OptionalAuth())
+		}
+		if d.Analytics != nil {
+			analytics.Register(r, d.Analytics, requireAuth)
+		}
+	}
+	if d.Content != nil {
+		content.Register(r, d.Content)
+	}
+	if d.Admin != nil {
+		admin.Register(r, d.Admin)
 	}
 	// Generous global per-IP limit; stricter per-route limits are added by modules.
 	global := httpx.NewRateLimiter(d.Clock, 120, 6000)

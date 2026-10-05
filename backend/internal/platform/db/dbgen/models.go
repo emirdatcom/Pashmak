@@ -19,6 +19,36 @@ type AdminAudit struct {
 	At      time.Time
 }
 
+type ConfigVersion struct {
+	ID            int64
+	Version       int32
+	Payload       []byte
+	MinAppVersion string
+	PublishedAt   time.Time
+	PublishedBy   string
+	IsActive      bool
+}
+
+type ContentPack struct {
+	ID            int64
+	PackKey       string
+	Version       int32
+	Locale        string
+	Payload       []byte
+	Raw           []byte
+	Sha256        string
+	MinAppVersion string
+	PublishedAt   time.Time
+	IsActive      bool
+}
+
+type DailyMetric struct {
+	Day    time.Time
+	Metric string
+	Dims   []byte
+	Value  float64
+}
+
 type Device struct {
 	ID         uuid.UUID
 	UserID     uuid.UUID
@@ -43,6 +73,34 @@ type EntitlementGrant struct {
 	EndsAt      time.Time
 	RevokedAt   *time.Time
 	CreatedAt   time.Time
+}
+
+type Event struct {
+	ID         uuid.UUID
+	UserID     uuid.NullUUID
+	InstallID  uuid.NullUUID
+	Name       string
+	Props      []byte
+	ClientTs   time.Time
+	ReceivedAt time.Time
+	AppVersion string
+	Market     string
+	SessionID  string
+}
+
+type EventsDedupe struct {
+	EventID    uuid.UUID
+	ReceivedAt time.Time
+}
+
+type Experiment struct {
+	Key       string
+	Status    string
+	Variants  []byte
+	Audience  []byte
+	StartedAt *time.Time
+	StoppedAt *time.Time
+	UpdatedAt time.Time
 }
 
 type Product struct {

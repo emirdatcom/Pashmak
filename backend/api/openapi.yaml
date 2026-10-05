@@ -170,9 +170,183 @@ paths:
         "401": {$ref: "#/components/responses/Error"}
         "409": {$ref: "#/components/responses/Error"}
         "503": {$ref: "#/components/responses/Error"}
+  /v1/config:
+    get:
+      operationId: getConfig
+      security: [{}, {bearer: []}]
+      parameters:
+        - {name: known_version, in: query, required: false, schema: {type: integer}}
+        - {name: If-None-Match, in: header, required: false, schema: {type: string}}
+      responses:
+        "200":
+          description: config (ETag header set; gzip when accepted)
+          headers: {ETag: {schema: {type: string}}}
+          content: {application/json: {schema: {$ref: "#/components/schemas/ConfigResponse"}}}
+        "304": {description: not modified}
+        "400": {$ref: "#/components/responses/Error"}
+        "401": {$ref: "#/components/responses/Error"}
+        "404": {$ref: "#/components/responses/Error"}
+  /v1/content/manifest:
+    get:
+      operationId: getContentManifest
+      security: []
+      responses:
+        "200":
+          description: packs compatible with X-App-Version
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [packs]
+                properties:
+                  packs:
+                    type: array
+                    items:
+                      type: object
+                      required: [pack_key, version, sha256, size, min_app_version, url]
+                      properties:
+                        pack_key: {type: string}
+                        version: {type: integer}
+                        sha256: {type: string}
+                        size: {type: integer}
+                        min_app_version: {type: string}
+                        url: {type: string}
+        "304": {description: not modified}
+  /v1/content/packs/{pack_key}/{version}:
+    get:
+      operationId: getContentPack
+      security: []
+      parameters:
+        - {name: pack_key, in: path, required: true, schema: {type: string}}
+        - {name: version, in: path, required: true, schema: {type: integer}}
+      responses:
+        "200":
+          description: immutable pack (Cache-Control public, max-age=31536000, immutable)
+          content: {application/json: {schema: {type: object}}}
+        "304": {description: not modified}
+        "404": {$ref: "#/components/responses/Error"}
+  /v1/events:
+    post:
+      operationId: ingestEvents
+      security: [{bearer: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [events]
+              properties:
+                sent_at: {type: string, format: date-time}
+                events:
+                  type: array
+                  minItems: 1
+                  maxItems: 200
+                  items: {$ref: "#/components/schemas/Event"}
+      responses:
+        "200":
+          description: result
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [accepted, rejected, rejected_reasons]
+                properties:
+                  accepted: {type: integer}
+                  rejected: {type: integer}
+                  rejected_reasons: {type: object, additionalProperties: {type: integer}}
+        "400": {$ref: "#/components/responses/Error"}
+        "401": {$ref: "#/components/responses/Error"}
+        "413": {$ref: "#/components/responses/Error"}
+  /admin/v1/config:
+    post:
+      operationId: adminPublishConfig
+      security: [{basic: []}]
+      requestBody:
+        required: true
+        content: {application/json: {schema: {type: object, additionalProperties: false, required: [payload], properties: {payload: {type: object}, min_app_version: {type: string}, activate: {type: boolean}}}}}
+      responses:
+        "201": {description: published, content: {application/json: {schema: {type: object, required: [version, active], properties: {version: {type: integer}, active: {type: boolean}}}}}}
+        "400": {$ref: "#/components/responses/Error"}
+        "401": {$ref: "#/components/responses/Error"}
+        "403": {$ref: "#/components/responses/Error"}
+  /admin/v1/config/{version}/activate:
+    post:
+      operationId: adminActivateConfig
+      security: [{basic: []}]
+      parameters: [{name: version, in: path, required: true, schema: {type: integer}}]
+      responses:
+        "200": {description: activated, content: {application/json: {schema: {type: object, required: [version, active], properties: {version: {type: integer}, active: {type: boolean}}}}}}
+        "401": {$ref: "#/components/responses/Error"}
+        "403": {$ref: "#/components/responses/Error"}
+        "404": {$ref: "#/components/responses/Error"}
+  /admin/v1/experiments/{key}:
+    put:
+      operationId: adminPutExperiment
+      security: [{basic: []}]
+      parameters: [{name: key, in: path, required: true, schema: {type: string}}]
+      requestBody:
+        required: true
+        content: {application/json: {schema: {type: object}}}
+      responses:
+        "204": {description: stored}
+        "400": {$ref: "#/components/responses/Error"}
+        "401": {$ref: "#/components/responses/Error"}
+        "403": {$ref: "#/components/responses/Error"}
+  /admin/v1/content/packs:
+    post:
+      operationId: adminPublishPack
+      security: [{basic: []}]
+      requestBody:
+        required: true
+        content: {application/json: {schema: {type: object}}}
+      responses:
+        "201": {description: published, content: {application/json: {schema: {type: object}}}}
+        "400": {$ref: "#/components/responses/Error"}
+        "401": {$ref: "#/components/responses/Error"}
+        "403": {$ref: "#/components/responses/Error"}
+  /admin/v1/users/{id}/grants:
+    post:
+      operationId: adminGrantPromo
+      security: [{basic: []}]
+      parameters: [{name: id, in: path, required: true, schema: {type: string, format: uuid}}]
+      requestBody:
+        required: true
+        content: {application/json: {schema: {type: object, additionalProperties: false, required: [days, reason], properties: {days: {type: integer}, reason: {type: string}}}}}
+      responses:
+        "201": {description: granted, content: {application/json: {schema: {type: object}}}}
+        "400": {$ref: "#/components/responses/Error"}
+        "401": {$ref: "#/components/responses/Error"}
+        "403": {$ref: "#/components/responses/Error"}
+        "404": {$ref: "#/components/responses/Error"}
+  /admin/v1/users/{id}:
+    get:
+      operationId: adminGetUser
+      security: [{basic: []}]
+      parameters: [{name: id, in: path, required: true, schema: {type: string, format: uuid}}]
+      responses:
+        "200": {description: account facts only, content: {application/json: {schema: {type: object}}}}
+        "401": {$ref: "#/components/responses/Error"}
+        "403": {$ref: "#/components/responses/Error"}
+        "404": {$ref: "#/components/responses/Error"}
+  /admin/v1/metrics/daily:
+    get:
+      operationId: adminDailyMetrics
+      security: [{basic: []}]
+      parameters:
+        - {name: from, in: query, required: false, schema: {type: string, format: date}}
+        - {name: to, in: query, required: false, schema: {type: string, format: date}}
+        - {name: metric, in: query, required: false, schema: {type: string}}
+      responses:
+        "200": {description: rollups, content: {application/json: {schema: {type: object}}}}
+        "400": {$ref: "#/components/responses/Error"}
+        "401": {$ref: "#/components/responses/Error"}
+        "403": {$ref: "#/components/responses/Error"}
 components:
   securitySchemes:
     bearer: {type: http, scheme: bearer, bearerFormat: JWT}
+    basic: {type: http, scheme: basic}
   responses:
     Error:
       description: error
