@@ -185,7 +185,7 @@ class _ShopDetailState extends ConsumerState<ShopDetailScreen> {
                 owned: owned.contains(it.itemKey),
                 ownedLabel: copy.t('shop.owned'),
                 priceCoins: it.priceCoins,
-                premiumLabel: it.premiumOnly && !premium && !owned.contains(it.itemKey) ? copy.t('shop.premium_only') : null,
+                premiumLabel: it.premiumOnly && !premium && !owned.contains(it.itemKey) ? copy.t('shop.premium_short') : null,
                 onTap: owned.contains(it.itemKey) ? null : () => _buy(it),
               ),
           ],
@@ -230,7 +230,7 @@ class _ShopDetailState extends ConsumerState<ShopDetailScreen> {
             const SizedBox(height: 16),
             Row(children: [
               Expanded(child: Text(copy.t('shop.today'), style: const TextStyle(color: DS.onDark, fontWeight: FontWeight.w700))),
-              CountdownChip(label: '${copy.t('shop.refresh_in')}: ${formatRemaining(copy, untilNext)}'),
+              Flexible(child: CountdownChip(label: '${copy.t('shop.refresh_in')}: ${formatRemaining(copy, untilNext)}')),
             ]),
             const SizedBox(height: 8),
             grid(_stock),

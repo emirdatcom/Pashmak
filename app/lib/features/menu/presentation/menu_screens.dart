@@ -53,7 +53,7 @@ class MenuScreen extends ConsumerWidget {
           physics: const NeverScrollableScrollPhysics(),
           mainAxisSpacing: 10,
           crossAxisSpacing: 10,
-          childAspectRatio: 1.35,
+          childAspectRatio: 1.0,
           children: [
             for (final t in tiles)
               RoundCard(

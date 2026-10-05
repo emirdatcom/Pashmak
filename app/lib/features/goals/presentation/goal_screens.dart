@@ -66,26 +66,35 @@ class GoalsScreen extends ConsumerWidget {
                 ]),
               ),
             )
-          : ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 96), children: [
-              for (final h in goals)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: RoundCard(
-                    onTap: () => context.push(Routes.goal(h.id)),
-                    child: Row(children: [
-                      AreaIcon(icon: library[h.goalKey ?? h.templateKey]?.icon, area: h.areaKey ?? library[h.goalKey ?? h.templateKey]?.areaKey),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Text(goalTitle(copy, h.goalKey ?? h.templateKey, h.title), style: const TextStyle(color: DS.textPrimary, fontWeight: FontWeight.w700, fontSize: 16)),
-                          if (h.isLocked) Text(copy.t('goal.locked.hint'), style: const TextStyle(color: DS.textSecondary, fontSize: 13)),
-                        ]),
-                      ),
-                      const Icon(Icons.chevron_left, color: DS.textSecondary),
-                    ]),
+          : ReorderableListView(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
+              onReorderItem: (from, to) async {
+                final ids = [for (final h in goals) h.id];
+                ids.insert(to, ids.removeAt(from));
+                await ref.read(habitServiceProvider).reorder(ids);
+              },
+              children: [
+                for (final h in goals)
+                  Padding(
+                    key: ValueKey(h.id),
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: RoundCard(
+                      onTap: () => context.push(Routes.goal(h.id)),
+                      child: Row(children: [
+                        AreaIcon(icon: library[h.goalKey ?? h.templateKey]?.icon, area: h.areaKey ?? library[h.goalKey ?? h.templateKey]?.areaKey),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Text(goalTitle(copy, h.goalKey ?? h.templateKey, h.title), style: const TextStyle(color: DS.textPrimary, fontWeight: FontWeight.w700, fontSize: 16)),
+                            if (h.isLocked) Text(copy.t('goal.locked.hint'), style: const TextStyle(color: DS.textSecondary, fontSize: 13)),
+                          ]),
+                        ),
+                        const Icon(Icons.drag_handle, color: DS.textSecondary),
+                      ]),
+                    ),
                   ),
-                ),
-            ]),
+              ],
+            ),
     );
   }
 }
@@ -182,7 +191,7 @@ class _GoalEditorState extends ConsumerState<GoalEditorScreen> {
     } else {
       await svc.update(widget.goalId!, draft);
     }
-    if (mounted) context.pop();
+    if (mounted) context.canPop() ? context.pop() : context.go(Routes.home);
   }
 
   Future<String?> _sheet(List<(String, String)> options, String title) => showModalBottomSheet<String>(

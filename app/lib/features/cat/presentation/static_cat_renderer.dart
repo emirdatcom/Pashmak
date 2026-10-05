@@ -77,7 +77,7 @@ class _CatPainter extends CustomPainter {
   final CatMood mood;
   final bool blink;
 
-  static const _backdrops = [Color(0xFFFBE3C2), Color(0xFFCFE8E6), Color(0xFFD9D2EE), Color(0xFFE6EFC9)];
+  static const _backdrops = DS.catBackdrops;
 
   /// Placeholder backdrop colour derived from the item key until real art exists.
   static Color backdropFor(String key) => _backdrops[key.codeUnits.fold<int>(0, (a, b) => a + b) % _backdrops.length];
@@ -192,13 +192,13 @@ class _CatPainter extends CustomPainter {
         ..quadraticBezierTo(c.dx, c.dy - 96, c.dx + 40, c.dy - 36)
         ..close();
       canvas.drawPath(p, Paint()..color = AppColors.turquoiseDark);
-      canvas.drawCircle(c.translate(0, -82), 7, Paint()..color = Colors.white);
+      canvas.drawCircle(c.translate(0, -82), 7, Paint()..color = DS.onDark);
     } else if (hat == 'hat_flower') {
       for (var i = 0; i < 5; i++) {
         final a = i * 2 * math.pi / 5;
-        canvas.drawCircle(c.translate(math.cos(a) * 9, -62 + math.sin(a) * 9), 7, Paint()..color = const Color(0xFFE8739E));
+        canvas.drawCircle(c.translate(math.cos(a) * 9, -62 + math.sin(a) * 9), 7, Paint()..color = DS.catFlowerPetal);
       }
-      canvas.drawCircle(c.translate(0, -62), 5, Paint()..color = const Color(0xFFFFD166));
+      canvas.drawCircle(c.translate(0, -62), 5, Paint()..color = DS.catFlowerCore);
     } else if (hat == 'hat_felt') {
       canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromCenter(center: c.translate(0, -52), width: 70, height: 36), const Radius.circular(16)), Paint()..color = DS.bgShopPanel);
     }

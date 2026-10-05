@@ -179,3 +179,6 @@ abstract PaymentGateway {
 - منطق خالص (با `Clock` و seed تزریقی): `GoalRecommender`، `QuestEngine`، `ShopRotation`، `CatGrowth` در `domain/` هر feature.
 - `CatRenderer` پارامتر `stage` می‌گیرد؛ جای `RiveCatRenderer` حفظ شده.
 - چک CI: `input/reference/` نباید در `pubspec.yaml` assets باشد.
+
+### مسیرها پس از پرامپت 22
+`/home` `/quests` (`/quests/reflect`) `/shop` (`/shop/outfit|furniture`) `/bag` `/cat` (`/cat/discoveries`, `/cat/edit`) داخل `AppShell`؛ بیرون از شل: `/menu` (`/menu/areas`, `/menu/areas/retake`, `/menu/history`)، `/goals` (`/new`, `/:id`, `/:id/edit`)، `/exercises?tab=`، `/settings/help`، `/onboarding/1..11`. `/habits/*` به `/goals/*` redirect می‌شود.

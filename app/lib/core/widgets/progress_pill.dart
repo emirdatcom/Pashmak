@@ -20,23 +20,23 @@ class ProgressPill extends StatelessWidget {
       label: label ?? text,
       value: text,
       child: ExcludeSemantics(
-        child: LayoutBuilder(builder: (context, c) {
-          return Container(
-            height: height,
-            decoration: BoxDecoration(color: DS.progressRail, borderRadius: BorderRadius.circular(height)),
-            child: Stack(alignment: Alignment.center, children: [
-              Align(
-                alignment: AlignmentDirectional.centerStart,
+        child: Container(
+          height: height,
+          decoration: BoxDecoration(color: DS.progressRail, borderRadius: BorderRadius.circular(height)),
+          child: Stack(alignment: Alignment.center, children: [
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: FractionallySizedBox(
+                widthFactor: f,
                 child: AnimatedContainer(
                   duration: MediaQuery.of(context).disableAnimations ? Duration.zero : const Duration(milliseconds: 250),
-                  width: c.maxWidth * f,
                   decoration: BoxDecoration(color: DS.progressYellow, borderRadius: BorderRadius.circular(height)),
                 ),
               ),
-              if (showText) Text(text, style: const TextStyle(color: DS.textPrimary, fontSize: 13, fontWeight: FontWeight.w700)),
-            ]),
-          );
-        }),
+            ),
+            if (showText) Text(text, style: const TextStyle(color: DS.textPrimary, fontSize: 13, fontWeight: FontWeight.w700)),
+          ]),
+        ),
       ),
     );
   }

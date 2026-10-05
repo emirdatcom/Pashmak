@@ -105,6 +105,11 @@ class DS {
         _ => areaHome,
       };
 
+  // placeholder cat art
+  static const catBackdrops = [Color(0xFFFBE3C2), Color(0xFFCFE8E6), Color(0xFFD9D2EE), Color(0xFFE6EFC9)];
+  static const catFlowerPetal = Color(0xFFE8739E);
+  static const catFlowerCore = Color(0xFFFFD166);
+
   static const radiusCard = 28.0;
   static const radiusButton = 20.0;
   static const buttonEdge = 4.0;

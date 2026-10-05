@@ -47,7 +47,7 @@ class StatsScreen extends ConsumerWidget {
                   CircleAvatar(
                     radius: 16,
                     backgroundColor: d.active ? AppColors.orangeDark : Theme.of(context).colorScheme.surfaceContainerHighest,
-                    child: d.active ? const Icon(Icons.check, size: 16, color: Colors.white) : (d.isToday ? const Icon(Icons.circle, size: 8) : null),
+                    child: d.active ? const Icon(Icons.check, size: 16, color: DS.onDark) : (d.isToday ? const Icon(Icons.circle, size: 8) : null),
                   ),
                 ]),
               ),

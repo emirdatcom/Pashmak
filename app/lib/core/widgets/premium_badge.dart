@@ -15,7 +15,7 @@ class PremiumBadge extends StatelessWidget {
         child: Row(mainAxisSize: MainAxisSize.min, children: [
           if (locked) const Icon(Icons.lock, size: 14, color: DS.lockYellow),
           if (locked) const SizedBox(width: 4),
-          Text(label, style: const TextStyle(color: DS.onDark, fontSize: 12, fontWeight: FontWeight.w700)),
+          Flexible(child: Text(label, overflow: TextOverflow.ellipsis, style: const TextStyle(color: DS.onDark, fontSize: 12, fontWeight: FontWeight.w700))),
         ]),
       );
 }

@@ -18,7 +18,7 @@ class CountdownChip extends StatelessWidget {
         child: Row(mainAxisSize: MainAxisSize.min, children: [
           Icon(Icons.refresh, size: 18, color: color),
           const SizedBox(width: 6),
-          Text(label, style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w700)),
+          Flexible(child: Text(label, style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w700))),
         ]),
       ),
     );
