@@ -29,7 +29,13 @@ enum AnalyticsEvent {
   notificationOpened('notification_opened', {'type'}),
   safetyScreenViewed('safety_screen_viewed', {'source'}),
   settingsChanged('settings_changed', {'key'}),
-  forceUpdateShown('force_update_shown', {'kind'});
+  forceUpdateShown('force_update_shown', {'kind'}),
+  backupEnabled('backup_enabled', {}),
+  backupCompleted('backup_completed', {'auto'}),
+  restoreCompletedBackup('restore_completed_backup', {}),
+  phoneLinked('phone_linked', {'merged'}),
+  statsViewed('stats_viewed', {'range'}),
+  seasonalItemPurchased('seasonal_item_purchased', {'seasonal_key'});
 
   const AnalyticsEvent(this.wireName, this.allowedProps);
   final String wireName;

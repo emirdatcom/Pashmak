@@ -41,6 +41,12 @@
 | `safety_screen_viewed` | `source` (`settings`/`auto_card`) | **بدون** دلیل تشخیص |
 | `settings_changed` | `key` (فقط کلیدهای غیرحساس) | |
 | `force_update_shown` | `kind` (`soft`/`hard`) | |
+| `backup_enabled` | — | فاز ۲ |
+| `backup_completed` | `auto` (bool) | فاز ۲؛ بدون اندازه/محتوا |
+| `restore_completed_backup` | — | فاز ۲؛ جدا از `restore_completed` (بازگردانی خرید) |
+| `phone_linked` | `merged` (bool) | فاز ۲؛ **بدون** شماره |
+| `stats_viewed` | `range` (`week`/`month`) | فاز ۲ (آمار پریمیوم) |
+| `seasonal_item_purchased` | `seasonal_key` | فاز ۲ |
 
 بازگشت روز ۱/۷/۳۰ **رویداد جدا نیست**؛ از `app_opened` + `install_age_days` در rollup محاسبه می‌شود.
 

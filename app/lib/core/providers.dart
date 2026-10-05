@@ -7,6 +7,7 @@ import 'analytics/analytics_service.dart';
 import 'auth/device_identity.dart';
 import 'auth/token_store.dart';
 import 'config/app_config.dart';
+import '../features/shop/seasonal/seasonal.dart';
 import 'config/config_repository.dart';
 import 'content/content_repository.dart';
 import 'content/copy_resolver.dart';
@@ -148,13 +149,19 @@ final copyProvider = Provider<CopyResolver>((ref) {
   final brand = content.bundledEntries('brand');
   final dl = content.downloadedEntries('brand');
   return CopyResolver(
-    bundled: {...content.bundledEntries('copy_fa')},
+    bundled: {...content.bundledEntries('copy_fa'), ...ref.watch(seasonalCatalogProvider).copyOverlay},
     downloaded: {...content.downloadedEntries('copy_fa')},
     appName: (dl['app_name'] ?? brand['app_name'] ?? 'App') as String,
     defaultCatName: (dl['cat_default_name'] ?? brand['cat_default_name'] ?? '') as String,
     catName: ref.watch(catNameProvider),
     today: () => ref.read(todayProvider).value,
   );
+});
+
+/// Seasonal packs (nowruz, yalda, ramadan), bundled or downloaded.
+final seasonalCatalogProvider = Provider<SeasonalCatalog>((ref) {
+  final content = ref.watch(contentRepositoryProvider);
+  return SeasonalCatalog.fromEntries([for (final k in seasonalPackKeys) content.entries(k)]);
 });
 
 /// `app_meta.onboarding_completed`; drives the router redirect.

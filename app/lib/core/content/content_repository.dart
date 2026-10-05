@@ -11,7 +11,8 @@ import '../network/api_error.dart';
 /// Highest `pack_schema_version` this app understands; newer packs are ignored (docs/30 §11).
 const supportedPackSchemaVersion = 1;
 
-const bundledPackKeys = ['brand', 'copy_fa', 'habit_templates', 'exercises', 'adventures', 'shop_items', 'safety'];
+const seasonalPackKeys = ['seasonal_nowruz', 'seasonal_yalda', 'seasonal_ramadan'];
+const bundledPackKeys = ['brand', 'copy_fa', 'habit_templates', 'exercises', 'adventures', 'shop_items', 'safety', ...seasonalPackKeys];
 
 /// Bundled packs (assets/content) plus downloaded ones (content_cache, sha256-verified).
 class ContentRepository {

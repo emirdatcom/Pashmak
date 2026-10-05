@@ -404,6 +404,57 @@
         }
       },
       "server_side": false
+    },
+    {
+      "name": "backup_enabled",
+      "props": {},
+      "server_side": false
+    },
+    {
+      "name": "backup_completed",
+      "props": {
+        "auto": {
+          "type": "bool"
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "restore_completed_backup",
+      "props": {},
+      "server_side": false
+    },
+    {
+      "name": "phone_linked",
+      "props": {
+        "merged": {
+          "type": "bool"
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "stats_viewed",
+      "props": {
+        "range": {
+          "type": "string",
+          "enum": [
+            "week",
+            "month"
+          ]
+        }
+      },
+      "server_side": false
+    },
+    {
+      "name": "seasonal_item_purchased",
+      "props": {
+        "seasonal_key": {
+          "type": "string",
+          "max_len": 32
+        }
+      },
+      "server_side": false
     }
   ]
 }

@@ -41,7 +41,7 @@ var (
 		"exercises":       {"breathing_basic", "gratitude", "guided_journal", "muscle_relax", "afternoon_tea"},
 	}
 	// *_key fields that are identifiers, not references into copy_fa.
-	idFields           = map[string]bool{"location_key": true, "story_key": true, "item_key": true, "pack_key": true}
+	idFields           = map[string]bool{"location_key": true, "story_key": true, "item_key": true, "pack_key": true, "seasonal_key": true}
 	canonicalLocations = []string{"alley", "rooftop", "courtyard", "bazaar", "garden"}
 )
 
@@ -151,7 +151,7 @@ func Run(dir string) ([]Issue, error) {
 	copyKeys := map[string]bool{}
 	packs := map[string]pack{}
 	raws := map[string][]byte{}
-	for _, k := range schemas.PackKeys {
+	for _, k := range schemas.AllPackKeys() {
 		file := "content/" + k + ".json"
 		raw, err := os.ReadFile(filepath.Join(dir, file)) // #nosec G304
 		if err != nil {
@@ -195,7 +195,7 @@ func Run(dir string) ([]Issue, error) {
 	}
 
 	// other packs: text rules + references to copy keys
-	for _, k := range schemas.PackKeys {
+	for _, k := range schemas.AllPackKeys() {
 		if k == "copy_fa" || raws[k] == nil {
 			continue
 		}

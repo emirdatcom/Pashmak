@@ -1,0 +1,38 @@
+{
+  "pack_key": "seasonal_nowruz",
+  "version": 1,
+  "pack_schema_version": 1,
+  "locale": "fa",
+  "min_app_version": "1.0.0",
+  "entries": {
+    "seasonal_key": "nowruz",
+    "from": "1405-12-20",
+    "to": "1406-01-13",
+    "strings": {
+      "name": "نوروز",
+      "home_banner": "نوروزت پیشاپیش مبارک؛ بهار دلت هم سبز.",
+      "notif_body": "عیدت مبارک! یه سر بزن، {CAT_NAME} دلتنگت شده."
+    },
+    "theme": {
+      "accent": "#3FA796"
+    },
+    "items": [
+      {
+        "item_key": "hat_nowruz_sabzeh",
+        "name": "کلاه سبزه",
+        "slot": "hat",
+        "price_coins": 120,
+        "premium_only": false,
+        "asset": "assets/shop/hat_nowruz_sabzeh.webp"
+      },
+      {
+        "item_key": "bg_nowruz_haftsin",
+        "name": "سفره‌ی هفت‌سین",
+        "slot": "background",
+        "price_coins": 150,
+        "premium_only": false,
+        "asset": "assets/shop/bg_nowruz_haftsin.webp"
+      }
+    ]
+  }
+}

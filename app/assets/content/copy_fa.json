@@ -427,6 +427,9 @@
     "stats.deep.cta": "دیدن آمار عمیق‌تر",
     "empty.habits": "هنوز عادتی نداری. یکی اضافه کن.",
     "empty.closet": "کمدت هنوز خالیه.",
-    "empty.adventure": "فعلاً ماجراجویی‌ای در کار نیست."
+    "empty.adventure": "فعلاً ماجراجویی‌ای در کار نیست.",
+    "shop.tab.seasonal": "فصلی",
+    "shop.out_of_season": "این آیتم فقط توی فصلش خریدنیه.",
+    "notif.seasonal.title": "خبر خوب از {CAT_NAME}"
   }
 }

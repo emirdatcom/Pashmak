@@ -13,8 +13,7 @@ import '../../wallet/presentation/wallet_bar.dart';
 import '../domain/shop_service.dart';
 
 List<ShopItem> _items(WidgetRef ref) {
-  ref.watch(contentRepositoryProvider);
-  return [for (final j in ((ref.read(contentRepositoryProvider).entries('shop_items') as List?) ?? const []).cast<Map<String, dynamic>>()) ShopItem.fromJson(j)];
+  return shopCatalog(ref.watch(contentRepositoryProvider), ref.watch(seasonalCatalogProvider));
 }
 
 class ShopScreen extends ConsumerWidget {
@@ -23,21 +22,26 @@ class ShopScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final copy = ref.watch(copyProvider);
     final items = _items(ref);
+    final today = ref.watch(todayProvider);
+    final activeKeys = {for (final p in ref.watch(seasonalCatalogProvider).active(today)) p.key};
+    final seasonalOn = ref.watch(appConfigProvider).feature('seasonal_packs');
+    final seasonalItems = !seasonalOn ? <ShopItem>[] : items.where((i) => i.seasonalKey != null && activeKeys.contains(i.seasonalKey)).toList();
     final owned = {for (final i in ref.watch(ownedItemsProvider).value ?? const []) i.itemKey};
     return DefaultTabController(
-      length: 3,
+      length: seasonalItems.isEmpty ? 3 : 4,
       child: Scaffold(
         appBar: AppBar(
           title: Text(copy.t('shop.title')),
           actions: [TextButton(onPressed: () => context.push(Routes.closet), child: Text(copy.t('shop.closet')))],
-          bottom: TabBar(tabs: [Tab(text: copy.t('shop.tab.cat')), Tab(text: copy.t('shop.tab.room')), Tab(text: copy.t('shop.tab.background'))]),
+          bottom: TabBar(tabs: [Tab(text: copy.t('shop.tab.cat')), Tab(text: copy.t('shop.tab.room')), Tab(text: copy.t('shop.tab.background')), if (seasonalItems.isNotEmpty) Tab(text: copy.t('shop.tab.seasonal'))]),
         ),
         body: Column(children: [
           const Padding(padding: EdgeInsets.all(AppSpacing.sm), child: WalletBar()),
           Expanded(
             child: TabBarView(children: [
               for (final tab in ['cat', 'room', 'background'])
-                ListView(children: [for (final it in items.where((i) => i.tab == tab)) _ShopTile(item: it, owned: owned.contains(it.itemKey))]),
+                ListView(children: [for (final it in items.where((i) => i.tab == tab && i.seasonalKey == null)) _ShopTile(item: it, owned: owned.contains(it.itemKey))]),
+              if (seasonalItems.isNotEmpty) ListView(children: [for (final it in seasonalItems) _ShopTile(item: it, owned: owned.contains(it.itemKey))]),
             ]),
           ),
         ]),
@@ -69,7 +73,9 @@ class _ShopTile extends ConsumerWidget {
                 }
                 final r = await ref.read(shopServiceProvider).buy(item.itemKey, isPremium: premium);
                 if (!context.mounted) return;
-                if (r == BuyStatus.notEnoughCoins) {
+                if (r == BuyStatus.outOfSeason) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(copy.t('shop.out_of_season'))));
+                } else if (r == BuyStatus.notEnoughCoins) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text(copy.t('shop.not_enough_coins')),
                     action: SnackBarAction(label: copy.t('adventure.title'), onPressed: () => context.push(Routes.adventure)),

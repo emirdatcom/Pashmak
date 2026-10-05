@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 
@@ -17,10 +18,20 @@ import (
 // PackKeys are the content packs with a schema in config-data/content/schema.
 var PackKeys = []string{"brand", "copy_fa", "habit_templates", "exercises", "adventures", "shop_items", "safety"}
 
+// SeasonalKeys are the seasonal packs shipped with the app (phase 2). They share one schema
+// (`seasonal.schema.json`); any other `seasonal_<name>` pack is accepted by ValidatePack too.
+var SeasonalKeys = []string{"seasonal_nowruz", "seasonal_yalda", "seasonal_ramadan"}
+
+var seasonalKey = regexp.MustCompile(`^seasonal_[a-z0-9]+$`)
+
+// AllPackKeys lists every pack the repository must contain.
+func AllPackKeys() []string { return append(append([]string{}, PackKeys...), SeasonalKeys...) }
+
 // Set holds compiled schemas.
 type Set struct {
-	config *jsonschema.Schema
-	packs  map[string]*jsonschema.Schema
+	config   *jsonschema.Schema
+	packs    map[string]*jsonschema.Schema
+	seasonal *jsonschema.Schema
 }
 
 // ValidationError lists human-readable problems, one per line, "path: message".
@@ -57,6 +68,11 @@ func Load(dir string) (*Set, error) {
 		return nil, err
 	}
 	s := &Set{config: cs, packs: map[string]*jsonschema.Schema{}}
+	seasonal, err := compile(filepath.Join(dir, "content", "schema", "seasonal.schema.json"))
+	if err != nil {
+		return nil, err
+	}
+	s.seasonal = seasonal
 	for _, k := range PackKeys {
 		ps, err := compile(filepath.Join(dir, "content", "schema", k+".schema.json"))
 		if err != nil {
@@ -109,6 +125,9 @@ func (s *Set) ValidateConfig(raw []byte) error { return validate(s.config, raw) 
 // ValidatePack validates a content pack document (envelope + entries).
 func (s *Set) ValidatePack(packKey string, raw []byte) error {
 	ps, ok := s.packs[packKey]
+	if !ok && seasonalKey.MatchString(packKey) {
+		ps, ok = s.seasonal, true
+	}
 	if !ok {
 		return &ValidationError{Problems: []string{"$.pack_key: unknown pack " + packKey}}
 	}

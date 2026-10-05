@@ -1,0 +1,20 @@
+{
+  "pack_key": "seasonal_ramadan",
+  "version": 1,
+  "pack_schema_version": 1,
+  "locale": "fa",
+  "min_app_version": "1.0.0",
+  "entries": {
+    "seasonal_key": "ramadan",
+    "from": "1405-11-19",
+    "to": "1405-12-18",
+    "strings": {
+      "name": "ماه رمضان",
+      "home_banner": "ماه رمضان؛ با آرامش و مهربونی با خودت."
+    },
+    "theme": {
+      "accent": "#2E6F8E"
+    },
+    "items": []
+  }
+}

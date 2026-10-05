@@ -128,6 +128,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
         const WalletBar(),
         const SizedBox(height: AppSpacing.md),
         const TrialEndingBanner(),
+        const _SeasonBanner(),
         if (cardVisible) _SafetyCard(),
         _StreakCard(current: streak?.current ?? 0),
         const SizedBox(height: AppSpacing.md),
@@ -255,5 +256,22 @@ Future<bool> passGate(BuildContext context, WidgetRef ref, String trigger) async
     case GateDecision.suppressed:
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ref.read(copyProvider).t('gate.suppressed'))));
       return false;
+  }
+}
+
+/// Seasonal text/theme on home while a season runs (docs/40 §2). Ramadan has text and theme only.
+class _SeasonBanner extends ConsumerWidget {
+  const _SeasonBanner();
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (!ref.watch(appConfigProvider).feature('seasonal_packs')) return const SizedBox.shrink();
+    final active = ref.watch(seasonalCatalogProvider).active(ref.watch(todayProvider));
+    if (active.isEmpty) return const SizedBox.shrink();
+    final copy = ref.watch(copyProvider);
+    final p = active.first;
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md), side: BorderSide(color: Color(p.accent ?? 0xFF3FA796), width: 2)),
+      child: Padding(padding: const EdgeInsets.all(AppSpacing.md), child: Text(copy.t('seasonal.${p.key}.home_banner'))),
+    );
   }
 }

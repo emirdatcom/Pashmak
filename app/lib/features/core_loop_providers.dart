@@ -1,5 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../core/content/content_repository.dart';
+import 'shop/seasonal/seasonal.dart';
+import 'notifications/domain/notification_planner.dart' show SeasonalEvent;
+
 import '../core/config/app_config.dart';
 import '../core/db/app_database.dart';
 import '../core/entitlement/premium_gate.dart';
@@ -53,6 +57,13 @@ final notificationSchedulerProvider = Provider<NotificationScheduler>((ref) => N
       copy: () => ref.read(copyProvider),
       analytics: ref.watch(analyticsProvider),
       dayStartHour: ref.watch(dayStartHourProvider),
+      seasonal: () {
+        final hour = 10; // a calm mid-morning moment on the first day of the season
+        return [
+          for (final p in ref.read(seasonalCatalogProvider).packs)
+            if (p.notifBody != null) SeasonalEvent(id: '${p.key}_${p.from ~/ 10000}', at: p.startDate.add(Duration(hours: hour)), copyKey: 'seasonal.${p.key}.notif_body'),
+        ];
+      },
     ));
 
 final widgetSnapshotPublisherProvider = Provider<WidgetSnapshotPublisher>((ref) => DataChangedPublisher(() async {
@@ -160,11 +171,19 @@ final exerciseServiceProvider = Provider<ExerciseService>((ref) => ExerciseServi
     rewardsPerDay: () => ref.read(appConfigProvider).exerciseRewardsPerDay,
     freeExercises: () => ref.read(appConfigProvider).freeExercises));
 
+/// Base shop items plus every seasonal item (owned seasonal items must stay resolvable after the season).
+List<ShopItem> shopCatalog(ContentRepository content, SeasonalCatalog seasonal) => [
+      for (final j in ((content.entries('shop_items') as List?) ?? const []).cast<Map<String, dynamic>>()) ShopItem.fromJson(j),
+      for (final p in seasonal.packs)
+        for (final i in p.items) ShopItem(itemKey: i.itemKey, nameKey: i.nameKey, slot: i.slot, priceCoins: i.priceCoins, premiumOnly: i.premiumOnly, seasonalKey: p.key),
+    ];
+
 final shopServiceProvider = Provider<ShopService>((ref) {
   final content = ref.watch(contentRepositoryProvider);
   return ShopService(ref.watch(databaseProvider), ref.watch(clockProvider), ref.watch(walletServiceProvider), ref.watch(analyticsProvider),
       ref.watch(widgetSnapshotPublisherProvider),
-      items: () => [for (final j in ((content.entries('shop_items') as List?) ?? const []).cast<Map<String, dynamic>>()) ShopItem.fromJson(j)]);
+      items: () => shopCatalog(content, ref.read(seasonalCatalogProvider)),
+      isSeasonActive: (key) => ref.read(seasonalCatalogProvider).active(ref.read(todayProvider)).any((p) => p.key == key));
 });
 
 final ownedItemsProvider = StreamProvider<List<InventoryData>>((ref) => ref.watch(shopServiceProvider).watchOwned());

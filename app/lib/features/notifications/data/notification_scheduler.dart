@@ -53,7 +53,9 @@ class NotificationScheduler {
     required CopyResolver Function() copy,
     AnalyticsService analytics = const NoopAnalytics(),
     this.dayStartHour = 4,
-  })  : _db = db,
+    List<SeasonalEvent> Function()? seasonal,
+  })  : _seasonal = seasonal ?? _none,
+        _db = db,
         _clock = clock,
         _service = service,
         _config = config,
@@ -101,6 +103,9 @@ class NotificationScheduler {
     );
   }
 
+  static List<SeasonalEvent> _none() => const [];
+  final List<SeasonalEvent> Function() _seasonal;
+
   Future<PlanInput> buildInput() async {
     final now = _clock.now();
     final today = LocalDay.of(now, dayStartHour: dayStartHour);
@@ -145,6 +150,7 @@ class NotificationScheduler {
       lastOpenedAt: lastOpened == null ? null : DateTime.fromMillisecondsSinceEpoch(lastOpened),
       trial: PlanTrial(active: trialActive, startedAt: trialStart == null ? null : DateTime.fromMillisecondsSinceEpoch(trialStart), purchased: purchased),
       log: log,
+      seasonal: _seasonal(),
     );
   }
 

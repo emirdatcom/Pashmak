@@ -41,3 +41,32 @@ func TestCatalogLoads(t *testing.T) {
 		t.Fatalf("catalog looks incomplete: %d events", len(c.Events))
 	}
 }
+
+func TestSeasonalPacks(t *testing.T) {
+	s, err := Load(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, k := range SeasonalKeys {
+		raw, err := os.ReadFile(dir + "/content/" + k + ".json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := s.ValidatePack(k, raw); err != nil {
+			t.Fatalf("%s: %v", k, err)
+		}
+	}
+	raw, _ := os.ReadFile(dir + "/content/seasonal_yalda.json")
+	// any seasonal_<name> pack key is accepted, but the content must still match the schema
+	renamed := strings.Replace(string(raw), `"seasonal_yalda"`, `"seasonal_mehregan"`, 1)
+	if err := s.ValidatePack("seasonal_mehregan", []byte(renamed)); err != nil {
+		t.Fatalf("new seasonal key should be accepted: %v", err)
+	}
+	badDate := strings.Replace(string(raw), `"1405-09-28"`, `"1405-13-40"`, 1)
+	if err := s.ValidatePack("seasonal_yalda", []byte(badDate)); err == nil {
+		t.Fatal("an impossible Jalali date must be rejected")
+	}
+	if err := s.ValidatePack("seasonal", raw); err == nil {
+		t.Fatal("a key that is not seasonal_<name> must be rejected")
+	}
+}

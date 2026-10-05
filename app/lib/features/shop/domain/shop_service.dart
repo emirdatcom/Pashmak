@@ -8,9 +8,10 @@ import '../../../core/widget_snapshot.dart';
 import '../../wallet/domain/wallet_service.dart';
 
 class ShopItem {
-  const ShopItem({required this.itemKey, required this.nameKey, required this.slot, required this.priceCoins, required this.premiumOnly});
+  const ShopItem({required this.itemKey, required this.nameKey, required this.slot, required this.priceCoins, required this.premiumOnly, this.seasonalKey});
   factory ShopItem.fromJson(Map<String, dynamic> j) => ShopItem(
       itemKey: j['item_key'] as String, nameKey: j['name_key'] as String, slot: j['slot'] as String, priceCoins: j['price_coins'] as int, premiumOnly: j['premium_only'] as bool);
+  final String? seasonalKey;
   final String itemKey;
   final String nameKey;
   final String slot;
@@ -21,12 +22,17 @@ class ShopItem {
   String get tab => slot == 'background' ? 'background' : (slot.startsWith('room_') ? 'room' : 'cat');
 }
 
-enum BuyStatus { bought, alreadyOwned, notEnoughCoins, premiumRequired, unknownItem }
+enum BuyStatus { bought, alreadyOwned, notEnoughCoins, premiumRequired, unknownItem, outOfSeason }
 
 enum EquipStatus { equipped, unequipped, notOwned, premiumLocked }
 
 class ShopService {
-  ShopService(this._db, this._clock, this._wallet, this._analytics, this._publisher, {required this.items});
+  ShopService(this._db, this._clock, this._wallet, this._analytics, this._publisher, {required this.items, this.isSeasonActive = _always});
+
+  static bool _always(String _) => true;
+
+  /// Seasonal items can only be bought while their season runs (owned ones stay usable afterwards).
+  final bool Function(String seasonalKey) isSeasonActive;
 
   final AppDatabase _db;
   final Clock _clock;
@@ -44,6 +50,7 @@ class ShopService {
     final it = item(itemKey);
     if (it == null) return BuyStatus.unknownItem;
     if ((await (_db.select(_db.inventory)..where((i) => i.itemKey.equals(itemKey))).getSingleOrNull()) != null) return BuyStatus.alreadyOwned;
+    if (it.seasonalKey != null && !isSeasonActive(it.seasonalKey!)) return BuyStatus.outOfSeason;
     if (it.premiumOnly && !isPremium) return BuyStatus.premiumRequired;
     final status = await _db.transaction(() async {
       if (!await _wallet.spend(Currency.coins, it.priceCoins, 'shop_purchase', itemKey)) return BuyStatus.notEnoughCoins;
@@ -52,6 +59,7 @@ class ShopService {
     });
     if (status == BuyStatus.bought) {
       await _analytics.track(AnalyticsEvent.shopItemPurchased, {'item_key': itemKey, 'price_coins': it.priceCoins});
+      if (it.seasonalKey != null) await _analytics.track(AnalyticsEvent.seasonalItemPurchased, {'seasonal_key': it.seasonalKey});
     }
     return status;
   }

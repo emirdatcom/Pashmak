@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "seasonal pack",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "pack_key",
+    "version",
+    "pack_schema_version",
+    "locale",
+    "min_app_version",
+    "entries"
+  ],
+  "properties": {
+    "pack_key": {
+      "type": "string",
+      "pattern": "^seasonal_[a-z0-9]+$"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "pack_schema_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "locale": {
+      "const": "fa"
+    },
+    "min_app_version": {
+      "type": "string",
+      "pattern": "^[0-9]+(\\.[0-9]+){0,2}$"
+    },
+    "entries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "seasonal_key",
+        "from",
+        "to",
+        "strings",
+        "items"
+      ],
+      "properties": {
+        "seasonal_key": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+$"
+        },
+        "from": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$",
+          "description": "Jalali date, inclusive"
+        },
+        "to": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$",
+          "description": "Jalali date, inclusive"
+        },
+        "strings": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "home_banner"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "home_banner": {
+              "type": "string",
+              "minLength": 1
+            },
+            "notif_body": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "theme": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "accent"
+          ],
+          "properties": {
+            "accent": {
+              "type": "string",
+              "pattern": "^#[0-9A-Fa-f]{6}$"
+            }
+          }
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "item_key",
+              "name",
+              "slot",
+              "price_coins",
+              "premium_only",
+              "asset"
+            ],
+            "properties": {
+              "item_key": {
+                "type": "string",
+                "pattern": "^[a-z0-9_]{1,64}$"
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "slot": {
+                "enum": [
+                  "collar",
+                  "hat",
+                  "background",
+                  "room_table",
+                  "room_floor",
+                  "room_wall"
+                ]
+              },
+              "price_coins": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "premium_only": {
+                "type": "boolean"
+              },
+              "asset": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

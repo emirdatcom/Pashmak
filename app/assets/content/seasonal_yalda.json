@@ -1,0 +1,37 @@
+{
+  "pack_key": "seasonal_yalda",
+  "version": 1,
+  "pack_schema_version": 1,
+  "locale": "fa",
+  "min_app_version": "1.0.0",
+  "entries": {
+    "seasonal_key": "yalda",
+    "from": "1405-09-28",
+    "to": "1405-10-01",
+    "strings": {
+      "name": "یلدا",
+      "home_banner": "شب یلدا مبارک؛ بلندترین شب سال، کنار آدمای دوست‌داشتنی."
+    },
+    "theme": {
+      "accent": "#C0392B"
+    },
+    "items": [
+      {
+        "item_key": "hat_yalda_watermelon",
+        "name": "کلاه هندونه",
+        "slot": "hat",
+        "price_coins": 100,
+        "premium_only": false,
+        "asset": "assets/shop/hat_yalda_watermelon.webp"
+      },
+      {
+        "item_key": "bg_yalda_night",
+        "name": "شب یلدا",
+        "slot": "background",
+        "price_coins": 140,
+        "premium_only": false,
+        "asset": "assets/shop/bg_yalda_night.webp"
+      }
+    ]
+  }
+}

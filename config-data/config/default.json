@@ -64,7 +64,7 @@
     "widgets": false,
     "backup": false,
     "phone_link": false,
-    "seasonal_packs": false,
+    "seasonal_packs": true,
     "stats_deep": false
   },
   "update": {"min_supported_version": "1.0.0", "recommended_version": "1.0.0"}
