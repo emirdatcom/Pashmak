@@ -18,6 +18,7 @@
 | 15 | `15-frontend-onboarding-polish.md` | MVP | 11–14 | — |
 | 16 | `16-frontend-phase2.md` (backup، اتصال شماره، آمار عمیق، فصلی، Rive) | فاز ۲ | 15، 05 | — |
 | 20 | `20-integration-and-release.md` | MVP (و تکرار در هر فاز) | همه MVP | — |
+| 21 | `21-decisions-alignment-and-support-chat.md` (تصمیم‌های قطعی مالک + چت پشتیبانی) | قبل از انتشار | 01–20 | — |
 
 ```mermaid
 flowchart LR
