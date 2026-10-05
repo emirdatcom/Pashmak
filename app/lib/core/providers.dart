@@ -15,6 +15,7 @@ import 'notifications/notification_service.dart';
 import 'payments/payment_gateway.dart';
 import 'time/clock.dart';
 import 'time/local_day.dart';
+import '../features/cat/presentation/static_cat_renderer.dart';
 import 'widgets/cat_renderer.dart';
 
 // Providers that bootstrap (or tests) must override with real instances.
@@ -33,7 +34,7 @@ final deviceIdentityProvider = Provider<DeviceIdentity>((ref) => DeviceIdentity(
 
 final paymentGatewayProvider = Provider<PaymentGateway>((ref) => FakeGateway(market: ref.watch(flavorProvider).market));
 final notificationServiceProvider = Provider<NotificationService>((ref) => const NoopNotificationService());
-final catRendererProvider = Provider<CatRenderer>((ref) => const PlaceholderCatRenderer());
+final catRendererProvider = Provider<CatRenderer>((ref) => const StaticCatRenderer());
 
 /// Random id of the current app session (new per process).
 final sessionIdProvider = Provider<String>((ref) => const Uuid().v4());
@@ -105,3 +106,21 @@ class SoftUpdateDismissedNotifier extends Notifier<bool> {
 }
 
 final softUpdateDismissedProvider = NotifierProvider<SoftUpdateDismissedNotifier, bool>(SoftUpdateDismissedNotifier.new);
+
+/// Premium state. Stub until prompt 14 (signed entitlement); tests and dev can override it.
+class PremiumNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+  void set(bool v) => state = v;
+}
+
+final premiumProvider = NotifierProvider<PremiumNotifier, bool>(PremiumNotifier.new);
+
+/// True after a check-in with mood_level <= 2 in this session (paywall suppression, docs/60 §5).
+class LowMoodSessionNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+  void mark() => state = true;
+}
+
+final lowMoodSessionProvider = NotifierProvider<LowMoodSessionNotifier, bool>(LowMoodSessionNotifier.new);

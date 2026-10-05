@@ -144,7 +144,7 @@ void main() {
 
     test('every {variable} in the real copy pack is a known one', () {
       final doc = jsonDecode(realAssets().files['assets/content/copy_fa.json']!) as Map<String, dynamic>;
-      final known = {'APP_NAME', 'CAT_NAME', 'n', 'habit', 'place', 'date', 'time'};
+      final known = {'APP_NAME', 'CAT_NAME', 'n', 'habit', 'place', 'date', 'time', 'item'};
       for (final e in (doc['entries'] as Map<String, dynamic>).entries) {
         final texts = e.value is List ? (e.value as List).cast<String>() : [e.value as String];
         for (final t in texts) {

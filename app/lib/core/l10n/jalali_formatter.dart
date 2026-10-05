@@ -31,6 +31,9 @@ class JalaliFormatter {
 
   static String weekday(LocalDay d) => weekdayNames[d.weekdayIndex];
 
+  /// `دوشنبه، ۱۳ مهر ۱۴۰۵`
+  static String weekdayDate(LocalDay d) => '${weekday(d)}، ${date(d)}';
+
   static String monthName(LocalDay d) => monthNames[toJalali(d).month - 1];
 
   /// `YYYY-MM` of the Persian month (used for monthly streak-freeze reset).

@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/adventure/presentation/adventure_screens.dart';
+import '../../features/checkin/presentation/checkin_screen.dart';
+import '../../features/habits/presentation/habits_screens.dart';
+import '../../features/home/presentation/home_screen.dart';
+import '../../features/safety/presentation/safety_screen.dart';
 import '../../features/system/force_update_screen.dart';
 import '../../features/system/placeholder_screen.dart';
 import '../../features/system/splash_screen.dart';
@@ -39,11 +44,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       ShellRoute(
         builder: (context, state, child) => _TabShell(location: state.uri.path, child: child),
         routes: [
-          GoRoute(path: Routes.home, builder: (_, _) => ph('home')),
-          GoRoute(path: Routes.habits, builder: (_, _) => ph('habits'), routes: [
-            GoRoute(path: 'new', builder: (_, _) => ph('habits/new')),
-            GoRoute(path: ':id', builder: (_, s) => ph('habits/${s.pathParameters['id']}'), routes: [
-              GoRoute(path: 'edit', builder: (_, s) => ph('habits/${s.pathParameters['id']}/edit')),
+          GoRoute(path: Routes.home, builder: (_, _) => const HomeScreen()),
+          GoRoute(path: Routes.habits, builder: (_, _) => const HabitsScreen(), routes: [
+            GoRoute(path: 'new', builder: (_, _) => const HabitEditorScreen()),
+            GoRoute(path: ':id', builder: (_, s) => HabitDetailScreen(habitId: s.pathParameters['id']!), routes: [
+              GoRoute(path: 'edit', builder: (_, s) => HabitEditorScreen(habitId: s.pathParameters['id'])),
             ]),
           ]),
           GoRoute(path: Routes.exercises, builder: (_, _) => ph('exercises'), routes: [
@@ -54,16 +59,16 @@ final routerProvider = Provider<GoRouter>((ref) {
           ]),
         ],
       ),
-      GoRoute(path: Routes.checkin, builder: (_, _) => ph('checkin')),
-      GoRoute(path: Routes.adventure, builder: (_, _) => ph('adventure'), routes: [
-        GoRoute(path: 'result/:id', builder: (_, s) => ph('adventure/result/${s.pathParameters['id']}')),
+      GoRoute(path: Routes.checkin, builder: (_, _) => const CheckinScreen()),
+      GoRoute(path: Routes.adventure, builder: (_, _) => const AdventureScreen(), routes: [
+        GoRoute(path: 'result/:id', builder: (_, s) => AdventureResultScreen(adventureId: s.pathParameters['id']!)),
       ]),
       GoRoute(path: Routes.stats, builder: (_, _) => ph('stats')),
       GoRoute(path: '/paywall', builder: (_, s) => ph('paywall?trigger=${s.uri.queryParameters['trigger'] ?? ''}')),
       GoRoute(path: Routes.settings, builder: (_, _) => ph('settings'), routes: [
         GoRoute(path: ':section', builder: (_, s) => ph('settings/${s.pathParameters['section']}')),
       ]),
-      GoRoute(path: Routes.safety, builder: (_, _) => ph('safety')),
+      GoRoute(path: Routes.safety, builder: (_, _) => const SafetyScreen()),
     ],
   );
 });
