@@ -57,3 +57,13 @@
 
 ## د) بسته‌شده
 (خالی)
+
+
+## یافته‌های پیاده‌سازی پرامپت 03 (billing)
+> محیط ساخت به مستندات رسمی مارکت‌ها (`pardakht.cafebazaar.ir`، `developer.myket.ir`) دسترسی شبکه نداشت؛ هیچ‌کدام از موارد زیر «راستی‌آزمایی‌شده» نیست.
+- **V1 (Bazaar API):** adapter (`billing/bazaar`) بر اساس شکل مستند‌شده‌ی API از حافظه نوشته شد (endpoint validate برای inapp و subscriptions، OAuth با refresh_token). تست‌های golden نمونه‌ی دست‌ساز هستند، نه پاسخ ضبط‌شده. پشت `BILLING_BAZAAR_ENABLED` (پیش‌فرض خاموش). قبل از prod: یک خرید واقعی تست + جایگزینی golden‌ها.
+- **V2/V3 (اشتراک و تریال):** فرض A3 اجرا شد: همه‌ی پلن‌های premium در seed `kind=pass` هستند. کد مسیر `subscription` (grant تا `expires_at`، reverify) آماده و با fake تست شده؛ با تأیید V2/V3 فقط `kind` در `config-data/products.json` عوض می‌شود. adapter مایکت (`billing/myket`) **پیاده نشده** (همیشه `MARKET_UNAVAILABLE`)؛ TODO مستند.
+- **V5 (webhook):** فرض بر نبود webhook؛ worker هر ۶ ساعت re-verify می‌کند. رویداد `subscription_canceled` هنگام refund/cancel و هنگام برگشتن `auto_renewing` به false ارسال می‌شود (sink فعلاً no-op تا پرامپت 04).
+- **A21 (جدید):** انتقال خرید به کاربر دیگر فقط برای `pass`/`subscription` و فقط وقتی کاربر قبلی روی همان `device_hash` دستگاهی دارد؛ مصرفی (سکه) هرگز منتقل نمی‌شود (جلوگیری از فروش مجدد توکن). گرانت منتقل‌شده برای pass = مدت باقی‌مانده.
+- **A22 (جدید):** `provisional_started_at` تا ۵ دقیقه در آینده (skew) پذیرفته و به `now` کلمپ می‌شود.
+- **A23 (جدید):** `/purchases/verify` و `/restore` یک limiter مشترک ۳۰/ساعت/user دارند.

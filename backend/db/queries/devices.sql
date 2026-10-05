@@ -12,3 +12,9 @@ WHERE id = $1;
 
 -- name: RebindDevice :exec
 UPDATE devices SET user_id = $2 WHERE id = $1;
+
+-- name: GetDeviceByID :one
+SELECT * FROM devices WHERE id = $1;
+
+-- name: UserHasDeviceHash :one
+SELECT EXISTS (SELECT 1 FROM devices WHERE user_id = $1 AND device_hash = $2);

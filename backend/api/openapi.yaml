@@ -76,6 +76,100 @@ paths:
       responses:
         "204": {description: deleted}
         "401": {$ref: "#/components/responses/Error"}
+  /v1/entitlements:
+    get:
+      operationId: getEntitlements
+      security: [{bearer: []}]
+      responses:
+        "200": {description: state, content: {application/json: {schema: {$ref: "#/components/schemas/EntitlementState"}}}}
+        "401": {$ref: "#/components/responses/Error"}
+  /v1/trial/start:
+    post:
+      operationId: startTrial
+      security: [{bearer: []}]
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                provisional_started_at: {type: string, format: date-time, nullable: true}
+      responses:
+        "200": {description: state, content: {application/json: {schema: {$ref: "#/components/schemas/EntitlementState"}}}}
+        "400": {$ref: "#/components/responses/Error"}
+        "401": {$ref: "#/components/responses/Error"}
+        "409": {$ref: "#/components/responses/Error"}
+  /v1/purchases/verify:
+    post:
+      operationId: verifyPurchase
+      security: [{bearer: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [market, product_id, market_sku, purchase_token]
+              properties:
+                market: {type: string, enum: [bazaar, myket]}
+                product_id: {type: string}
+                market_sku: {type: string}
+                purchase_token: {type: string}
+                order_id: {type: string}
+      responses:
+        "200":
+          description: verified
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [purchase_id, purchase_state, entitlement_state, coins_granted]
+                properties:
+                  purchase_id: {type: string, format: uuid}
+                  purchase_state: {type: string, enum: [pending, verified, invalid, refunded, expired, canceled]}
+                  entitlement_state: {$ref: "#/components/schemas/EntitlementState"}
+                  coins_granted: {type: integer}
+        "400": {$ref: "#/components/responses/Error"}
+        "401": {$ref: "#/components/responses/Error"}
+        "409": {$ref: "#/components/responses/Error"}
+        "422": {$ref: "#/components/responses/Error"}
+        "429": {$ref: "#/components/responses/Error"}
+        "503": {$ref: "#/components/responses/Error"}
+  /v1/purchases/restore:
+    post:
+      operationId: restorePurchases
+      security: [{bearer: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [market, purchases]
+              properties:
+                market: {type: string, enum: [bazaar, myket]}
+                purchases:
+                  type: array
+                  maxItems: 50
+                  items:
+                    type: object
+                    additionalProperties: false
+                    required: [product_id, market_sku, purchase_token]
+                    properties:
+                      product_id: {type: string}
+                      market_sku: {type: string}
+                      purchase_token: {type: string}
+                      order_id: {type: string}
+      responses:
+        "200": {description: state, content: {application/json: {schema: {$ref: "#/components/schemas/EntitlementState"}}}}
+        "400": {$ref: "#/components/responses/Error"}
+        "401": {$ref: "#/components/responses/Error"}
+        "409": {$ref: "#/components/responses/Error"}
+        "503": {$ref: "#/components/responses/Error"}
 components:
   securitySchemes:
     bearer: {type: http, scheme: bearer, bearerFormat: JWT}
@@ -110,7 +204,7 @@ components:
         entitlements:
           type: array
           items: {type: object, required: [key, source, starts_at, ends_at], properties: {key: {type: string, enum: [premium]}, source: {type: string, enum: [trial, subscription, pass, promo]}, starts_at: {type: string, format: date-time}, ends_at: {type: string, format: date-time}}}
-        trial: {type: object, required: [eligible, used], properties: {eligible: {type: boolean}, used: {type: boolean}, ends_at: {type: string, format: date-time, nullable: true}}}
+        trial: {type: object, required: [eligible, used, ends_at], properties: {eligible: {type: boolean}, used: {type: boolean}, ends_at: {type: string, format: date-time, nullable: true}}}
         server_time: {type: string, format: date-time}
         valid_until: {type: string, format: date-time}
         grace_days: {type: integer}

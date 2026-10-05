@@ -7,3 +7,6 @@
 - تست یکپارچه (`db/`) به Docker نیاز دارد و بدون آن skip می‌شود.
 - تست یکپارچه با Postgres واقعی: `TEST_DATABASE_URL=postgres://user:pass@localhost:5432/postgres?sslmode=disable go test ./...` (برای هر تست یک دیتابیس موقت ساخته می‌شود).
 - Endpointهای فعلی: `POST /v1/auth/device`، `POST /v1/auth/refresh`، `GET|DELETE /v1/me`. کلیدهای امضای access token باید kid با پیشوند `at-` داشته باشند (`admin-cli keygen at-1`).
+- Entitlement/billing: `GET /v1/entitlements`، `POST /v1/trial/start`، `POST /v1/purchases/verify|restore`. کلید امضای state: `admin-cli keygen ent-1`. seed محصولات: `DATABASE_URL=... go run ./cmd/admin-cli seed-products ../config-data/products.json`.
+- adapter جعلی dev/staging: `BILLING_FAKE_ENABLED=true` (توکن‌های `test_valid_*`, `test_refunded_*`, `test_invalid_*`, `test_timeout_*`)؛ در prod رد می‌شود.
+- بازتولید fixture امضا: `go test ./internal/modules/entitlement -update`.

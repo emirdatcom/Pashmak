@@ -13,6 +13,7 @@ type Metrics struct {
 	Registry     *prometheus.Registry
 	HTTPRequests *prometheus.CounterVec
 	HTTPDuration *prometheus.HistogramVec
+	MarketVerify *prometheus.CounterVec
 }
 
 // DBStats is the subset of pool statistics we export.
@@ -36,7 +37,10 @@ func New() *Metrics {
 			Buckets: prometheus.DefBuckets,
 		}, []string{"route"}),
 	}
-	reg.MustRegister(m.HTTPRequests, m.HTTPDuration)
+	m.MarketVerify = prometheus.NewCounterVec(prometheus.CounterOpts{
+		Name: "market_verify_total", Help: "Market purchase verifications by market and result.",
+	}, []string{"market", "result"})
+	reg.MustRegister(m.HTTPRequests, m.HTTPDuration, m.MarketVerify)
 	return m
 }
 

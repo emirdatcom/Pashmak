@@ -7,6 +7,8 @@ import (
 	"time"
 
 	"github.com/emirdatcom/pashmak/backend/internal/modules/auth"
+	"github.com/emirdatcom/pashmak/backend/internal/modules/billing"
+	"github.com/emirdatcom/pashmak/backend/internal/modules/entitlement"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/user"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/clock"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/httpx"
@@ -28,6 +30,8 @@ type Deps struct {
 	Clock   clock.Clock
 	Auth    *auth.Service // optional in health-only tests
 	User    *user.Service
+	Entitle *entitlement.Service
+	Billing *billing.Service
 }
 
 // Handler builds the router with the global middleware chain:
@@ -49,8 +53,15 @@ func Handler(d Deps) (*httpx.Router, http.Handler) {
 	})
 	if d.Auth != nil {
 		auth.Register(r, d.Auth, d.Clock)
+		requireAuth := d.Auth.RequireAuth()
 		if d.User != nil {
-			user.Register(r, d.User, d.Auth.RequireAuth())
+			user.Register(r, d.User, requireAuth)
+		}
+		if d.Entitle != nil {
+			entitlement.Register(r, d.Entitle, requireAuth)
+		}
+		if d.Billing != nil {
+			billing.Register(r, d.Billing, requireAuth, d.Clock)
 		}
 	}
 	// Generous global per-IP limit; stricter per-route limits are added by modules.

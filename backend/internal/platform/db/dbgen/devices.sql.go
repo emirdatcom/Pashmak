@@ -58,6 +58,28 @@ func (q *Queries) CreateDevice(ctx context.Context, arg CreateDeviceParams) (Dev
 	return i, err
 }
 
+const getDeviceByID = `-- name: GetDeviceByID :one
+SELECT id, user_id, install_id, device_hash, market, app_version, os_version, model, created_at, last_seen_at FROM devices WHERE id = $1
+`
+
+func (q *Queries) GetDeviceByID(ctx context.Context, id uuid.UUID) (Device, error) {
+	row := q.db.QueryRow(ctx, getDeviceByID, id)
+	var i Device
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.InstallID,
+		&i.DeviceHash,
+		&i.Market,
+		&i.AppVersion,
+		&i.OsVersion,
+		&i.Model,
+		&i.CreatedAt,
+		&i.LastSeenAt,
+	)
+	return i, err
+}
+
 const getDeviceByInstallID = `-- name: GetDeviceByInstallID :one
 SELECT id, user_id, install_id, device_hash, market, app_version, os_version, model, created_at, last_seen_at FROM devices WHERE install_id = $1
 `
@@ -118,4 +140,20 @@ func (q *Queries) TouchDevice(ctx context.Context, arg TouchDeviceParams) error 
 		arg.LastSeenAt,
 	)
 	return err
+}
+
+const userHasDeviceHash = `-- name: UserHasDeviceHash :one
+SELECT EXISTS (SELECT 1 FROM devices WHERE user_id = $1 AND device_hash = $2)
+`
+
+type UserHasDeviceHashParams struct {
+	UserID     uuid.UUID
+	DeviceHash string
+}
+
+func (q *Queries) UserHasDeviceHash(ctx context.Context, arg UserHasDeviceHashParams) (bool, error) {
+	row := q.db.QueryRow(ctx, userHasDeviceHash, arg.UserID, arg.DeviceHash)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
 }

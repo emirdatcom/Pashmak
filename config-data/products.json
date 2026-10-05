@@ -1,0 +1,11 @@
+{
+  "_comment": "Seed for `admin-cli seed-products`. market_sku values are placeholders until SKUs are created in the Bazaar/Myket panels (docs/80 §7). Premium plans are sold as time passes (open-questions A3); switch kind to subscription per market after verifying V2/V3.",
+  "products": [
+    {"id": "premium_1m",  "kind": "pass", "entitlement": "premium", "duration_days": 30,  "market_sku": {"bazaar": "premium_1m",  "myket": "premium_1m"}},
+    {"id": "premium_3m",  "kind": "pass", "entitlement": "premium", "duration_days": 90,  "market_sku": {"bazaar": "premium_3m",  "myket": "premium_3m"}},
+    {"id": "premium_6m",  "kind": "pass", "entitlement": "premium", "duration_days": 180, "market_sku": {"bazaar": "premium_6m",  "myket": "premium_6m"}},
+    {"id": "premium_12m", "kind": "pass", "entitlement": "premium", "duration_days": 365, "market_sku": {"bazaar": "premium_12m", "myket": "premium_12m"}},
+    {"id": "coins_small",  "kind": "consumable", "coins_amount": 200,  "market_sku": {"bazaar": "coins_small",  "myket": "coins_small"}},
+    {"id": "coins_medium", "kind": "consumable", "coins_amount": 600,  "market_sku": {"bazaar": "coins_medium", "myket": "coins_medium"}}
+  ]
+}

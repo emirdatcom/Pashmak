@@ -1,0 +1,25 @@
+{
+  "kid": "ent-test",
+  "public_key": "A6EHv_POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg",
+  "canonical": "{\"entitlements\":[{\"ends_at\":\"2027-01-03T08:00:00Z\",\"key\":\"premium\",\"source\":\"pass\",\"starts_at\":\"2026-10-05T08:00:00Z\"}],\"grace_days\":3,\"server_time\":\"2026-10-05T08:00:00Z\",\"trial\":{\"eligible\":false,\"ends_at\":\"2026-10-12T08:00:00Z\",\"used\":true},\"valid_until\":\"2026-10-12T08:00:00Z\"}",
+  "state": {
+    "entitlements": [
+      {
+        "key": "premium",
+        "source": "pass",
+        "starts_at": "2026-10-05T08:00:00Z",
+        "ends_at": "2027-01-03T08:00:00Z"
+      }
+    ],
+    "trial": {
+      "eligible": false,
+      "used": true,
+      "ends_at": "2026-10-12T08:00:00Z"
+    },
+    "server_time": "2026-10-05T08:00:00Z",
+    "valid_until": "2026-10-12T08:00:00Z",
+    "grace_days": 3,
+    "signature": "SL_HvNV1AxCJ1VnylN7mBV-Fm76mhX7wTK9dMtHzMIlt1-DWCcMEr1ZAKJ_iFV4gweMiejO5Wiu7SmifnjTwCA",
+    "kid": "ent-test"
+  }
+}

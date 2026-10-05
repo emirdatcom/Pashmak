@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type AdminAudit struct {
@@ -33,6 +32,48 @@ type Device struct {
 	LastSeenAt time.Time
 }
 
+type EntitlementGrant struct {
+	ID          uuid.UUID
+	UserID      uuid.UUID
+	Entitlement string
+	Source      string
+	PurchaseID  uuid.NullUUID
+	Reason      string
+	StartsAt    time.Time
+	EndsAt      time.Time
+	RevokedAt   *time.Time
+	CreatedAt   time.Time
+}
+
+type Product struct {
+	ID           string
+	Market       string
+	Kind         string
+	Entitlement  *string
+	DurationDays *int32
+	CoinsAmount  *int32
+	MarketSku    string
+	Active       bool
+}
+
+type Purchase struct {
+	ID                uuid.UUID
+	UserID            uuid.UUID
+	DeviceID          uuid.UUID
+	Market            string
+	ProductID         string
+	MarketOrderID     string
+	PurchaseTokenHash string
+	PurchaseTokenEnc  []byte
+	State             string
+	PurchasedAt       time.Time
+	VerifiedAt        *time.Time
+	ExpiresAt         *time.Time
+	AutoRenewing      bool
+	RawResponse       []byte
+	CreatedAt         time.Time
+}
+
 type RefreshToken struct {
 	ID        uuid.UUID
 	DeviceID  uuid.UUID
@@ -43,11 +84,19 @@ type RefreshToken struct {
 	CreatedAt time.Time
 }
 
+type Trial struct {
+	ID         uuid.UUID
+	UserID     uuid.UUID
+	DeviceHash string
+	StartedAt  time.Time
+	EndsAt     time.Time
+}
+
 type User struct {
 	ID              uuid.UUID
 	CreatedAt       time.Time
 	Status          string
-	PhoneE164       pgtype.Text
+	PhoneE164       *string
 	PhoneVerifiedAt *time.Time
 	DeletedAt       *time.Time
 }

@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"sync"
 	"testing"
 	"time"
 
@@ -16,18 +18,48 @@ import (
 
 	"github.com/emirdatcom/pashmak/backend/internal/app"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/auth"
+	"github.com/emirdatcom/pashmak/backend/internal/modules/billing"
+	"github.com/emirdatcom/pashmak/backend/internal/modules/billing/fake"
+	"github.com/emirdatcom/pashmak/backend/internal/modules/entitlement"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/user"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/clock"
+	"github.com/emirdatcom/pashmak/backend/internal/platform/db"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/metrics"
 	"github.com/emirdatcom/pashmak/backend/internal/platform/signer"
 	"github.com/emirdatcom/pashmak/backend/internal/testutil"
 )
 
 type env struct {
-	h   http.Handler
-	clk *clock.Fake
-	t   *testing.T
-	doc *openapi3.T
+	h    http.Handler
+	clk  *clock.Fake
+	t    *testing.T
+	doc  *openapi3.T
+	pool *db.Pool
+	ent  *entitlement.Service
+	bill *billing.Service
+	fake *fake.Adapter
+	sink *recordingSink
+}
+
+type recordingSink struct {
+	mu     sync.Mutex
+	events []string
+}
+
+func (r *recordingSink) Emit(_ context.Context, name string, _ uuid.UUID, _ map[string]any) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.events = append(r.events, name)
+	return nil
+}
+
+func productsJSON(t *testing.T) []byte {
+	t.Helper()
+	b, err := os.ReadFile("../../../config-data/products.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	return b
 }
 
 func newEnv(t *testing.T) *env {
@@ -43,8 +75,27 @@ func newEnv(t *testing.T) *env {
 	}
 	clk := clock.NewFake(time.Now().UTC().Truncate(time.Second))
 	a := auth.NewService(auth.NewPGStore(pool), sg, clk, "salt")
-	u := user.NewService(user.NewPGStore(pool), a, clk)
-	_, h := app.Handler(app.Deps{DB: pool, Metrics: metrics.New(), Clock: clk, Auth: a, User: u})
+	if err := signer.Generate(dir, "ent-1"); err != nil {
+		t.Fatal(err)
+	}
+	entSigner, err := signer.LoadWithPrefix(dir, "ent-")
+	if err != nil {
+		t.Fatal(err)
+	}
+	ent := entitlement.NewService(pool, entSigner, clk, nil)
+	u := user.NewService(user.NewPGStore(pool), a, clk, ent)
+	if _, err := billing.SeedProducts(context.Background(), pool, productsJSON(t)); err != nil {
+		t.Fatal(err)
+	}
+	f := fake.New(clk)
+	sink := &recordingSink{}
+	bs, err := billing.NewService(billing.Options{Pool: pool, Entitle: ent, Registry: billing.Registry{"bazaar": f, "myket": f},
+		Clock: clk, EncKey: bytes.Repeat([]byte{7}, 32), Sink: sink, Backoff: []time.Duration{0, 0},
+		Sleep: func(context.Context, time.Duration) {}, MarketCall: 200 * time.Millisecond})
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, h := app.Handler(app.Deps{DB: pool, Metrics: metrics.New(), Clock: clk, Auth: a, User: u, Entitle: ent, Billing: bs})
 	doc, err := openapi3.NewLoader().LoadFromFile("../../api/openapi.yaml")
 	if err != nil {
 		t.Fatal(err)
@@ -52,7 +103,7 @@ func newEnv(t *testing.T) *env {
 	if err := doc.Validate(context.Background()); err != nil {
 		t.Fatalf("openapi invalid: %v", err)
 	}
-	return &env{h: h, clk: clk, t: t, doc: doc}
+	return &env{h: h, clk: clk, t: t, doc: doc, pool: pool, ent: ent, bill: bs, fake: f, sink: sink}
 }
 
 // call performs a request, validates the response against openapi.yaml and returns status + body.
@@ -82,7 +133,9 @@ func (e *env) call(method, path, token string, body any, ip string) (int, map[st
 	}
 	vreq := httptest.NewRequest(method, "http://example.com"+path, bytes.NewReader(nil))
 	route, params, err := router.FindRoute(vreq)
-	if err == nil {
+	if err != nil {
+		e.t.Errorf("%s %s is not described in openapi.yaml: %v", method, path, err)
+	} else {
 		in := &openapi3filter.ResponseValidationInput{
 			RequestValidationInput: &openapi3filter.RequestValidationInput{Request: vreq, PathParams: params, Route: route,
 				Options: &openapi3filter.Options{AuthenticationFunc: openapi3filter.NoopAuthenticationFunc}},

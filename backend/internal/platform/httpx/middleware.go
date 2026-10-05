@@ -218,3 +218,21 @@ func RateLimit(l *RateLimiter) Middleware {
 		})
 	}
 }
+
+// RateLimitUser limits by authenticated user id (falls back to IP). Use after the auth middleware.
+func RateLimitUser(l *RateLimiter) Middleware {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			key := ClientIP(r)
+			if p, ok := PrincipalFrom(r.Context()); ok {
+				key = "u:" + p.UserID.String()
+			}
+			if !l.Allow(key) {
+				w.Header().Set("Retry-After", "60")
+				WriteError(w, r, CodeRateLimited, "too many requests")
+				return
+			}
+			next.ServeHTTP(w, r)
+		})
+	}
+}

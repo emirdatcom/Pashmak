@@ -172,6 +172,16 @@ erDiagram
 
 **Canonicalization برای امضا** (باید در Go و Dart یکسان باشد): (۱) آبجکت بدون فیلدهای `signature` و `kid`؛ (۲) کلیدها در همه سطوح به ترتیب بایتی UTF-8 مرتب؛ (۳) بدون فاصله/خط جدید؛ (۴) زمان‌ها RFC3339 UTC با ثانیه و بدون کسر (`2026-10-05T08:00:00Z`)؛ (۵) اعداد صحیح بدون اعشار؛ bool/null استاندارد؛ (۶) رشته‌ها با escape حداقلی JSON (بدون escape غیرضروری `/` یا یونیکد). امضا = `Ed25519(priv, utf8(canonical))` با base64url بدون padding. یک fixture امضاشده با کلید تست در `fixtures/entitlement_state_signed.json` (پرامپت 03) مرجع هر دو پیاده‌سازی است.
 
+**مثال canonical (از `fixtures/entitlement_state_signed.json`)** — ورودی (بدون `signature`/`kid`) و خروجی canonical، همه در یک خط:
+```
+{"entitlements":[{"ends_at":"2027-01-03T08:00:00Z","key":"premium","source":"pass","starts_at":"2026-10-05T08:00:00Z"}],"grace_days":3,"server_time":"2026-10-05T08:00:00Z","trial":{"eligible":false,"ends_at":"2026-10-12T08:00:00Z","used":true},"valid_until":"2026-10-12T08:00:00Z"}
+```
+کلید تست: seed = بایت‌های `0..31`؛ `kid=ent-test`؛ کلید عمومی و امضا در خود fixture. `trial.ends_at` همیشه حاضر است (`null` وقتی تریالی نبوده). فیلد `entitlements` شامل grantهای **فعال و در صف** (`ends_at > server_time`) است؛ کلاینت با `starts_at ≤ now < ends_at` تصمیم می‌گیرد (grant بسته‌های انباشته‌شده در آینده شروع می‌شوند).
+
+**افزوده‌ی قرارداد `/v1/purchases/verify`:** پاسخ علاوه بر فیلدهای جدول، `purchase_id` (uuid) هم دارد تا کلاینت ledger سکه را با `ref=purchase_id` idempotent ثبت کند؛ فیلد `EntitlementState` در کلید `entitlement_state` می‌آید و `restore` مستقیماً `EntitlementState` برمی‌گرداند.
+
+**کلیدهای امضا:** access-token با kidهای پیشوند `at-` و EntitlementState با پیشوند `ent-` (دو مجموعه کلید جدا در `SIGNING_KEYS_DIR`؛ `admin-cli keygen <kid>`).
+
 **ConfigResponse**: `{version, payload, experiments: {key: variant}, etag}` — `payload` قبلاً با overrideهای experiment ادغام شده است. پیشوندهای کلید payload: `limits.*`, `pricing.*`, `trial.*`, `paywall.*`, `entitlement.*`, `economy.*`, `adventure.*`, `streak.*`, `notifications.*`, `safety.*`, `features.*`, `update.*` (تعریف کلیدها: اسناد ۳۰ §۴–§۵، ۵۰ §۷، ۶۰ §۳؛ schema: `config-data/config/schema/config.schema.json`).
 
 **Event**: `{event_id (uuid, idempotency), name, ts, session_id, props}` — نام‌ها فقط از فهرست سند ۷۰؛ رویداد ناشناخته `rejected`.

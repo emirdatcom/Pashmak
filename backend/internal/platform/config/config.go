@@ -24,6 +24,16 @@ type Config struct {
 	SigningKeysDir    string
 	DeviceHashSalt    string
 	DataEncKey        []byte
+
+	BillingBazaarEnabled bool
+	BillingMyketEnabled  bool
+	BillingFakeEnabled   bool // dev/staging only
+	BazaarPackageName    string
+	BazaarClientID       string
+	BazaarClientSecret   string
+	BazaarRefreshToken   string
+	MyketPackageName     string
+	MyketAccessToken     string
 }
 
 // IsProd reports whether APP_ENV is prod.
@@ -50,6 +60,16 @@ func LoadFrom(get func(string) string) (Config, error) {
 		AdminPasswordHash: get("ADMIN_PASSWORD_HASH"),
 		SigningKeysDir:    str("SIGNING_KEYS_DIR", "./keys"),
 		DeviceHashSalt:    get("DEVICE_HASH_SALT"),
+
+		BillingBazaarEnabled: get("BILLING_BAZAAR_ENABLED") == "true",
+		BillingMyketEnabled:  get("BILLING_MYKET_ENABLED") == "true",
+		BillingFakeEnabled:   get("BILLING_FAKE_ENABLED") == "true",
+		BazaarPackageName:    get("BAZAAR_PACKAGE_NAME"),
+		BazaarClientID:       get("BAZAAR_CLIENT_ID"),
+		BazaarClientSecret:   get("BAZAAR_CLIENT_SECRET"),
+		BazaarRefreshToken:   get("BAZAAR_REFRESH_TOKEN"),
+		MyketPackageName:     get("MYKET_PACKAGE_NAME"),
+		MyketAccessToken:     get("MYKET_ACCESS_TOKEN"),
 	}
 	var errs []error
 	switch c.AppEnv {
@@ -94,6 +114,12 @@ func LoadFrom(get func(string) string) (Config, error) {
 		}
 		if c.DataEncKey == nil {
 			errs = append(errs, errors.New("DATA_ENC_KEY is required in prod"))
+		}
+		if c.BillingFakeEnabled {
+			errs = append(errs, errors.New("BILLING_FAKE_ENABLED must not be set in prod"))
+		}
+		if c.BillingBazaarEnabled && (c.BazaarPackageName == "" || c.BazaarClientID == "" || c.BazaarClientSecret == "" || c.BazaarRefreshToken == "") {
+			errs = append(errs, errors.New("BAZAAR_PACKAGE_NAME/CLIENT_ID/CLIENT_SECRET/REFRESH_TOKEN are required when BILLING_BAZAAR_ENABLED"))
 		}
 	}
 	return c, errors.Join(errs...)
