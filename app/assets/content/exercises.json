@@ -1,0 +1,160 @@
+{
+  "pack_key": "exercises",
+  "version": 1,
+  "pack_schema_version": 1,
+  "locale": "fa",
+  "min_app_version": "1.0.0",
+  "entries": [
+    {
+      "key": "breathing_basic",
+      "premium": false,
+      "duration_s": 120,
+      "type": "timer_steps",
+      "collection": "stress",
+      "disclaimer_key": "disclaimer.exercise",
+      "steps": [
+        {
+          "text_key": "exercise.breathing_basic.step.intro",
+          "seconds": 6,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.breathing_basic.step.inhale",
+          "seconds": 4,
+          "animation": "inhale",
+          "repeat": 6
+        },
+        {
+          "text_key": "exercise.breathing_basic.step.hold",
+          "seconds": 4,
+          "animation": "hold",
+          "repeat": 6
+        },
+        {
+          "text_key": "exercise.breathing_basic.step.exhale",
+          "seconds": 6,
+          "animation": "exhale",
+          "repeat": 6
+        },
+        {
+          "text_key": "exercise.breathing_basic.step.outro",
+          "seconds": 5,
+          "animation": "none"
+        }
+      ]
+    },
+    {
+      "key": "gratitude",
+      "premium": true,
+      "duration_s": 180,
+      "type": "journal_prompt",
+      "collection": "focus",
+      "disclaimer_key": "disclaimer.exercise",
+      "prompts": [
+        "exercise.gratitude.prompt.1",
+        "exercise.gratitude.prompt.2",
+        "exercise.gratitude.prompt.3"
+      ]
+    },
+    {
+      "key": "guided_journal",
+      "premium": true,
+      "duration_s": 300,
+      "type": "journal_prompt",
+      "collection": "focus",
+      "disclaimer_key": "disclaimer.exercise",
+      "prompts": [
+        "exercise.guided_journal.prompt.1",
+        "exercise.guided_journal.prompt.2",
+        "exercise.guided_journal.prompt.3",
+        "exercise.guided_journal.prompt.4",
+        "exercise.guided_journal.prompt.5"
+      ]
+    },
+    {
+      "key": "muscle_relax",
+      "premium": true,
+      "duration_s": 240,
+      "type": "timer_steps",
+      "collection": "sleep",
+      "disclaimer_key": "disclaimer.exercise",
+      "steps": [
+        {
+          "text_key": "exercise.muscle_relax.step.intro",
+          "seconds": 8,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.muscle_relax.step.hands",
+          "seconds": 15,
+          "animation": "hold"
+        },
+        {
+          "text_key": "exercise.muscle_relax.step.shoulders",
+          "seconds": 15,
+          "animation": "hold"
+        },
+        {
+          "text_key": "exercise.muscle_relax.step.face",
+          "seconds": 15,
+          "animation": "hold"
+        },
+        {
+          "text_key": "exercise.muscle_relax.step.legs",
+          "seconds": 15,
+          "animation": "hold"
+        },
+        {
+          "text_key": "exercise.muscle_relax.step.release",
+          "seconds": 20,
+          "animation": "exhale"
+        },
+        {
+          "text_key": "exercise.muscle_relax.step.outro",
+          "seconds": 6,
+          "animation": "none"
+        }
+      ]
+    },
+    {
+      "key": "afternoon_tea",
+      "premium": true,
+      "duration_s": 120,
+      "type": "timer_steps",
+      "collection": "stress",
+      "disclaimer_key": "disclaimer.exercise",
+      "steps": [
+        {
+          "text_key": "exercise.afternoon_tea.step.intro",
+          "seconds": 8,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.afternoon_tea.step.hold_glass",
+          "seconds": 20,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.afternoon_tea.step.sip",
+          "seconds": 25,
+          "animation": "inhale"
+        },
+        {
+          "text_key": "exercise.afternoon_tea.step.breathe",
+          "seconds": 30,
+          "animation": "exhale"
+        },
+        {
+          "text_key": "exercise.afternoon_tea.step.notice",
+          "seconds": 25,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.afternoon_tea.step.outro",
+          "seconds": 8,
+          "animation": "none"
+        }
+      ]
+    }
+  ]
+}

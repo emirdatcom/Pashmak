@@ -1,0 +1,28 @@
+name: app
+on:
+  push: {paths: ["app/**", "config-data/**", ".github/workflows/app.yml"]}
+  pull_request: {paths: ["app/**", "config-data/**"]}
+defaults:
+  run: {working-directory: app}
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: {channel: stable, cache: true}
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: "17"}
+      - run: sudo apt-get update && sudo apt-get install -y libsqlcipher1
+      - run: flutter pub get
+      - name: generated files are up to date
+        run: |
+          dart run build_runner build --delete-conflicting-outputs
+          dart run tool/sync_assets.dart --check
+          dart run tool/gen_analytics_events.dart --check
+          dart run drift_dev schema dump lib/core/db/app_database.dart drift_schemas/
+          git diff --exit-code -- lib drift_schemas
+      - run: flutter analyze
+      - run: flutter test
+      - run: flutter build apk --flavor bazaar -t lib/main_bazaar.dart --split-per-abi
+      - run: flutter build apk --flavor myket -t lib/main_myket.dart --split-per-abi

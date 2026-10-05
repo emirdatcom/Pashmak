@@ -1,0 +1,141 @@
+{
+  "pack_key": "adventures",
+  "version": 1,
+  "pack_schema_version": 1,
+  "locale": "fa",
+  "min_app_version": "1.0.0",
+  "entries": {
+    "locations": [
+      {
+        "location_key": "alley",
+        "name_key": "adventure.location.alley.name",
+        "bg_asset": "assets/adventure/alley.webp",
+        "stories": [
+          {
+            "story_key": "alley_1",
+            "text_key": "adventure.story.alley.1",
+            "weight": 1
+          },
+          {
+            "story_key": "alley_2",
+            "text_key": "adventure.story.alley.2",
+            "weight": 1
+          },
+          {
+            "story_key": "alley_3",
+            "text_key": "adventure.story.alley.3",
+            "weight": 1
+          }
+        ],
+        "possible_items": [
+          "collar_turquoise",
+          "bg_alley_evening"
+        ]
+      },
+      {
+        "location_key": "rooftop",
+        "name_key": "adventure.location.rooftop.name",
+        "bg_asset": "assets/adventure/rooftop.webp",
+        "stories": [
+          {
+            "story_key": "rooftop_1",
+            "text_key": "adventure.story.rooftop.1",
+            "weight": 1
+          },
+          {
+            "story_key": "rooftop_2",
+            "text_key": "adventure.story.rooftop.2",
+            "weight": 1
+          },
+          {
+            "story_key": "rooftop_3",
+            "text_key": "adventure.story.rooftop.3",
+            "weight": 1
+          }
+        ],
+        "possible_items": [
+          "hat_beanie",
+          "bg_rooftop_night"
+        ]
+      },
+      {
+        "location_key": "courtyard",
+        "name_key": "adventure.location.courtyard.name",
+        "bg_asset": "assets/adventure/courtyard.webp",
+        "stories": [
+          {
+            "story_key": "courtyard_1",
+            "text_key": "adventure.story.courtyard.1",
+            "weight": 1
+          },
+          {
+            "story_key": "courtyard_2",
+            "text_key": "adventure.story.courtyard.2",
+            "weight": 1
+          },
+          {
+            "story_key": "courtyard_3",
+            "text_key": "adventure.story.courtyard.3",
+            "weight": 1
+          }
+        ],
+        "possible_items": [
+          "rug_small",
+          "samovar"
+        ]
+      },
+      {
+        "location_key": "bazaar",
+        "name_key": "adventure.location.bazaar.name",
+        "bg_asset": "assets/adventure/bazaar.webp",
+        "stories": [
+          {
+            "story_key": "bazaar_1",
+            "text_key": "adventure.story.bazaar.1",
+            "weight": 1
+          },
+          {
+            "story_key": "bazaar_2",
+            "text_key": "adventure.story.bazaar.2",
+            "weight": 1
+          },
+          {
+            "story_key": "bazaar_3",
+            "text_key": "adventure.story.bazaar.3",
+            "weight": 1
+          }
+        ],
+        "possible_items": [
+          "blanket_floral",
+          "tea_glass"
+        ]
+      },
+      {
+        "location_key": "garden",
+        "name_key": "adventure.location.garden.name",
+        "bg_asset": "assets/adventure/garden.webp",
+        "stories": [
+          {
+            "story_key": "garden_1",
+            "text_key": "adventure.story.garden.1",
+            "weight": 1
+          },
+          {
+            "story_key": "garden_2",
+            "text_key": "adventure.story.garden.2",
+            "weight": 1
+          },
+          {
+            "story_key": "garden_3",
+            "text_key": "adventure.story.garden.3",
+            "weight": 1
+          }
+        ],
+        "possible_items": [
+          "bg_garden_spring",
+          "hat_flower"
+        ]
+      }
+    ]
+  }
+}

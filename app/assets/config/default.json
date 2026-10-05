@@ -1,0 +1,71 @@
+{
+  "limits": {
+    "free_active_habits": 3,
+    "free_custom_habits": 0,
+    "free_exercises": ["breathing_basic"],
+    "free_adventure_locations": ["alley", "rooftop", "courtyard"]
+  },
+  "pricing": {
+    "plans": [
+      {"product_id": "premium_1m", "market_sku": {"bazaar": "premium_1m", "myket": "premium_1m"}, "display_price_toman": 99000, "badge_key": "", "highlight": false},
+      {"product_id": "premium_3m", "market_sku": {"bazaar": "premium_3m", "myket": "premium_3m"}, "display_price_toman": 249000, "badge_key": "paywall.badge.save", "highlight": false},
+      {"product_id": "premium_6m", "market_sku": {"bazaar": "premium_6m", "myket": "premium_6m"}, "display_price_toman": 449000, "badge_key": "paywall.badge.save", "highlight": false},
+      {"product_id": "premium_12m", "market_sku": {"bazaar": "premium_12m", "myket": "premium_12m"}, "display_price_toman": 749000, "badge_key": "paywall.badge.best", "highlight": true}
+    ],
+    "monthly_anchor_product": "premium_1m"
+  },
+  "trial": {"enabled": true, "days": 7, "reminder_day": 6},
+  "paywall": {
+    "variant": "a",
+    "triggers": {
+      "fourth_habit": true, "custom_habit": true, "premium_exercise": true, "premium_location": true,
+      "premium_item": true, "stats_deep": true, "trial_end": true, "settings": true
+    },
+    "cooldown_hours": 24
+  },
+  "entitlement": {"grace_days": 3, "offline_validity_days": 7, "pending_verification_hours": 72},
+  "economy": {
+    "energy_per_habit": 10,
+    "energy_per_checkin": 5,
+    "energy_per_exercise": 10,
+    "exercise_rewards_per_day": 3,
+    "energy_cap": 100
+  },
+  "adventure": {
+    "locations": [
+      {"location_key": "alley", "energy_cost": 20, "duration_minutes": 30, "coins_min": 15, "coins_max": 25, "item_drop_rate": 0.1},
+      {"location_key": "rooftop", "energy_cost": 20, "duration_minutes": 60, "coins_min": 18, "coins_max": 30, "item_drop_rate": 0.12},
+      {"location_key": "courtyard", "energy_cost": 20, "duration_minutes": 90, "coins_min": 20, "coins_max": 35, "item_drop_rate": 0.15},
+      {"location_key": "bazaar", "energy_cost": 30, "duration_minutes": 180, "coins_min": 25, "coins_max": 40, "item_drop_rate": 0.15},
+      {"location_key": "garden", "energy_cost": 30, "duration_minutes": 240, "coins_min": 25, "coins_max": 40, "item_drop_rate": 0.15}
+    ]
+  },
+  "streak": {"freezes_per_month": 1},
+  "notifications": {
+    "max_per_day": 3,
+    "default_morning_time": "09:00",
+    "default_evening_time": "20:30",
+    "default_quiet": {"start": "22:30", "end": "08:00"},
+    "comeback_days": [3, 7, 14],
+    "ignore_threshold": 3,
+    "types_enabled": {
+      "morning": true, "habit_reminder": true, "evening_checkin": true, "cat_returned": true,
+      "streak_gentle": true, "comeback": true, "trial": true, "seasonal": true
+    }
+  },
+  "safety": {
+    "low_mood_level": 1,
+    "low_mood_count": 3,
+    "low_mood_window_days": 4,
+    "card_cooldown_hours": 48
+  },
+  "features": {
+    "rive_cat": false,
+    "widgets": false,
+    "backup": false,
+    "phone_link": false,
+    "seasonal_packs": false,
+    "stats_deep": false
+  },
+  "update": {"min_supported_version": "1.0.0", "recommended_version": "1.0.0"}
+}

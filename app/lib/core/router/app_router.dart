@@ -1,0 +1,104 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../features/system/force_update_screen.dart';
+import '../../features/system/placeholder_screen.dart';
+import '../../features/system/splash_screen.dart';
+import '../providers.dart';
+import '../util/version.dart';
+import 'redirect.dart';
+import 'routes.dart';
+
+/// Notifies go_router when redirect inputs change.
+class _RouterRefresh extends ChangeNotifier {
+  void poke() => notifyListeners();
+}
+
+final routerProvider = Provider<GoRouter>((ref) {
+  final refresh = _RouterRefresh();
+  ref.listen(onboardingCompletedProvider, (_, _) => refresh.poke());
+  ref.listen(appConfigProvider, (_, _) => refresh.poke());
+  ref.onDispose(refresh.dispose);
+
+  PlaceholderScreen ph(String n) => PlaceholderScreen(n);
+
+  return GoRouter(
+    initialLocation: Routes.splash,
+    refreshListenable: refresh,
+    redirect: (context, state) => appRedirect(
+      location: state.uri.path,
+      onboardingCompleted: ref.read(onboardingCompletedProvider),
+      appVersion: ref.read(appVersionProvider),
+      minSupportedVersion: ref.read(appConfigProvider).minSupportedVersion,
+    ),
+    routes: [
+      GoRoute(path: Routes.splash, builder: (_, _) => const SplashScreen()),
+      GoRoute(path: '/onboarding/:step', builder: (_, s) => ph('onboarding/${s.pathParameters['step']}')),
+      GoRoute(path: Routes.update, builder: (_, _) => const ForceUpdateScreen()),
+      ShellRoute(
+        builder: (context, state, child) => _TabShell(location: state.uri.path, child: child),
+        routes: [
+          GoRoute(path: Routes.home, builder: (_, _) => ph('home')),
+          GoRoute(path: Routes.habits, builder: (_, _) => ph('habits'), routes: [
+            GoRoute(path: 'new', builder: (_, _) => ph('habits/new')),
+            GoRoute(path: ':id', builder: (_, s) => ph('habits/${s.pathParameters['id']}'), routes: [
+              GoRoute(path: 'edit', builder: (_, s) => ph('habits/${s.pathParameters['id']}/edit')),
+            ]),
+          ]),
+          GoRoute(path: Routes.exercises, builder: (_, _) => ph('exercises'), routes: [
+            GoRoute(path: ':id/run', builder: (_, s) => ph('exercises/${s.pathParameters['id']}/run')),
+          ]),
+          GoRoute(path: Routes.shop, builder: (_, _) => ph('shop'), routes: [
+            GoRoute(path: 'closet', builder: (_, _) => ph('shop/closet')),
+          ]),
+        ],
+      ),
+      GoRoute(path: Routes.checkin, builder: (_, _) => ph('checkin')),
+      GoRoute(path: Routes.adventure, builder: (_, _) => ph('adventure'), routes: [
+        GoRoute(path: 'result/:id', builder: (_, s) => ph('adventure/result/${s.pathParameters['id']}')),
+      ]),
+      GoRoute(path: Routes.stats, builder: (_, _) => ph('stats')),
+      GoRoute(path: '/paywall', builder: (_, s) => ph('paywall?trigger=${s.uri.queryParameters['trigger'] ?? ''}')),
+      GoRoute(path: Routes.settings, builder: (_, _) => ph('settings'), routes: [
+        GoRoute(path: ':section', builder: (_, s) => ph('settings/${s.pathParameters['section']}')),
+      ]),
+      GoRoute(path: Routes.safety, builder: (_, _) => ph('safety')),
+    ],
+  );
+});
+
+class _TabShell extends ConsumerWidget {
+  const _TabShell({required this.location, required this.child});
+  final String location;
+  final Widget child;
+
+  static const _tabs = [Routes.home, Routes.habits, Routes.exercises, Routes.shop];
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final copy = ref.watch(copyProvider);
+    final config = ref.watch(appConfigProvider);
+    final app = ref.watch(appVersionProvider);
+    final showSoft = !ref.watch(softUpdateDismissedProvider) && config.recommendedVersion.isNotEmpty && _older(app, config.recommendedVersion);
+    final index = _tabs.indexWhere(location.startsWith).clamp(0, _tabs.length - 1);
+    return Scaffold(
+      body: Column(children: [
+        if (showSoft) const SoftUpdateBanner(),
+        Expanded(child: child),
+      ]),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: index,
+        onDestinationSelected: (i) => context.go(_tabs[i]),
+        destinations: [
+          NavigationDestination(icon: const Icon(Icons.home_outlined), label: copy.t('nav.home')),
+          NavigationDestination(icon: const Icon(Icons.check_circle_outline), label: copy.t('nav.habits')),
+          NavigationDestination(icon: const Icon(Icons.self_improvement), label: copy.t('nav.exercises')),
+          NavigationDestination(icon: const Icon(Icons.storefront_outlined), label: copy.t('nav.shop')),
+        ],
+      ),
+    );
+  }
+
+  bool _older(String a, String b) => a != b && compareVersions(a, b) < 0;
+}

@@ -1,0 +1,15 @@
+{
+  "pack_key": "brand",
+  "version": 1,
+  "pack_schema_version": 1,
+  "locale": "fa",
+  "min_app_version": "1.0.0",
+  "entries": {
+    "app_name": "پشمک",
+    "cat_default_name": "ملوس",
+    "support_contact": {
+      "email": "",
+      "channel_url": ""
+    }
+  }
+}
