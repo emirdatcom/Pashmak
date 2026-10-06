@@ -70,17 +70,25 @@ func run() error {
 	return nil
 }
 
-// loop runs j every Interval with up to 10% jitter.
+// loop runs j shortly after start (so frequent restarts or deploys never starve a daily job), then every
+// Interval, each wait with up to 10% jitter so replicas and jobs do not fire in lockstep.
 func loop(ctx context.Context, j Job) {
+	wait := startDelay(j.Interval)
 	for {
-		jitter := time.Duration(rand.Int64N(int64(j.Interval/10) + 1)) // #nosec G404 -- jitter only
 		select {
 		case <-ctx.Done():
 			return
-		case <-time.After(j.Interval + jitter):
+		case <-time.After(wait):
 		}
 		if err := j.Run(ctx); err != nil {
 			slog.Error("job failed", "job", j.Name, "err", err)
 		}
+		wait = j.Interval + time.Duration(rand.Int64N(int64(j.Interval/10)+1)) // #nosec G404 -- jitter only
 	}
+}
+
+// startDelay spreads the first runs over up to a minute (or a tenth of a short interval).
+func startDelay(interval time.Duration) time.Duration {
+	limit := min(time.Minute, interval/10)
+	return time.Duration(rand.Int64N(int64(limit) + 1)) // #nosec G404 -- jitter only
 }

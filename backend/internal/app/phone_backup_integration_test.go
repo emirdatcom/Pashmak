@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -319,3 +320,62 @@ func TestMergeTransfersBPurchasesToA(t *testing.T) {
 }
 
 func jsonEncoder(b *bytes.Buffer, v any) error { return json.NewEncoder(b).Encode(v) }
+
+// One device of a two-device account moves to another account by phone: only that device's sessions end.
+func TestMergeKeepsTheOtherDevicesOfTheLeavingAccountSignedIn(t *testing.T) {
+	e := newEnv(t)
+	const phoneX, e164X = "09125550001", "+989125550001"
+	const phoneZ, e164Z = "09125550002", "+989125550002"
+	// X owns phoneX on device 1; device 2 (a new install) joins X by verifying phoneX.
+	x := e.newUser("hw-x1")
+	_, m := e.otp(x, phoneX)
+	e.verifyOTP(x, m["challenge_id"].(string), e.sms.code(e164X))
+	d2 := e.newUser("hw-x2")
+	e.clk.Advance(2 * time.Minute)
+	_, m = e.otp(d2, phoneX)
+	st, joined := e.verifyOTP(d2, m["challenge_id"].(string), e.sms.code(e164X))
+	if st != 200 || joined["merged"] != true || joined["user_id"] != x.id {
+		t.Fatalf("device 2 joins X: %d %v", st, joined)
+	}
+	d2refresh := joined["refresh_token"].(string)
+	// Z owns phoneZ; device 1 (still X) verifies phoneZ and moves to Z.
+	z := e.newUser("hw-z")
+	_, m = e.otp(z, phoneZ)
+	e.verifyOTP(z, m["challenge_id"].(string), e.sms.code(e164Z))
+	e.clk.Advance(2 * time.Minute)
+	_, m = e.otp(x, phoneZ)
+	if st, res := e.verifyOTP(x, m["challenge_id"].(string), e.sms.code(e164Z)); st != 200 || res["merged"] != true || res["user_id"] != z.id {
+		t.Fatalf("device 1 moves to Z: %d %v", st, res)
+	}
+	// Device 2 still belongs to X and keeps its session; device 1's old X refresh token is dead.
+	if st, m := e.call("POST", "/v1/auth/refresh", "", map[string]any{"refresh_token": d2refresh}, ""); st != 200 {
+		t.Fatalf("device 2 must stay signed in: %d %v", st, m)
+	}
+	if st, _ := e.call("POST", "/v1/auth/refresh", "", map[string]any{"refresh_token": x.refresh}, ""); st != 401 {
+		t.Fatalf("device 1's old session must end: %d", st)
+	}
+}
+
+// One account cannot fan OTP codes out to many different numbers.
+func TestOTPPerAccountCapAcrossNumbers(t *testing.T) {
+	e := newEnv(t)
+	u := e.newUser("hw-fan")
+	for i := 0; i < 6; i++ {
+		if st, m := e.otp(u, fmt.Sprintf("0912777000%d", i)); st != 200 {
+			t.Fatalf("code %d: %d %v", i, st, m)
+		}
+	}
+	if st, m := e.otp(u, "09127770009"); st != 429 || errCode(m) != "RATE_LIMITED" {
+		t.Fatalf("7th number in an hour must be limited: %d %v", st, m)
+	}
+	e.clk.Advance(61 * time.Minute)
+	// the 1h access token has expired too: refresh the session first
+	st, m := e.call("POST", "/v1/auth/refresh", "", map[string]any{"refresh_token": u.refresh}, "")
+	if st != 200 {
+		t.Fatalf("refresh: %d %v", st, m)
+	}
+	u.token = m["access_token"].(string)
+	if st, _ := e.otp(u, "09127770009"); st != 200 {
+		t.Fatalf("allowed again after an hour: %d", st)
+	}
+}

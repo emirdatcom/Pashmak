@@ -592,7 +592,7 @@ class _Reward extends ConsumerWidget {
         style: const TextStyle(color: DS.textSecondary, fontWeight: FontWeight.w700, fontSize: 14),
       ),
       const SizedBox(width: 2),
-      EmojiArt(exerciseTreat(habit.id), size: 18),
+      EmojiArt(exerciseTreat(habit.goalKey ?? habit.templateKey ?? habit.id), size: 18),
     ],
   );
 }

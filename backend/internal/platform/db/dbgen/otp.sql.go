@@ -86,6 +86,22 @@ func (q *Queries) InsertOTPChallenge(ctx context.Context, arg InsertOTPChallenge
 	return err
 }
 
+const oTPCountForUser = `-- name: OTPCountForUser :one
+SELECT COUNT(*)::int AS sent FROM otp_challenges WHERE user_id = $1 AND created_at > $2
+`
+
+type OTPCountForUserParams struct {
+	UserID    uuid.UUID
+	CreatedAt time.Time
+}
+
+func (q *Queries) OTPCountForUser(ctx context.Context, arg OTPCountForUserParams) (int32, error) {
+	row := q.db.QueryRow(ctx, oTPCountForUser, arg.UserID, arg.CreatedAt)
+	var sent int32
+	err := row.Scan(&sent)
+	return sent, err
+}
+
 const oTPStatsForPhone = `-- name: OTPStatsForPhone :one
 SELECT COUNT(*) FILTER (WHERE created_at > $2)::int AS sent_in_window,
        COALESCE(MAX(created_at), 'epoch'::timestamptz)::timestamptz AS last_sent

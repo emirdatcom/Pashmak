@@ -25,6 +25,7 @@ const (
 	otpTTL            = 2 * time.Minute
 	otpMaxAttempts    = 5
 	otpPerPhonePerHr  = 3
+	otpPerUserPerHr   = 6 // across all numbers: one account cannot fan codes out to many phones
 	otpResendCooldown = 60 * time.Second
 )
 
@@ -133,6 +134,13 @@ func (s *PhoneService) RequestOTP(ctx context.Context, p httpx.Principal, phone 
 	}
 	if int(stats.SentInWindow) >= otpPerPhonePerHr || now.Sub(stats.LastSent) < otpResendCooldown {
 		return uuid.Nil, 0, httpx.NewError(httpx.CodeRateLimited, "too many codes requested for this number")
+	}
+	byUser, err := q.OTPCountForUser(ctx, dbgen.OTPCountForUserParams{UserID: p.UserID, CreatedAt: now.Add(-time.Hour)})
+	if err != nil {
+		return uuid.Nil, 0, fmt.Errorf("otp count: %w", err)
+	}
+	if int(byUser) >= otpPerUserPerHr {
+		return uuid.Nil, 0, httpx.NewError(httpx.CodeRateLimited, "too many codes requested")
 	}
 	code, err := newCode()
 	if err != nil {
@@ -253,11 +261,12 @@ func (s *PhoneService) VerifyOTP(ctx context.Context, p httpx.Principal, challen
 // B's trial and trial grants stay with B.
 func (s *PhoneService) merge(ctx context.Context, q *dbgen.Queries, p httpx.Principal, a uuid.UUID, now time.Time) error {
 	b := p.UserID
+	// Only this install leaves B: its old sessions end, B's other devices stay signed in.
+	if err := q.RevokeDeviceTokens(ctx, dbgen.RevokeDeviceTokensParams{DeviceID: p.DeviceID, RevokedAt: &now}); err != nil {
+		return fmt.Errorf("revoke device tokens: %w", err)
+	}
 	if err := q.RebindDevice(ctx, dbgen.RebindDeviceParams{ID: p.DeviceID, UserID: a}); err != nil {
 		return fmt.Errorf("rebind device: %w", err)
-	}
-	if err := q.RevokeUserTokens(ctx, dbgen.RevokeUserTokensParams{UserID: b, RevokedAt: &now}); err != nil {
-		return fmt.Errorf("revoke tokens: %w", err)
 	}
 	for _, h := range s.hooks {
 		if err := h.OnUserMerged(ctx, q, b, a); err != nil {

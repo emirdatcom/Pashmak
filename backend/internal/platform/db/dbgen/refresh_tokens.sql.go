@@ -71,6 +71,20 @@ func (q *Queries) InsertRefreshToken(ctx context.Context, arg InsertRefreshToken
 	return err
 }
 
+const revokeDeviceTokens = `-- name: RevokeDeviceTokens :exec
+UPDATE refresh_tokens SET revoked_at = $2 WHERE device_id = $1 AND revoked_at IS NULL
+`
+
+type RevokeDeviceTokensParams struct {
+	DeviceID  uuid.UUID
+	RevokedAt *time.Time
+}
+
+func (q *Queries) RevokeDeviceTokens(ctx context.Context, arg RevokeDeviceTokensParams) error {
+	_, err := q.db.Exec(ctx, revokeDeviceTokens, arg.DeviceID, arg.RevokedAt)
+	return err
+}
+
 const revokeRefreshToken = `-- name: RevokeRefreshToken :exec
 UPDATE refresh_tokens SET revoked_at = $2 WHERE id = $1 AND revoked_at IS NULL
 `

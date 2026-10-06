@@ -18,3 +18,6 @@ UPDATE refresh_tokens SET revoked_at = $2 WHERE family_id = $1 AND revoked_at IS
 -- name: RevokeUserTokens :exec
 UPDATE refresh_tokens SET revoked_at = $2
 WHERE revoked_at IS NULL AND device_id IN (SELECT id FROM devices WHERE user_id = $1);
+
+-- name: RevokeDeviceTokens :exec
+UPDATE refresh_tokens SET revoked_at = $2 WHERE device_id = $1 AND revoked_at IS NULL;

@@ -15,3 +15,6 @@ UPDATE otp_challenges SET consumed_at = $2 WHERE id = $1 AND consumed_at IS NULL
 SELECT COUNT(*) FILTER (WHERE created_at > $2)::int AS sent_in_window,
        COALESCE(MAX(created_at), 'epoch'::timestamptz)::timestamptz AS last_sent
 FROM otp_challenges WHERE phone_hash = $1;
+
+-- name: OTPCountForUser :one
+SELECT COUNT(*)::int AS sent FROM otp_challenges WHERE user_id = $1 AND created_at > $2;

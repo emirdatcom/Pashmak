@@ -13,4 +13,7 @@ final backupServiceProvider = Provider<BackupService>((ref) => BackupService(
     ));
 
 final phoneLinkServiceProvider = Provider<PhoneLinkService>(
-    (ref) => PhoneLinkService(ref.watch(apiClientProvider), ref.watch(tokenStoreProvider), ref.watch(analyticsProvider)));
+    (ref) => PhoneLinkService(ref.watch(apiClientProvider), ref.watch(tokenStoreProvider), ref.watch(analyticsProvider),
+        // After a merge this device belongs to the other account: an automatic backup now would overwrite that
+        // account's backup with this device's data before the user had a chance to restore it.
+        onMerged: () => ref.read(backupServiceProvider).disable()));

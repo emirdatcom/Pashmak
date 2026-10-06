@@ -35,10 +35,13 @@ PhoneLinkFailure _map(ApiError e) => switch (e.code) {
 
 /// Optional phone linking (docs/10 §6): the number only exists to bring the account back on a new phone.
 class PhoneLinkService {
-  PhoneLinkService(this._api, this._tokens, this._analytics);
+  PhoneLinkService(this._api, this._tokens, this._analytics, {this.onMerged});
   final ApiClient _api;
   final TokenStore _tokens;
   final AnalyticsService _analytics;
+
+  /// Runs once the device has moved to the phone's existing account.
+  final Future<void> Function()? onMerged;
 
   /// Persian/Arabic digits accepted; returns the Latin digits, or null when it cannot be an Iranian mobile number
   /// (the server normalises and has the final word).
@@ -79,6 +82,7 @@ class PhoneLinkService {
         userId: d['user_id'] as String,
       ));
       final merged = d['merged'] as bool;
+      if (merged) await onMerged?.call();
       unawaited(_analytics.track(AnalyticsEvent.phoneLinked, {'merged': merged}));
       return merged;
     } on ApiError catch (e) {
