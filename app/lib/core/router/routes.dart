@@ -34,6 +34,8 @@ class Routes {
   static const exercises = '/exercises';
   static const sounds = '/sounds';
   static const journal = '/journal';
+  static const journeys = '/journeys';
+  static String journey(String key) => '/journeys/$key';
   static const assessments = '/assessments';
   static String assessment(String key) => '/assessments/$key';
   static String journalWrite(String template) => '/journal/write/$template';

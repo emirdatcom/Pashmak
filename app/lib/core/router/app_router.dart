@@ -27,6 +27,7 @@ import '../../features/shop/presentation/item_screen.dart';
 import '../../features/shop/presentation/shop_screens.dart';
 import '../../features/assessments/presentation/assessment_screens.dart';
 import '../../features/journal/presentation/journal_screens.dart';
+import '../../features/journeys/presentation/journey_screens.dart';
 import '../../features/settings/presentation/info_screens.dart';
 import '../../features/sounds/presentation/sounds_screen.dart';
 import '../../features/settings/presentation/settings_screens.dart';
@@ -106,6 +107,9 @@ final routerProvider = Provider<GoRouter>((ref) {
       ]),
       GoRoute(path: Routes.assessments, builder: (_, _) => const AssessmentsScreen(), routes: [
         GoRoute(path: ':key', builder: (_, s) => AssessmentRunScreen(assessmentKey: s.pathParameters['key']!)),
+      ]),
+      GoRoute(path: Routes.journeys, builder: (_, _) => const JourneysScreen(), routes: [
+        GoRoute(path: ':key', builder: (_, s) => JourneyScreen(journeyKey: s.pathParameters['key']!)),
       ]),
       GoRoute(path: Routes.journal, builder: (_, _) => const JournalScreen(), routes: [
         GoRoute(path: 'write/:template', builder: (_, s) => JournalWriteScreen(templateKey: s.pathParameters['template']!)),

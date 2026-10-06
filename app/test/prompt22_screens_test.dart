@@ -21,6 +21,7 @@ import 'package:pashmak_app/features/menu/presentation/menu_screens.dart';
 import 'package:pashmak_app/features/quests/presentation/quests_screen.dart';
 import 'package:pashmak_app/features/assessments/presentation/assessment_screens.dart';
 import 'package:pashmak_app/features/journal/presentation/journal_screens.dart';
+import 'package:pashmak_app/features/journeys/presentation/journey_screens.dart';
 import 'package:pashmak_app/features/settings/presentation/info_screens.dart';
 import 'package:pashmak_app/features/settings/presentation/settings_screens.dart';
 import 'package:pashmak_app/features/sounds/presentation/sounds_screen.dart';
@@ -58,6 +59,8 @@ void main() {
     'terms': const TermsScreen(),
     'rest mode': const RestModeScreen(),
     'assessments': const AssessmentsScreen(),
+    'journeys': const JourneysScreen(),
+    'journey': const JourneyScreen(journeyKey: 'calm_start'),
     'assessment phq9': const AssessmentRunScreen(assessmentKey: 'phq9'),
   };
 
