@@ -91,6 +91,10 @@ class DS {
   static const progressYellow = Color(0xFFFFC845);
   static const progressYellowGloss = Color(0xFFFFE28E);
   static const progressYellowShade = Color(0xFFF7B52C);
+  /// The adventure bar on the home card: orange on a white rail.
+  static const adventureFill = Color(0xFFFF8C2E);
+  static const adventureGloss = Color(0xFFFFB46E);
+  static const adventureShade = Color(0xFFF2741A);
   static const progressRail = Color(0xFFEFEFEF);
   static const doneBg = Color(0xFFE8E9C1);
   static const doneText = Color(0xFF256D2A);

@@ -404,7 +404,15 @@ class _EnergyCard extends ConsumerWidget {
           const _Tile(emoji: 'ui/bolt', color: DS.progressYellow),
           const SizedBox(width: 16),
           Expanded(
-            child: ProgressPill(value: startedToday ? target : energy, max: target),
+            child: ProgressPill(
+              value: startedToday ? target : energy,
+              max: target,
+              height: 30,
+              fill: DS.adventureFill,
+              gloss: DS.adventureGloss,
+              shade: DS.adventureShade,
+              rail: DS.card,
+            ),
           ),
         ],
       ),

@@ -28,7 +28,7 @@ class AdventureScreen extends ConsumerWidget {
         const SizedBox(height: 8),
         Text(copy.t('adventure.screen.idle_body'), textAlign: TextAlign.center, style: const TextStyle(color: DS.textPrimary)),
         const SizedBox(height: 16),
-        ProgressPill(value: energy, max: target),
+        ProgressPill(value: energy, max: target, fill: DS.adventureFill, gloss: DS.adventureGloss, shade: DS.adventureShade),
       ]);
     } else if (adv.status == 'returned' || now.millisecondsSinceEpoch >= adv.endsAt) {
       body = Column(children: [

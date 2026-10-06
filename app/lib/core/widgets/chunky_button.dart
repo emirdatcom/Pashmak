@@ -58,7 +58,8 @@ class _ChunkyButtonState extends State<ChunkyButton> {
       duration: dur,
       margin: EdgeInsets.only(top: DS.buttonEdge - edge),
       height: widget.height,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      // Icon-only buttons are often narrow (the goal tick is 46dp): keep the side padding small so the icon fits.
+      padding: EdgeInsets.symmetric(horizontal: widget.label.isEmpty ? 6 : 20),
       decoration: BoxDecoration(
         color: enabled ? widget.color : DS.neutralButton,
         borderRadius: BorderRadius.circular(DS.radiusButton),

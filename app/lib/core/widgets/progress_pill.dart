@@ -6,7 +6,7 @@ import 'emoji_art.dart';
 
 /// Yellow progress bar on a light rail with the "value/max" text centered on it.
 class ProgressPill extends StatelessWidget {
-  const ProgressPill({super.key, required this.value, required this.max, this.height = 24, this.label, this.showText = true, this.endEmoji, this.knob = false});
+  const ProgressPill({super.key, required this.value, required this.max, this.height = 24, this.label, this.showText = true, this.endEmoji, this.knob = false, this.fill = DS.progressYellow, this.gloss = DS.progressYellowGloss, this.shade = DS.progressYellowShade, this.rail = DS.progressRail});
   final int value;
   final int max;
   final double height;
@@ -19,6 +19,9 @@ class ProgressPill extends StatelessWidget {
   /// Always show at least a round knob of fill, even at zero (quest cards).
   final bool knob;
 
+  /// Fill colour, its highlight stripe and its deeper lower edge, and the empty rail behind it.
+  final Color fill, gloss, shade, rail;
+
   @override
   Widget build(BuildContext context) {
     final f = max <= 0 ? 0.0 : (value / max).clamp(0.0, 1.0);
@@ -29,7 +32,7 @@ class ProgressPill extends StatelessWidget {
       child: ExcludeSemantics(
         child: Container(
           height: height,
-          decoration: BoxDecoration(color: DS.progressRail, borderRadius: BorderRadius.circular(height)),
+          decoration: BoxDecoration(color: rail, borderRadius: BorderRadius.circular(height)),
           child: Stack(alignment: Alignment.center, children: [
             LayoutBuilder(
               builder: (context, c) {
@@ -45,11 +48,11 @@ class ProgressPill extends StatelessWidget {
                     // rounded, shiny bar instead of a flat band.
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(height),
-                      gradient: const LinearGradient(
+                      gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         stops: [0, 0.62, 1],
-                        colors: [DS.progressYellow, DS.progressYellow, DS.progressYellowShade],
+                        colors: [fill, fill, shade],
                       ),
                     ),
                     child: Stack(children: [
@@ -59,7 +62,7 @@ class ProgressPill extends StatelessWidget {
                           end: endEmoji == null ? height * 0.45 : height * 1.1,
                           top: height * 0.16,
                           height: height * 0.2,
-                          child: DecoratedBox(decoration: BoxDecoration(color: DS.progressYellowGloss, borderRadius: BorderRadius.circular(height))),
+                          child: DecoratedBox(decoration: BoxDecoration(color: gloss, borderRadius: BorderRadius.circular(height))),
                         ),
                       if (endEmoji != null) Align(alignment: AlignmentDirectional.centerEnd, child: EmojiArt(endEmoji!, size: height)),
                     ]),
