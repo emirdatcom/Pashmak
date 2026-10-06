@@ -155,6 +155,21 @@
     "source": "board8#19"
   },
   {
+    "id": "faces/blob_high",
+    "path": "assets/art/emoji/faces/blob_high.png",
+    "source": "moods#3"
+  },
+  {
+    "id": "faces/blob_low",
+    "path": "assets/art/emoji/faces/blob_low.png",
+    "source": "moods#1"
+  },
+  {
+    "id": "faces/blob_mid",
+    "path": "assets/art/emoji/faces/blob_mid.png",
+    "source": "moods#2"
+  },
+  {
     "id": "faces/hugging",
     "path": "assets/art/emoji/faces/hugging.png",
     "source": "sheet3#9"
@@ -238,6 +253,11 @@
     "id": "food/nuts",
     "path": "assets/art/emoji/food/nuts.png",
     "source": "board6#15"
+  },
+  {
+    "id": "food/pomegranate",
+    "path": "assets/art/emoji/food/pomegranate.png",
+    "source": "quests#4"
   },
   {
     "id": "food/salad",
@@ -550,6 +570,11 @@
     "source": "board10#6"
   },
   {
+    "id": "misc/crystal",
+    "path": "assets/art/emoji/misc/crystal.png",
+    "source": "quests#1"
+  },
+  {
     "id": "misc/desk_calendar",
     "path": "assets/art/emoji/misc/desk_calendar.png",
     "source": "board10#2"
@@ -605,6 +630,11 @@
     "source": "sheet2#24"
   },
   {
+    "id": "misc/padlock",
+    "path": "assets/art/emoji/misc/padlock.png",
+    "source": "quests#2"
+  },
+  {
     "id": "misc/paper_ball",
     "path": "assets/art/emoji/misc/paper_ball.png",
     "source": "board8#6"
@@ -648,6 +678,11 @@
     "id": "misc/treasure_chest",
     "path": "assets/art/emoji/misc/treasure_chest.png",
     "source": "board10#5"
+  },
+  {
+    "id": "nature/cloud",
+    "path": "assets/art/emoji/nature/cloud.png",
+    "source": "quests#3"
   },
   {
     "id": "nature/flower",

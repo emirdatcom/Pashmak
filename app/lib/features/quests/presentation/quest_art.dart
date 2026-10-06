@@ -20,7 +20,7 @@ class QuestArt {
 
   static const _byKey = <String, QuestArt>{
     // daily
-    'daily_claim': QuestArt('misc/crystal', DS.questTileGrey, fallback: 'misc/gift', kickerKey: 'quest.kicker.daily_claim', rays: true),
+    'daily_claim': QuestArt('misc/crystal', DS.questTileGrey, kickerKey: 'quest.kicker.daily_claim', rays: true),
     'checkin_word': QuestArt('connection/speech_bubble', DS.questTileBlue),
     'breathe_once': QuestArt('calm/box_breathing', DS.questTilePurple),
     'tick_one': QuestArt('misc/checklist', DS.questTileGreen),

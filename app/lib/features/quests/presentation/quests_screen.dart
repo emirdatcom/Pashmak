@@ -24,14 +24,6 @@ final todayReflectionProvider = Provider<Map<String, dynamic>?>((ref) {
   return prompts.isEmpty ? null : prompts[(today.year * 400 + today.month * 31 + today.day) % prompts.length];
 });
 
-/// Answer stickers that are still being drawn, mapped to the existing sticker shown until they land in the bundle.
-const _newArtFallback = <String, String>{
-  'faces/blob_low': 'faces/thinking',
-  'faces/blob_mid': 'faces/relieved',
-  'faces/blob_high': 'faces/smiling_blush',
-  'nature/cloud': 'calm/zzz',
-};
-
 const _headline = TextStyle(fontFamily: AppText.headline, fontFamilyFallback: AppText.headlineFallback);
 
 /// Quests tab (screenshots 01/04): season banner, daily quests on a timeline with a countdown to the next day, and
@@ -157,7 +149,7 @@ class _SeasonBanner extends ConsumerWidget {
                     ),
                     _OutlinedTitle(pack.name),
                     Expanded(
-                      child: locked ? const Center(child: EmojiArt('misc/padlock', size: 96, fallback: 'ui/lock')) : const SizedBox(),
+                      child: locked ? const Center(child: EmojiArt('misc/padlock', size: 96)) : const SizedBox(),
                     ),
                     Padding(padding: const EdgeInsets.fromLTRB(36, 0, 36, 20), child: _Ribbon(ribbon)),
                   ],
@@ -526,7 +518,6 @@ class _ReflectScreenState extends ConsumerState<ReflectScreen> {
                                   _Option(
                                     diameter: d,
                                     sticker: (p['${o}_icon'] as String?) ?? 'faces/thinking',
-                                    fallback: _newArtFallback[p['${o}_icon']],
                                     label: copy.t(p['${o}_key'] as String),
                                     selected: _picked == o,
                                     onTap: () => setState(() => _picked = o),
@@ -559,10 +550,9 @@ class _ReflectScreenState extends ConsumerState<ReflectScreen> {
 }
 
 class _Option extends StatelessWidget {
-  const _Option({required this.diameter, required this.sticker, required this.label, required this.selected, required this.onTap, this.fallback});
+  const _Option({required this.diameter, required this.sticker, required this.label, required this.selected, required this.onTap});
   final double diameter;
   final String sticker;
-  final String? fallback;
   final String label;
   final bool selected;
   final VoidCallback onTap;
@@ -595,7 +585,7 @@ class _Option extends StatelessWidget {
                   child: AnimatedScale(
                     duration: dur,
                     scale: selected ? 1.12 : 1,
-                    child: EmojiArt(sticker, size: diameter * 0.46, fallback: fallback),
+                    child: EmojiArt(sticker, size: diameter * 0.46),
                   ),
                 ),
                 const SizedBox(height: 12),

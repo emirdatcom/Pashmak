@@ -1,18 +1,18 @@
 # پرامپت‌های آرت: صفحه‌ی مأموریت‌ها و سؤال روزانه
 
-کد این تصاویر را از این مسیرها می‌خواند. تا وقتی فایلی نیامده، جایگزین موقت نشان داده می‌شود و صفحه خراب نمی‌شود.
+کد این تصاویر را از این مسیرها می‌خواند. استیکرها و صورتک‌ها تحویل و جایگذاری شده‌اند (✅)؛ فقط بنرهای فصل مانده‌اند و تا آمدنشان بنر با گرادیان تیره نشان داده می‌شود.
 
-| فایل | کجا دیده می‌شود | جایگزین موقت |
+| فایل | کجا دیده می‌شود | وضعیت |
 |---|---|---|
-| `app/assets/art/emoji/misc/crystal.png` | کاشی مأموریت «دریافت پاداش امروز» | `misc/gift` |
-| `app/assets/art/emoji/misc/padlock.png` | قفل بزرگ وسط بنر فصل | `ui/lock` |
-| `app/assets/art/emoji/faces/blob_low.png` | گزینه‌ی منفی سؤال‌های «حست دربارهٔ …» | `faces/thinking` |
-| `app/assets/art/emoji/faces/blob_mid.png` | گزینه‌ی خنثی | `faces/relieved` |
-| `app/assets/art/emoji/faces/blob_high.png` | گزینه‌ی مثبت | `faces/smiling_blush` |
-| `app/assets/art/emoji/nature/cloud.png` | گزینه‌ی «یه کم ابری» | `calm/zzz` |
-| `app/assets/art/background/season_yalda.webp` | تصویر پس‌زمینه‌ی بنر فصل یلدا | گرادیان قهوه‌ای تیره |
-| `app/assets/art/background/season_nowruz.webp` | بنر نوروز | همان |
-| `app/assets/art/background/season_ramadan.webp` | بنر رمضان | همان |
+| `app/assets/art/emoji/misc/crystal.png` | کاشی مأموریت «دریافت پاداش امروز» | ✅ |
+| `app/assets/art/emoji/misc/padlock.png` | قفل بزرگ وسط بنر فصل | ✅ |
+| `app/assets/art/emoji/faces/blob_low.png` | گزینه‌ی منفی سؤال‌های «حست دربارهٔ …» | ✅ |
+| `app/assets/art/emoji/faces/blob_mid.png` | گزینه‌ی خنثی | ✅ |
+| `app/assets/art/emoji/faces/blob_high.png` | گزینه‌ی مثبت | ✅ |
+| `app/assets/art/emoji/nature/cloud.png` | گزینه‌ی «یه کم ابری» | ✅ |
+| `app/assets/art/background/season_yalda.webp` | تصویر پس‌زمینه‌ی بنر فصل یلدا | مانده (گرادیان تیره) |
+| `app/assets/art/background/season_nowruz.webp` | بنر نوروز | مانده |
+| `app/assets/art/background/season_ramadan.webp` | بنر رمضان | مانده |
 
 استیکرها: PNG شفاف، ۳۸۴×۳۸۴، شیء وسط تصویر و حدود ۹۰٪ از کادر. بنرها: WebP، ۱۰۸۰×۶۶۷ (نسبت ۱٫۶۲)، حداکثر ۱۵۰KB.
 
