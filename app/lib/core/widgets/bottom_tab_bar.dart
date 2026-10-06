@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../theme/tokens.dart';
+import 'emoji_art.dart';
 
 class TabSpec {
-  const TabSpec({required this.icon, required this.label, required this.color});
-  final IconData icon;
+  const TabSpec({required this.emoji, required this.label, this.onDark = false});
+  final String emoji; // sticker id, see EmojiArt
   final String label;
-  final Color color; // the colour of the icon (icons are coloured, not outlined)
+  final bool onDark; // white labels and a glass highlight, for tabs with a mid or dark background
 }
 
 /// Bottom bar whose background follows the current tab. The selected tab gets a soft rounded highlight.
@@ -36,11 +37,11 @@ class BottomTabBar extends StatelessWidget {
                         onTap: () => onSelected(i),
                         child: Center(
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                            decoration: BoxDecoration(color: i == index ? DS.card.withValues(alpha: 0.55) : null, borderRadius: BorderRadius.circular(18)),
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(color: i == index ? (tabs[index].onDark ? DS.glass : DS.card.withValues(alpha: 0.55)) : null, borderRadius: BorderRadius.circular(18)),
                             child: Column(mainAxisSize: MainAxisSize.min, children: [
-                              Icon(tabs[i].icon, color: tabs[i].color, size: 28),
-                              Text(tabs[i].label, style: const TextStyle(color: DS.textPrimary, fontSize: 11, fontWeight: FontWeight.w700)),
+                              EmojiArt(tabs[i].emoji, size: 32),
+                              Text(tabs[i].label, style: TextStyle(color: tabs[index].onDark ? DS.onDark : DS.textPrimary, fontSize: 12, fontWeight: FontWeight.w800)),
                             ]),
                           ),
                         ),

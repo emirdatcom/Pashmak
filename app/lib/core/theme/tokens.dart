@@ -65,6 +65,8 @@ class DS {
   static const bgExercises = Color(0xFF6F52BC);
   static const bgBreathing = Color(0xFF96DFB2);
   static const bgHomeGround = Color(0xFF7BB65C);
+  /// The pinned top bar of home once the page is scrolled (a deeper shade of the ground).
+  static const bgHomeBar = Color(0xFF4E8F3E);
   static const bgHomeSky = Color(0xFFBFE3F2);
   static const bgHomeSkyEvening = Color(0xFFF4C79A);
   static const bgHomeSkyNight = Color(0xFF2F3E6B);
@@ -97,6 +99,35 @@ class DS {
 
   // surfaces and text
   static const card = Color(0xFFFFFFFF);
+  /// Bottom sheets: an off-white panel holding white cards with a soft 2dp outline instead of a shadow.
+  static const sheetBg = Color(0xFFF7F7F7);
+  static const outline = Color(0xFFE6E6E6);
+  static const chipBg = Color(0xFFEFEFEF);
+  /// Secondary labels inside the goal card (lighter than textSecondary, as in the reference).
+  static const textMuted = Color(0xFF8E9AA3);
+  /// Translucent white over the green page: suggestion rows, the selected category, the close button.
+  static const glass = Color(0x38FFFFFF);
+  /// Dark translucent card over the home scene, and the backdrop of the focused goal.
+  static const glassDark = Color(0x66123A1C);
+  static const scrimDeep = Color(0xD9061A12);
+  static const radiusSheet = 32.0;
+
+  // exercise kinds (the blob behind an exercise sticker)
+  static const exReflection = Color(0xFF6FBFD0);
+  static const exBreathing = Color(0xFF7B6FE0);
+  static const exGrounding = Color(0xFFE9525C);
+  static const exMovement = Color(0xFFF0409A);
+  static const exTimer = Color(0xFFFFCB5C);
+
+  static Color exerciseKind(String kind) => switch (kind) {
+        'reflection' => exReflection,
+        'grounding' => exGrounding,
+        'movement' => exMovement,
+        'timer' => exTimer,
+        _ => exBreathing,
+      };
+
+  static const radiusOutlineCard = 24.0;
   static const textPrimary = Color(0xFF2E3A3F);
   static const textSecondary = Color(0xFF47535A);
   static const onDark = Color(0xFFFFFFFF);
@@ -133,6 +164,8 @@ class DS {
   static const catFlowerCore = Color(0xFFFFD166);
 
   static const radiusCard = 28.0;
+  /// Home cards are low (about 66dp), so they take a smaller corner than the tall cards.
+  static const radiusHomeCard = 20.0;
   static const radiusButton = 20.0;
   static const buttonEdge = 4.0;
 }

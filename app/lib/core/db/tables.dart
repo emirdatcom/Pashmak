@@ -21,15 +21,19 @@ class Habits extends Table {
   // prompt 22 (schema v3): goal-library fields. `goalKey` supersedes `templateKey` (kept for old data).
   TextColumn get goalKey => text().nullable()();
   TextColumn get areaKey => text().nullable()();
-  TextColumn get timeOfDay => text().withDefault(const Constant('any'))(); // morning | afternoon | evening | any
-  TextColumn get repeatType => text().withDefault(const Constant('daily'))(); // daily | weekly | once
-  TextColumn get dueDay => text().nullable()(); // local_day, for `once`
+  TextColumn get timeOfDay => text().withDefault(const Constant('any'))(); // morning | afternoon | evening | bedtime | any
+  TextColumn get repeatType => text().withDefault(const Constant('daily'))(); // daily | weekly | monthly | once
+  TextColumn get dueDay => text().nullable()(); // local_day, see goalScheduledOn
   TextColumn get title => text().nullable()();
   TextColumn get icon => text().withDefault(const Constant('check'))();
   TextColumn get scheduleType => text().withDefault(const Constant('daily'))();
   IntColumn get weekdaysMask => integer().withDefault(const Constant(127))();
   IntColumn get targetPerDay => integer().withDefault(const Constant(1))();
   IntColumn get reminderMinutes => integer().nullable()();
+  // schema v4: a linked exercise (exercises pack key) that the goal starts, and carry-over of an undone `once` goal.
+  // Both nullable so snapshots written before v4 restore without an upgrader (null = not set).
+  TextColumn get exerciseKey => text().nullable()();
+  BoolColumn get keepUntilDone => boolean().nullable()();
   BoolColumn get isCustom => boolean().withDefault(const Constant(false))();
   BoolColumn get isLocked => boolean().withDefault(const Constant(false))();
   IntColumn get archivedAt => integer().nullable()();

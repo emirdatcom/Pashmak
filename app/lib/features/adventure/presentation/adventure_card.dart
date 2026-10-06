@@ -33,20 +33,40 @@ class AdventureCard extends ConsumerWidget {
     }
     return Padding(
       padding: const EdgeInsets.only(bottom: 0),
-      child: RoundCard(
-        color: returned ? DS.doneBg : DS.card,
-        onTap: () => context.push(Routes.adventure),
-        child: Row(children: [
-          Icon(returned ? Icons.card_giftcard : Icons.explore, color: returned ? DS.doneText : DS.areaFocus, size: 32),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(title, style: const TextStyle(color: DS.textPrimary, fontWeight: FontWeight.w700)),
-              Text(subtitle, style: const TextStyle(color: DS.textSecondary, fontSize: 13)),
+      child: Material(
+        color: DS.glassDark,
+        borderRadius: BorderRadius.circular(DS.radiusHomeCard),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: () => context.push(Routes.adventure),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            child: Row(children: [
+              SizedBox(
+                width: 52,
+                height: 52,
+                child: Stack(children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(color: DS.progressYellow, borderRadius: BorderRadius.circular(17)),
+                    child: EmojiArt(returned ? 'misc/treasure_chest' : 'misc/compass', size: 34),
+                  ),
+                  if (returned) const PositionedDirectional(end: 0, bottom: 0, child: EmojiArt('ui/check', size: 20)),
+                ]),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(title, style: const TextStyle(color: DS.onDark, fontSize: 16, fontWeight: FontWeight.w800)),
+                  const SizedBox(height: 2),
+                  Text(subtitle, style: const TextStyle(color: DS.onDark, fontSize: 14)),
+                ]),
+              ),
             ]),
           ),
-          const Icon(Icons.chevron_left, color: DS.textSecondary),
-        ]),
+        ),
       ),
     );
   }

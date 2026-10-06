@@ -129,6 +129,8 @@ flowchart LR
 
 ## تغییرات پرامپت 22
 - مهاجرت drift v3: `habits` + `area_key, time_of_day, repeat_type (daily|weekly|once), due_day, goal_key` (داده‌ی `template_key` به `goal_key` کپی می‌شود؛ ستون قدیمی می‌ماند)؛ جدول‌های جدید `onboarding_answers(key,value)`، `discoveries_found(discovery_key, found_at)`، `quest_progress(quest_key, progress, claimed_at)`، `quest_daily_state(local_day, quest_keys JSON, claimed JSON)`، `shop_rotation(local_day, refresh_count, item_keys JSON)`.
+- مهاجرت drift v4 (افزایشی): `habits` + `exercise_key` (کلید تمرین متصل؛ با تمام‌شدن آن تمرین، هدف‌های امروزِ متصل تیک می‌خورند) و `keep_until_done` (هدف `once` انجام‌نشده روزهای بعد هم می‌ماند). هر دو nullable تا اسنپ‌شات‌های قبل از v4 بدون upgrader بازیابی شوند. `target_per_day` از صفحه‌ی «گزینه‌های بیشتر» تنظیم می‌شود.
+- زمان‌بندی هدف (بدون تغییر اسکیما، `goalScheduledOn`): `time_of_day` مقدار `bedtime` هم می‌گیرد؛ `repeat_type` مقدار `monthly` هم می‌گیرد (روزِ ماهِ شمسیِ `due_day`، در ماه کوتاه‌تر آخرین روز)؛ برای تکرارهای دیگر `due_day` اختیاری و به معنی «اولین روز» است.
 - `user_settings`: `pause_mode`, `paused_since`. `app_meta`: `user_name`, `cat_stage`, `cat_fur`, `cat_trait`.
 - ledger reasonهای جدید: `quest_reward`, `shop_refresh`, `item_sell`.
 - اقتصاد: `economy.energy_per_goal` (5) جایگزین `energy_per_habit`؛ `adventure.daily_energy_target` (20): با پرشدن نوار، ماجراجویی روز خودکار شروع می‌شود (حداکثر یکی در روز؛ انرژی اضافه تا `economy.energy_cap` ذخیره می‌شود).

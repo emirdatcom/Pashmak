@@ -1,4 +1,5 @@
 import '../../../core/time/local_day.dart';
+import '../../habits/domain/goal_schedule.dart';
 
 /// Priority order of docs/50 §3 rule 2 (first = highest).
 const notificationPriority = ['trial', 'support_reply', 'habit_reminder', 'cat_returned', 'evening_checkin', 'morning', 'seasonal', 'comeback', 'streak_gentle'];
@@ -13,8 +14,8 @@ class PlanHabit {
   final int weekdaysMask; // bit0 = Saturday
   final bool isLocked;
   final bool doneToday;
-  final String repeatType; // daily | weekly | once
-  final String? dueDay; // local_day of a `once` goal
+  final String repeatType; // daily | weekly | monthly | once
+  final String? dueDay; // see goalScheduledOn
 }
 
 class PlanAdventure {
@@ -157,9 +158,7 @@ List<PlanItem> planNotifications(PlanInput i) {
     if (s.on('habit_reminder')) {
       for (final h in i.habits) {
         if (h.reminderMinutes == null || h.isLocked) continue;
-        final scheduled = h.repeatType == 'once'
-            ? h.dueDay == d.value
-            : (h.scheduleType == 'daily' || (h.weekdaysMask >> d.weekdayIndex) & 1 == 1);
+        final scheduled = goalScheduledOn(repeatType: h.repeatType, dueDay: h.dueDay, scheduleType: h.scheduleType, weekdaysMask: h.weekdaysMask, day: d);
         if (!scheduled || (isToday && h.doneToday)) continue;
         final tk = h.templateKey;
         cands.add(PlanItem(

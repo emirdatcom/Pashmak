@@ -16,6 +16,7 @@ import '../../core_loop_providers.dart';
 import '../../habits/domain/habit_service.dart';
 import '../../home/presentation/home_screen.dart' show passGate;
 import '../domain/exercise_runner.dart';
+import 'exercise_picker.dart';
 
 List<Map<String, dynamic>> _exercises(WidgetRef ref) =>
     ((ref.watch(contentRepositoryProvider).entries('exercises') as List?) ?? const []).cast<Map<String, dynamic>>();
@@ -82,7 +83,7 @@ class _ExercisesState extends ConsumerState<ExercisesScreen> {
                     if (context.mounted) await context.push(Routes.exerciseRun(e['key'] as String));
                   },
                   child: Row(children: [
-                    Container(width: 52, height: 52, decoration: BoxDecoration(color: DS.bgBreathing.withValues(alpha: 0.5), borderRadius: BorderRadius.circular(16)), child: const Icon(Icons.air, color: DS.textPrimary)),
+                    ExerciseBlob(e, size: 52),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

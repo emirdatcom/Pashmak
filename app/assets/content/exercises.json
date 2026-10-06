@@ -43,7 +43,9 @@
         }
       ],
       "tab": "calm",
-      "reward_energy": 10
+      "reward_energy": 10,
+      "kind": "breathing",
+      "icon": "body/lungs"
     },
     {
       "key": "gratitude",
@@ -58,7 +60,9 @@
         "exercise.gratitude.prompt.3"
       ],
       "tab": "calm",
-      "reward_energy": 10
+      "reward_energy": 10,
+      "kind": "reflection",
+      "icon": "hands/folded_hands"
     },
     {
       "key": "guided_journal",
@@ -75,7 +79,9 @@
         "exercise.guided_journal.prompt.5"
       ],
       "tab": "focus",
-      "reward_energy": 10
+      "reward_energy": 10,
+      "kind": "reflection",
+      "icon": "misc/journal"
     },
     {
       "key": "muscle_relax",
@@ -122,7 +128,9 @@
         }
       ],
       "tab": "night",
-      "reward_energy": 10
+      "reward_energy": 10,
+      "kind": "grounding",
+      "icon": "body/flexed_arm"
     },
     {
       "key": "afternoon_tea",
@@ -164,7 +172,9 @@
         }
       ],
       "tab": "calm",
-      "reward_energy": 10
+      "reward_energy": 10,
+      "kind": "grounding",
+      "icon": "food/tea_glass"
     },
     {
       "key": "breathing_square",
@@ -204,7 +214,9 @@
           "seconds": 5,
           "animation": "none"
         }
-      ]
+      ],
+      "kind": "breathing",
+      "icon": "calm/box_breathing"
     },
     {
       "key": "breathing_478",
@@ -244,7 +256,9 @@
           "seconds": 5,
           "animation": "none"
         }
-      ]
+      ],
+      "kind": "breathing",
+      "icon": "nature/moon"
     },
     {
       "key": "breathing_evening_tea",
@@ -284,7 +298,9 @@
           "seconds": 5,
           "animation": "none"
         }
-      ]
+      ],
+      "kind": "breathing",
+      "icon": "food/matcha"
     },
     {
       "key": "breathing_before_sleep",
@@ -324,7 +340,9 @@
           "seconds": 5,
           "animation": "none"
         }
-      ]
+      ],
+      "kind": "breathing",
+      "icon": "connection/teddy_bear"
     },
     {
       "key": "breathing_morning",
@@ -364,7 +382,9 @@
           "seconds": 5,
           "animation": "none"
         }
-      ]
+      ],
+      "kind": "breathing",
+      "icon": "nature/sun_face"
     },
     {
       "key": "breathing_energy",
@@ -404,7 +424,9 @@
           "seconds": 5,
           "animation": "none"
         }
-      ]
+      ],
+      "kind": "breathing",
+      "icon": "animals/lion"
     },
     {
       "key": "breathing_long_exhale",
@@ -444,7 +466,648 @@
           "seconds": 5,
           "animation": "none"
         }
-      ]
+      ],
+      "kind": "breathing",
+      "icon": "calm/dove_peace"
+    },
+    {
+      "key": "reflect_morning",
+      "premium": true,
+      "duration_s": 180,
+      "type": "journal_prompt",
+      "collection": "focus",
+      "disclaimer_key": "disclaimer.exercise",
+      "prompts": [
+        "exercise.reflect_morning.prompt.1",
+        "exercise.reflect_morning.prompt.2",
+        "exercise.reflect_morning.prompt.3"
+      ],
+      "tab": "morning",
+      "reward_energy": 10,
+      "kind": "reflection",
+      "icon": "time/morning"
+    },
+    {
+      "key": "reflect_afternoon",
+      "premium": true,
+      "duration_s": 180,
+      "type": "journal_prompt",
+      "collection": "focus",
+      "disclaimer_key": "disclaimer.exercise",
+      "prompts": [
+        "exercise.reflect_afternoon.prompt.1",
+        "exercise.reflect_afternoon.prompt.2",
+        "exercise.reflect_afternoon.prompt.3"
+      ],
+      "tab": "focus",
+      "reward_energy": 10,
+      "kind": "reflection",
+      "icon": "time/afternoon"
+    },
+    {
+      "key": "reflect_night",
+      "premium": true,
+      "duration_s": 180,
+      "type": "journal_prompt",
+      "collection": "focus",
+      "disclaimer_key": "disclaimer.exercise",
+      "prompts": [
+        "exercise.reflect_night.prompt.1",
+        "exercise.reflect_night.prompt.2",
+        "exercise.reflect_night.prompt.3"
+      ],
+      "tab": "night",
+      "reward_energy": 10,
+      "kind": "reflection",
+      "icon": "time/bedtime"
+    },
+    {
+      "key": "thoughts_dump",
+      "premium": true,
+      "duration_s": 180,
+      "type": "journal_prompt",
+      "collection": "focus",
+      "disclaimer_key": "disclaimer.exercise",
+      "prompts": [
+        "exercise.thoughts_dump.prompt.1",
+        "exercise.thoughts_dump.prompt.2",
+        "exercise.thoughts_dump.prompt.3"
+      ],
+      "tab": "calm",
+      "reward_energy": 10,
+      "kind": "reflection",
+      "icon": "misc/notepad_pencil"
+    },
+    {
+      "key": "vent_space",
+      "premium": true,
+      "duration_s": 180,
+      "type": "journal_prompt",
+      "collection": "focus",
+      "disclaimer_key": "disclaimer.exercise",
+      "prompts": [
+        "exercise.vent_space.prompt.1",
+        "exercise.vent_space.prompt.2",
+        "exercise.vent_space.prompt.3"
+      ],
+      "tab": "calm",
+      "reward_energy": 10,
+      "kind": "reflection",
+      "icon": "connection/speech_bubble"
+    },
+    {
+      "key": "kind_words",
+      "premium": true,
+      "duration_s": 180,
+      "type": "journal_prompt",
+      "collection": "focus",
+      "disclaimer_key": "disclaimer.exercise",
+      "prompts": [
+        "exercise.kind_words.prompt.1",
+        "exercise.kind_words.prompt.2",
+        "exercise.kind_words.prompt.3"
+      ],
+      "tab": "morning",
+      "reward_energy": 10,
+      "kind": "reflection",
+      "icon": "hearts/sparkling_heart"
+    },
+    {
+      "key": "good_memory",
+      "premium": true,
+      "duration_s": 180,
+      "type": "journal_prompt",
+      "collection": "focus",
+      "disclaimer_key": "disclaimer.exercise",
+      "prompts": [
+        "exercise.good_memory.prompt.1",
+        "exercise.good_memory.prompt.2",
+        "exercise.good_memory.prompt.3"
+      ],
+      "tab": "calm",
+      "reward_energy": 10,
+      "kind": "reflection",
+      "icon": "connection/selfie"
+    },
+    {
+      "key": "small_joys",
+      "premium": true,
+      "duration_s": 180,
+      "type": "journal_prompt",
+      "collection": "focus",
+      "disclaimer_key": "disclaimer.exercise",
+      "prompts": [
+        "exercise.small_joys.prompt.1",
+        "exercise.small_joys.prompt.2",
+        "exercise.small_joys.prompt.3"
+      ],
+      "tab": "calm",
+      "reward_energy": 10,
+      "kind": "reflection",
+      "icon": "misc/magnifier"
+    },
+    {
+      "key": "friendships",
+      "premium": true,
+      "duration_s": 180,
+      "type": "journal_prompt",
+      "collection": "focus",
+      "disclaimer_key": "disclaimer.exercise",
+      "prompts": [
+        "exercise.friendships.prompt.1",
+        "exercise.friendships.prompt.2",
+        "exercise.friendships.prompt.3"
+      ],
+      "tab": "calm",
+      "reward_energy": 10,
+      "kind": "reflection",
+      "icon": "connection/people_hugging"
+    },
+    {
+      "key": "confidence_boost",
+      "premium": true,
+      "duration_s": 180,
+      "type": "journal_prompt",
+      "collection": "focus",
+      "disclaimer_key": "disclaimer.exercise",
+      "prompts": [
+        "exercise.confidence_boost.prompt.1",
+        "exercise.confidence_boost.prompt.2",
+        "exercise.confidence_boost.prompt.3"
+      ],
+      "tab": "energize",
+      "reward_energy": 10,
+      "kind": "reflection",
+      "icon": "misc/medal_first"
+    },
+    {
+      "key": "energy_check",
+      "premium": true,
+      "duration_s": 180,
+      "type": "journal_prompt",
+      "collection": "focus",
+      "disclaimer_key": "disclaimer.exercise",
+      "prompts": [
+        "exercise.energy_check.prompt.1",
+        "exercise.energy_check.prompt.2",
+        "exercise.energy_check.prompt.3"
+      ],
+      "tab": "energize",
+      "reward_energy": 10,
+      "kind": "reflection",
+      "icon": "tech/battery"
+    },
+    {
+      "key": "sleep_reflect",
+      "premium": true,
+      "duration_s": 180,
+      "type": "journal_prompt",
+      "collection": "focus",
+      "disclaimer_key": "disclaimer.exercise",
+      "prompts": [
+        "exercise.sleep_reflect.prompt.1",
+        "exercise.sleep_reflect.prompt.2",
+        "exercise.sleep_reflect.prompt.3"
+      ],
+      "tab": "night",
+      "reward_energy": 10,
+      "kind": "reflection",
+      "icon": "calm/zzz"
+    },
+    {
+      "key": "name_feeling",
+      "premium": true,
+      "duration_s": 180,
+      "type": "journal_prompt",
+      "collection": "focus",
+      "disclaimer_key": "disclaimer.exercise",
+      "prompts": [
+        "exercise.name_feeling.prompt.1",
+        "exercise.name_feeling.prompt.2",
+        "exercise.name_feeling.prompt.3"
+      ],
+      "tab": "calm",
+      "reward_energy": 10,
+      "kind": "reflection",
+      "icon": "faces/thinking"
+    },
+    {
+      "key": "tomorrow_plan",
+      "premium": true,
+      "duration_s": 180,
+      "type": "journal_prompt",
+      "collection": "focus",
+      "disclaimer_key": "disclaimer.exercise",
+      "prompts": [
+        "exercise.tomorrow_plan.prompt.1",
+        "exercise.tomorrow_plan.prompt.2",
+        "exercise.tomorrow_plan.prompt.3"
+      ],
+      "tab": "night",
+      "reward_energy": 10,
+      "kind": "reflection",
+      "icon": "misc/flag_in_hole"
+    },
+    {
+      "key": "ground_54321",
+      "premium": true,
+      "duration_s": 121,
+      "type": "timer_steps",
+      "collection": "stress",
+      "disclaimer_key": "disclaimer.exercise",
+      "steps": [
+        {
+          "text_key": "exercise.ground_54321.step.intro",
+          "seconds": 6,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.ground_54321.step.see",
+          "seconds": 25,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.ground_54321.step.touch",
+          "seconds": 25,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.ground_54321.step.hear",
+          "seconds": 25,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.ground_54321.step.smell",
+          "seconds": 20,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.ground_54321.step.taste",
+          "seconds": 15,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.ground_54321.step.outro",
+          "seconds": 5,
+          "animation": "none"
+        }
+      ],
+      "tab": "calm",
+      "reward_energy": 10,
+      "kind": "grounding",
+      "icon": "body/eye"
+    },
+    {
+      "key": "ground_333",
+      "premium": true,
+      "duration_s": 70,
+      "type": "timer_steps",
+      "collection": "stress",
+      "disclaimer_key": "disclaimer.exercise",
+      "steps": [
+        {
+          "text_key": "exercise.ground_333.step.intro",
+          "seconds": 5,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.ground_333.step.see",
+          "seconds": 20,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.ground_333.step.hear",
+          "seconds": 20,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.ground_333.step.move",
+          "seconds": 20,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.ground_333.step.outro",
+          "seconds": 5,
+          "animation": "none"
+        }
+      ],
+      "tab": "calm",
+      "reward_energy": 10,
+      "kind": "grounding",
+      "icon": "misc/anchor"
+    },
+    {
+      "key": "body_scan",
+      "premium": true,
+      "duration_s": 137,
+      "type": "timer_steps",
+      "collection": "sleep",
+      "disclaimer_key": "disclaimer.exercise",
+      "steps": [
+        {
+          "text_key": "exercise.body_scan.step.intro",
+          "seconds": 6,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.body_scan.step.feet",
+          "seconds": 25,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.body_scan.step.legs",
+          "seconds": 25,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.body_scan.step.belly",
+          "seconds": 25,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.body_scan.step.shoulders",
+          "seconds": 25,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.body_scan.step.face",
+          "seconds": 25,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.body_scan.step.outro",
+          "seconds": 6,
+          "animation": "none"
+        }
+      ],
+      "tab": "night",
+      "reward_energy": 10,
+      "kind": "grounding",
+      "icon": "calm/meditation"
+    },
+    {
+      "key": "stretch_morning",
+      "premium": true,
+      "duration_s": 135,
+      "type": "timer_steps",
+      "collection": "focus",
+      "disclaimer_key": "disclaimer.exercise",
+      "steps": [
+        {
+          "text_key": "exercise.stretch_morning.step.intro",
+          "seconds": 5,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.stretch_morning.step.reach",
+          "seconds": 20,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.stretch_morning.step.side_right",
+          "seconds": 20,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.stretch_morning.step.side_left",
+          "seconds": 20,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.stretch_morning.step.neck",
+          "seconds": 20,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.stretch_morning.step.shoulders",
+          "seconds": 20,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.stretch_morning.step.fold",
+          "seconds": 25,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.stretch_morning.step.outro",
+          "seconds": 5,
+          "animation": "none"
+        }
+      ],
+      "tab": "morning",
+      "reward_energy": 10,
+      "kind": "movement",
+      "icon": "animals/chick"
+    },
+    {
+      "key": "stretch_desk",
+      "premium": true,
+      "duration_s": 130,
+      "type": "timer_steps",
+      "collection": "focus",
+      "disclaimer_key": "disclaimer.exercise",
+      "steps": [
+        {
+          "text_key": "exercise.stretch_desk.step.intro",
+          "seconds": 5,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.stretch_desk.step.neck_right",
+          "seconds": 20,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.stretch_desk.step.neck_left",
+          "seconds": 20,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.stretch_desk.step.shoulders",
+          "seconds": 20,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.stretch_desk.step.wrists",
+          "seconds": 20,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.stretch_desk.step.twist_right",
+          "seconds": 20,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.stretch_desk.step.twist_left",
+          "seconds": 20,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.stretch_desk.step.outro",
+          "seconds": 5,
+          "animation": "none"
+        }
+      ],
+      "tab": "focus",
+      "reward_energy": 10,
+      "kind": "movement",
+      "icon": "tech/keyboard"
+    },
+    {
+      "key": "stretch_bedtime",
+      "premium": true,
+      "duration_s": 150,
+      "type": "timer_steps",
+      "collection": "sleep",
+      "disclaimer_key": "disclaimer.exercise",
+      "steps": [
+        {
+          "text_key": "exercise.stretch_bedtime.step.intro",
+          "seconds": 5,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.stretch_bedtime.step.child",
+          "seconds": 30,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.stretch_bedtime.step.knees",
+          "seconds": 30,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.stretch_bedtime.step.twist_right",
+          "seconds": 25,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.stretch_bedtime.step.twist_left",
+          "seconds": 25,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.stretch_bedtime.step.rest",
+          "seconds": 30,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.stretch_bedtime.step.outro",
+          "seconds": 5,
+          "animation": "none"
+        }
+      ],
+      "tab": "night",
+      "reward_energy": 10,
+      "kind": "movement",
+      "icon": "animals/koala"
+    },
+    {
+      "key": "couch_moves",
+      "premium": true,
+      "duration_s": 115,
+      "type": "timer_steps",
+      "collection": "focus",
+      "disclaimer_key": "disclaimer.exercise",
+      "steps": [
+        {
+          "text_key": "exercise.couch_moves.step.intro",
+          "seconds": 5,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.couch_moves.step.ankles",
+          "seconds": 20,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.couch_moves.step.knees",
+          "seconds": 25,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.couch_moves.step.arms",
+          "seconds": 20,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.couch_moves.step.twist_right",
+          "seconds": 20,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.couch_moves.step.twist_left",
+          "seconds": 20,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.couch_moves.step.outro",
+          "seconds": 5,
+          "animation": "none"
+        }
+      ],
+      "tab": "energize",
+      "reward_energy": 10,
+      "kind": "movement",
+      "icon": "animals/sloth"
+    },
+    {
+      "key": "focus_timer",
+      "premium": true,
+      "duration_s": 300,
+      "type": "timer_steps",
+      "collection": "focus",
+      "disclaimer_key": "disclaimer.exercise",
+      "steps": [
+        {
+          "text_key": "exercise.focus_timer.step.intro",
+          "seconds": 5,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.focus_timer.step.work",
+          "seconds": 290,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.focus_timer.step.outro",
+          "seconds": 5,
+          "animation": "none"
+        }
+      ],
+      "tab": "focus",
+      "reward_energy": 10,
+      "kind": "timer",
+      "icon": "misc/stopwatch"
+    },
+    {
+      "key": "quiet_sit",
+      "premium": true,
+      "duration_s": 180,
+      "type": "timer_steps",
+      "collection": "stress",
+      "disclaimer_key": "disclaimer.exercise",
+      "steps": [
+        {
+          "text_key": "exercise.quiet_sit.step.intro",
+          "seconds": 5,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.quiet_sit.step.sit",
+          "seconds": 170,
+          "animation": "none"
+        },
+        {
+          "text_key": "exercise.quiet_sit.step.outro",
+          "seconds": 5,
+          "animation": "none"
+        }
+      ],
+      "tab": "calm",
+      "reward_energy": 10,
+      "kind": "timer",
+      "icon": "calm/candle"
     }
   ]
 }

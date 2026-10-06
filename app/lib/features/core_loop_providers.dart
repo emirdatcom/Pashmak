@@ -204,7 +204,8 @@ final exerciseServiceProvider = Provider<ExerciseService>((ref) => ExerciseServi
     today: () => ref.read(todayProvider),
     energyPerExercise: () => ref.read(appConfigProvider).energyPerExercise,
     rewardsPerDay: () => ref.read(appConfigProvider).exerciseRewardsPerDay,
-    freeExercises: () => ref.read(appConfigProvider).freeExercises));
+    freeExercises: () => ref.read(appConfigProvider).freeExercises,
+    onCompleted: (key) => ref.read(habitServiceProvider).completeLinked(key)));
 
 /// Base shop items plus every seasonal item (owned seasonal items must stay resolvable after the season).
 List<ShopItem> shopCatalog(ContentRepository content, SeasonalCatalog seasonal) => [

@@ -21,7 +21,7 @@ class ExerciseCompletion {
 /// analytics or logs (docs/80 §1).
 class ExerciseService {
   ExerciseService(this._db, this._clock, this._wallet, this._streak, this._analytics, this._publisher,
-      {required this.today, required this.energyPerExercise, required this.rewardsPerDay, required this.freeExercises});
+      {required this.today, required this.energyPerExercise, required this.rewardsPerDay, required this.freeExercises, this.onCompleted});
 
   final AppDatabase _db;
   final Clock _clock;
@@ -33,6 +33,9 @@ class ExerciseService {
   final int Function() energyPerExercise;
   final int Function() rewardsPerDay;
   final List<String> Function() freeExercises;
+
+  /// Called with the exercise key after a session is completed (ticks the goals linked to it).
+  final Future<void> Function(String exerciseKey)? onCompleted;
 
   /// `limits.free_exercises` from config is the single source of truth for locks.
   bool isLocked(String exerciseKey, {required bool isPremium}) => !isPremium && !freeExercises().contains(exerciseKey);
@@ -67,6 +70,7 @@ class ExerciseService {
       if (canReward) granted = await _wallet.grant(Currency.energy, energyPerExercise(), 'exercise_done', sessionId) ?? 0;
     });
     await _streak.recordActivity(today());
+    await onCompleted?.call(session.exerciseKey);
     await _analytics.track(AnalyticsEvent.exerciseCompleted, {'exercise_key': session.exerciseKey, 'duration_s': durationS});
     await _publisher.refresh();
     return ExerciseCompletion(energyGranted: granted, rewarded: granted > 0);

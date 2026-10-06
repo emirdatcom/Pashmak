@@ -13,7 +13,7 @@ void main() {
   late SchemaVerifier verifier;
   setUpAll(() => verifier = SchemaVerifier(GeneratedHelper()));
 
-  test('v1 → v3 (through the v2 support chat cache) keeps existing data', () async {
+  test('v1 → v4 (through the v2 support chat cache) keeps existing data', () async {
     final schema = await verifier.schemaAt(1);
     final old = v1.DatabaseAtV1(schema.newConnection());
     await old.into(old.appMeta).insert(const RawValuesInsertable({'key': Variable('cat_name'), 'value': Variable('Pashmak')}));
@@ -32,14 +32,14 @@ void main() {
     await old.close();
 
     final db = AppDatabase(schema.newConnection());
-    await verifier.migrateAndValidate(db, 3);
+    await verifier.migrateAndValidate(db, 4);
     expect(await db.meta('cat_name'), 'Pashmak');
     expect((await db.select(db.habits).get()).single.id, 'h1');
     expect(await db.select(db.supportMessagesCache).get(), isEmpty);
     await db.close();
   });
 
-  test('v2 → v3 maps legacy templates to goal keys and adds the new tables', () async {
+  test('v2 → v4 maps legacy templates to goal keys and adds the new tables', () async {
     final schema = await verifier.schemaAt(2);
     final old = v2.DatabaseAtV2(schema.newConnection());
     for (final k in ['water', 'medicine']) {
@@ -59,7 +59,7 @@ void main() {
     await old.close();
 
     final db = AppDatabase(schema.newConnection());
-    await verifier.migrateAndValidate(db, 3);
+    await verifier.migrateAndValidate(db, 4);
     final rows = {for (final h in await db.select(db.habits).get()) h.id: h};
     expect(rows['h_water']!.goalKey, 'food_water_glass');
     expect(rows['h_water']!.timeOfDay, 'any');

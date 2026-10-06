@@ -108,6 +108,7 @@ flutter:
     - assets/art/emoji/connection/
     - assets/art/emoji/faces/
     - assets/art/emoji/food/
+    - assets/art/emoji/glyph/
     - assets/art/emoji/hands/
     - assets/art/emoji/hearts/
     - assets/art/emoji/hobbies/
@@ -118,6 +119,9 @@ flutter:
     - assets/art/emoji/nav/
     - assets/art/emoji/people/
     - assets/art/emoji/tech/
+    - assets/art/emoji/time/
+    - assets/art/emoji/treats/
+    - assets/art/emoji/ui/
   fonts:
     - family: Vazirmatn
       fonts:

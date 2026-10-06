@@ -564,6 +564,31 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _exerciseKeyMeta = const VerificationMeta(
+    'exerciseKey',
+  );
+  @override
+  late final GeneratedColumn<String> exerciseKey = GeneratedColumn<String>(
+    'exercise_key',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _keepUntilDoneMeta = const VerificationMeta(
+    'keepUntilDone',
+  );
+  @override
+  late final GeneratedColumn<bool> keepUntilDone = GeneratedColumn<bool>(
+    'keep_until_done',
+    aliasedName,
+    true,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("keep_until_done" IN (0, 1))',
+    ),
+  );
   static const VerificationMeta _isCustomMeta = const VerificationMeta(
     'isCustom',
   );
@@ -665,6 +690,8 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
     weekdaysMask,
     targetPerDay,
     reminderMinutes,
+    exerciseKey,
+    keepUntilDone,
     isCustom,
     isLocked,
     archivedAt,
@@ -777,6 +804,24 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
         ),
       );
     }
+    if (data.containsKey('exercise_key')) {
+      context.handle(
+        _exerciseKeyMeta,
+        exerciseKey.isAcceptableOrUnknown(
+          data['exercise_key']!,
+          _exerciseKeyMeta,
+        ),
+      );
+    }
+    if (data.containsKey('keep_until_done')) {
+      context.handle(
+        _keepUntilDoneMeta,
+        keepUntilDone.isAcceptableOrUnknown(
+          data['keep_until_done']!,
+          _keepUntilDoneMeta,
+        ),
+      );
+    }
     if (data.containsKey('is_custom')) {
       context.handle(
         _isCustomMeta,
@@ -884,6 +929,14 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
         DriftSqlType.int,
         data['${effectivePrefix}reminder_minutes'],
       ),
+      exerciseKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}exercise_key'],
+      ),
+      keepUntilDone: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}keep_until_done'],
+      ),
       isCustom: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}is_custom'],
@@ -935,6 +988,8 @@ class Habit extends DataClass implements Insertable<Habit> {
   final int weekdaysMask;
   final int targetPerDay;
   final int? reminderMinutes;
+  final String? exerciseKey;
+  final bool? keepUntilDone;
   final bool isCustom;
   final bool isLocked;
   final int? archivedAt;
@@ -956,6 +1011,8 @@ class Habit extends DataClass implements Insertable<Habit> {
     required this.weekdaysMask,
     required this.targetPerDay,
     this.reminderMinutes,
+    this.exerciseKey,
+    this.keepUntilDone,
     required this.isCustom,
     required this.isLocked,
     this.archivedAt,
@@ -991,6 +1048,12 @@ class Habit extends DataClass implements Insertable<Habit> {
     map['target_per_day'] = Variable<int>(targetPerDay);
     if (!nullToAbsent || reminderMinutes != null) {
       map['reminder_minutes'] = Variable<int>(reminderMinutes);
+    }
+    if (!nullToAbsent || exerciseKey != null) {
+      map['exercise_key'] = Variable<String>(exerciseKey);
+    }
+    if (!nullToAbsent || keepUntilDone != null) {
+      map['keep_until_done'] = Variable<bool>(keepUntilDone);
     }
     map['is_custom'] = Variable<bool>(isCustom);
     map['is_locked'] = Variable<bool>(isLocked);
@@ -1033,6 +1096,12 @@ class Habit extends DataClass implements Insertable<Habit> {
       reminderMinutes: reminderMinutes == null && nullToAbsent
           ? const Value.absent()
           : Value(reminderMinutes),
+      exerciseKey: exerciseKey == null && nullToAbsent
+          ? const Value.absent()
+          : Value(exerciseKey),
+      keepUntilDone: keepUntilDone == null && nullToAbsent
+          ? const Value.absent()
+          : Value(keepUntilDone),
       isCustom: Value(isCustom),
       isLocked: Value(isLocked),
       archivedAt: archivedAt == null && nullToAbsent
@@ -1066,6 +1135,8 @@ class Habit extends DataClass implements Insertable<Habit> {
       weekdaysMask: serializer.fromJson<int>(json['weekdaysMask']),
       targetPerDay: serializer.fromJson<int>(json['targetPerDay']),
       reminderMinutes: serializer.fromJson<int?>(json['reminderMinutes']),
+      exerciseKey: serializer.fromJson<String?>(json['exerciseKey']),
+      keepUntilDone: serializer.fromJson<bool?>(json['keepUntilDone']),
       isCustom: serializer.fromJson<bool>(json['isCustom']),
       isLocked: serializer.fromJson<bool>(json['isLocked']),
       archivedAt: serializer.fromJson<int?>(json['archivedAt']),
@@ -1092,6 +1163,8 @@ class Habit extends DataClass implements Insertable<Habit> {
       'weekdaysMask': serializer.toJson<int>(weekdaysMask),
       'targetPerDay': serializer.toJson<int>(targetPerDay),
       'reminderMinutes': serializer.toJson<int?>(reminderMinutes),
+      'exerciseKey': serializer.toJson<String?>(exerciseKey),
+      'keepUntilDone': serializer.toJson<bool?>(keepUntilDone),
       'isCustom': serializer.toJson<bool>(isCustom),
       'isLocked': serializer.toJson<bool>(isLocked),
       'archivedAt': serializer.toJson<int?>(archivedAt),
@@ -1116,6 +1189,8 @@ class Habit extends DataClass implements Insertable<Habit> {
     int? weekdaysMask,
     int? targetPerDay,
     Value<int?> reminderMinutes = const Value.absent(),
+    Value<String?> exerciseKey = const Value.absent(),
+    Value<bool?> keepUntilDone = const Value.absent(),
     bool? isCustom,
     bool? isLocked,
     Value<int?> archivedAt = const Value.absent(),
@@ -1139,6 +1214,10 @@ class Habit extends DataClass implements Insertable<Habit> {
     reminderMinutes: reminderMinutes.present
         ? reminderMinutes.value
         : this.reminderMinutes,
+    exerciseKey: exerciseKey.present ? exerciseKey.value : this.exerciseKey,
+    keepUntilDone: keepUntilDone.present
+        ? keepUntilDone.value
+        : this.keepUntilDone,
     isCustom: isCustom ?? this.isCustom,
     isLocked: isLocked ?? this.isLocked,
     archivedAt: archivedAt.present ? archivedAt.value : this.archivedAt,
@@ -1174,6 +1253,12 @@ class Habit extends DataClass implements Insertable<Habit> {
       reminderMinutes: data.reminderMinutes.present
           ? data.reminderMinutes.value
           : this.reminderMinutes,
+      exerciseKey: data.exerciseKey.present
+          ? data.exerciseKey.value
+          : this.exerciseKey,
+      keepUntilDone: data.keepUntilDone.present
+          ? data.keepUntilDone.value
+          : this.keepUntilDone,
       isCustom: data.isCustom.present ? data.isCustom.value : this.isCustom,
       isLocked: data.isLocked.present ? data.isLocked.value : this.isLocked,
       archivedAt: data.archivedAt.present
@@ -1202,6 +1287,8 @@ class Habit extends DataClass implements Insertable<Habit> {
           ..write('weekdaysMask: $weekdaysMask, ')
           ..write('targetPerDay: $targetPerDay, ')
           ..write('reminderMinutes: $reminderMinutes, ')
+          ..write('exerciseKey: $exerciseKey, ')
+          ..write('keepUntilDone: $keepUntilDone, ')
           ..write('isCustom: $isCustom, ')
           ..write('isLocked: $isLocked, ')
           ..write('archivedAt: $archivedAt, ')
@@ -1214,7 +1301,7 @@ class Habit extends DataClass implements Insertable<Habit> {
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     id,
     templateKey,
     goalKey,
@@ -1228,6 +1315,8 @@ class Habit extends DataClass implements Insertable<Habit> {
     weekdaysMask,
     targetPerDay,
     reminderMinutes,
+    exerciseKey,
+    keepUntilDone,
     isCustom,
     isLocked,
     archivedAt,
@@ -1235,7 +1324,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     createdAt,
     updatedAt,
     deletedAt,
-  );
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1253,6 +1342,8 @@ class Habit extends DataClass implements Insertable<Habit> {
           other.weekdaysMask == this.weekdaysMask &&
           other.targetPerDay == this.targetPerDay &&
           other.reminderMinutes == this.reminderMinutes &&
+          other.exerciseKey == this.exerciseKey &&
+          other.keepUntilDone == this.keepUntilDone &&
           other.isCustom == this.isCustom &&
           other.isLocked == this.isLocked &&
           other.archivedAt == this.archivedAt &&
@@ -1276,6 +1367,8 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
   final Value<int> weekdaysMask;
   final Value<int> targetPerDay;
   final Value<int?> reminderMinutes;
+  final Value<String?> exerciseKey;
+  final Value<bool?> keepUntilDone;
   final Value<bool> isCustom;
   final Value<bool> isLocked;
   final Value<int?> archivedAt;
@@ -1298,6 +1391,8 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     this.weekdaysMask = const Value.absent(),
     this.targetPerDay = const Value.absent(),
     this.reminderMinutes = const Value.absent(),
+    this.exerciseKey = const Value.absent(),
+    this.keepUntilDone = const Value.absent(),
     this.isCustom = const Value.absent(),
     this.isLocked = const Value.absent(),
     this.archivedAt = const Value.absent(),
@@ -1321,6 +1416,8 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     this.weekdaysMask = const Value.absent(),
     this.targetPerDay = const Value.absent(),
     this.reminderMinutes = const Value.absent(),
+    this.exerciseKey = const Value.absent(),
+    this.keepUntilDone = const Value.absent(),
     this.isCustom = const Value.absent(),
     this.isLocked = const Value.absent(),
     this.archivedAt = const Value.absent(),
@@ -1346,6 +1443,8 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     Expression<int>? weekdaysMask,
     Expression<int>? targetPerDay,
     Expression<int>? reminderMinutes,
+    Expression<String>? exerciseKey,
+    Expression<bool>? keepUntilDone,
     Expression<bool>? isCustom,
     Expression<bool>? isLocked,
     Expression<int>? archivedAt,
@@ -1369,6 +1468,8 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
       if (weekdaysMask != null) 'weekdays_mask': weekdaysMask,
       if (targetPerDay != null) 'target_per_day': targetPerDay,
       if (reminderMinutes != null) 'reminder_minutes': reminderMinutes,
+      if (exerciseKey != null) 'exercise_key': exerciseKey,
+      if (keepUntilDone != null) 'keep_until_done': keepUntilDone,
       if (isCustom != null) 'is_custom': isCustom,
       if (isLocked != null) 'is_locked': isLocked,
       if (archivedAt != null) 'archived_at': archivedAt,
@@ -1394,6 +1495,8 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     Value<int>? weekdaysMask,
     Value<int>? targetPerDay,
     Value<int?>? reminderMinutes,
+    Value<String?>? exerciseKey,
+    Value<bool?>? keepUntilDone,
     Value<bool>? isCustom,
     Value<bool>? isLocked,
     Value<int?>? archivedAt,
@@ -1417,6 +1520,8 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
       weekdaysMask: weekdaysMask ?? this.weekdaysMask,
       targetPerDay: targetPerDay ?? this.targetPerDay,
       reminderMinutes: reminderMinutes ?? this.reminderMinutes,
+      exerciseKey: exerciseKey ?? this.exerciseKey,
+      keepUntilDone: keepUntilDone ?? this.keepUntilDone,
       isCustom: isCustom ?? this.isCustom,
       isLocked: isLocked ?? this.isLocked,
       archivedAt: archivedAt ?? this.archivedAt,
@@ -1470,6 +1575,12 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     if (reminderMinutes.present) {
       map['reminder_minutes'] = Variable<int>(reminderMinutes.value);
     }
+    if (exerciseKey.present) {
+      map['exercise_key'] = Variable<String>(exerciseKey.value);
+    }
+    if (keepUntilDone.present) {
+      map['keep_until_done'] = Variable<bool>(keepUntilDone.value);
+    }
     if (isCustom.present) {
       map['is_custom'] = Variable<bool>(isCustom.value);
     }
@@ -1513,6 +1624,8 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
           ..write('weekdaysMask: $weekdaysMask, ')
           ..write('targetPerDay: $targetPerDay, ')
           ..write('reminderMinutes: $reminderMinutes, ')
+          ..write('exerciseKey: $exerciseKey, ')
+          ..write('keepUntilDone: $keepUntilDone, ')
           ..write('isCustom: $isCustom, ')
           ..write('isLocked: $isLocked, ')
           ..write('archivedAt: $archivedAt, ')
@@ -9847,6 +9960,8 @@ typedef $$HabitsTableCreateCompanionBuilder = HabitsCompanion Function({
   Value<int> weekdaysMask,
   Value<int> targetPerDay,
   Value<int?> reminderMinutes,
+  Value<String?> exerciseKey,
+  Value<bool?> keepUntilDone,
   Value<bool> isCustom,
   Value<bool> isLocked,
   Value<int?> archivedAt,
@@ -9870,6 +9985,8 @@ typedef $$HabitsTableUpdateCompanionBuilder = HabitsCompanion Function({
   Value<int> weekdaysMask,
   Value<int> targetPerDay,
   Value<int?> reminderMinutes,
+  Value<String?> exerciseKey,
+  Value<bool?> keepUntilDone,
   Value<bool> isCustom,
   Value<bool> isLocked,
   Value<int?> archivedAt,
@@ -9974,6 +10091,16 @@ class $$HabitsTableFilterComposer
 
   ColumnFilters<int> get reminderMinutes => $composableBuilder(
     column: $table.reminderMinutes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get exerciseKey => $composableBuilder(
+    column: $table.exerciseKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get keepUntilDone => $composableBuilder(
+    column: $table.keepUntilDone,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -10112,6 +10239,16 @@ class $$HabitsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get exerciseKey => $composableBuilder(
+    column: $table.exerciseKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get keepUntilDone => $composableBuilder(
+    column: $table.keepUntilDone,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<bool> get isCustom => $composableBuilder(
     column: $table.isCustom,
     builder: (column) => ColumnOrderings(column),
@@ -10208,6 +10345,16 @@ class $$HabitsTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get exerciseKey => $composableBuilder(
+    column: $table.exerciseKey,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get keepUntilDone => $composableBuilder(
+    column: $table.keepUntilDone,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<bool> get isCustom =>
       $composableBuilder(column: $table.isCustom, builder: (column) => column);
 
@@ -10298,6 +10445,8 @@ class $$HabitsTableTableManager
                 Value<int> weekdaysMask = const Value.absent(),
                 Value<int> targetPerDay = const Value.absent(),
                 Value<int?> reminderMinutes = const Value.absent(),
+                Value<String?> exerciseKey = const Value.absent(),
+                Value<bool?> keepUntilDone = const Value.absent(),
                 Value<bool> isCustom = const Value.absent(),
                 Value<bool> isLocked = const Value.absent(),
                 Value<int?> archivedAt = const Value.absent(),
@@ -10320,6 +10469,8 @@ class $$HabitsTableTableManager
                 weekdaysMask: weekdaysMask,
                 targetPerDay: targetPerDay,
                 reminderMinutes: reminderMinutes,
+                exerciseKey: exerciseKey,
+                keepUntilDone: keepUntilDone,
                 isCustom: isCustom,
                 isLocked: isLocked,
                 archivedAt: archivedAt,
@@ -10344,6 +10495,8 @@ class $$HabitsTableTableManager
                 Value<int> weekdaysMask = const Value.absent(),
                 Value<int> targetPerDay = const Value.absent(),
                 Value<int?> reminderMinutes = const Value.absent(),
+                Value<String?> exerciseKey = const Value.absent(),
+                Value<bool?> keepUntilDone = const Value.absent(),
                 Value<bool> isCustom = const Value.absent(),
                 Value<bool> isLocked = const Value.absent(),
                 Value<int?> archivedAt = const Value.absent(),
@@ -10366,6 +10519,8 @@ class $$HabitsTableTableManager
                 weekdaysMask: weekdaysMask,
                 targetPerDay: targetPerDay,
                 reminderMinutes: reminderMinutes,
+                exerciseKey: exerciseKey,
+                keepUntilDone: keepUntilDone,
                 isCustom: isCustom,
                 isLocked: isLocked,
                 archivedAt: archivedAt,

@@ -167,8 +167,8 @@ void main() {
     await tester.scrollUntilVisible(find.text('یه لیوان آب بخور'), 200, scrollable: find.byType(Scrollable).first);
     await tester.tap(find.text('یه لیوان آب بخور'));
     await settle(tester, 1);
-    await tester.scrollUntilVisible(find.text('ذخیره هدف'), -200, scrollable: find.byType(Scrollable).first);
-    await tester.tap(find.text('ذخیره هدف'));
+    await tester.scrollUntilVisible(find.text('ذخیره'), -200, scrollable: find.byType(Scrollable).first);
+    await tester.tap(find.text('ذخیره'));
     await settle(tester);
     final goals = (await tester.runAsync(() => c.read(habitServiceProvider).activeHabits()))!;
     expect(goals.single.goalKey, 'food_water_glass');

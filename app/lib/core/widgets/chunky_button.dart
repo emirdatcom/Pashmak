@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/tokens.dart';
+import 'emoji_art.dart';
 
 /// 3D button of the redesign: a 4dp darker bottom edge that collapses (the button moves down 4dp) while pressed.
 /// Animation (80ms) is skipped when the platform asks for reduced motion.
@@ -10,6 +11,8 @@ class ChunkyButton extends StatefulWidget {
     required this.label,
     required this.onPressed,
     this.icon,
+    this.emoji,
+    this.glyph,
     this.color = DS.primaryGreen,
     this.edgeColor = DS.primaryGreenEdge,
     this.textColor = DS.onPrimary,
@@ -18,7 +21,7 @@ class ChunkyButton extends StatefulWidget {
   });
 
   /// A neutral (grey) variant used for secondary actions.
-  const ChunkyButton.neutral({super.key, required this.label, required this.onPressed, this.icon, this.expand = true, this.height = 52})
+  const ChunkyButton.neutral({super.key, required this.label, required this.onPressed, this.icon, this.emoji, this.glyph, this.expand = true, this.height = 52})
       : color = DS.neutralButton,
         edgeColor = DS.neutralButtonEdge,
         textColor = DS.textPrimary;
@@ -26,6 +29,12 @@ class ChunkyButton extends StatefulWidget {
   final String label;
   final VoidCallback? onPressed;
   final IconData? icon;
+
+  /// Sticker id (see EmojiArt) shown instead of [icon].
+  final String? emoji;
+
+  /// One-colour glyph (see GlyphArt) painted in [textColor], shown instead of [icon].
+  final String? glyph;
   final Color color;
   final Color edgeColor;
   final Color textColor;
@@ -57,8 +66,13 @@ class _ChunkyButtonState extends State<ChunkyButton> {
       ),
       alignment: Alignment.center,
       child: Row(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.center, children: [
-        if (widget.icon != null) Icon(widget.icon, color: enabled ? widget.textColor : DS.textSecondary),
-        if (widget.icon != null && widget.label.isNotEmpty) const SizedBox(width: 8),
+        if (widget.emoji != null)
+          EmojiArt(widget.emoji!, size: 28)
+        else if (widget.glyph != null)
+          GlyphArt(widget.glyph!, size: widget.height * 0.5, color: enabled ? widget.textColor : DS.textSecondary)
+        else if (widget.icon != null)
+          Icon(widget.icon, color: enabled ? widget.textColor : DS.textSecondary),
+        if ((widget.icon != null || widget.emoji != null || widget.glyph != null) && widget.label.isNotEmpty) const SizedBox(width: 8),
         if (widget.label.isNotEmpty)
         Flexible(
           child: Text(widget.label,

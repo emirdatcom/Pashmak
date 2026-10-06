@@ -45,7 +45,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -77,7 +77,12 @@ class AppDatabase extends _$AppDatabase {
             }
             await customStatement('UPDATE habits SET goal_key = template_key WHERE goal_key IS NULL AND template_key IS NOT NULL');
           }
-          if (to > 3) throw StateError('No migration from $from to $to');
+          // v3 → v4: goal options (linked exercise, keep until complete). Additive only.
+          if (from < 4) {
+            await m.addColumn(habits, habits.exerciseKey);
+            await m.addColumn(habits, habits.keepUntilDone);
+          }
+          if (to > 4) throw StateError('No migration from $from to $to');
         },
       );
 

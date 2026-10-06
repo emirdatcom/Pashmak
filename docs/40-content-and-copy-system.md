@@ -121,4 +121,4 @@ flowchart LR
 | `quests_special` | `key, title_key, hint_key, metric, target, reward_coins, route` |
 | `discoveries` | `key, name_key, category (food|plant|antique|sound|sky)` |
 | `reflection_prompts` | پرسش دوگزینه‌ای محلی: `prompt_key, a_key, b_key` |
-`habit_templates` فقط برای نگاشت داده‌ی قدیمی می‌ماند. `shop_items` اسلات‌های `glasses, scarf, room_shelf` و فیلد `always_available` (کلکسیون همیشگی)؛ `exercises` فیلد `tab` و `reward_energy` و ۸ تمرین تنفس.
+`habit_templates` فقط برای نگاشت داده‌ی قدیمی می‌ماند. `shop_items` اسلات‌های `glasses, scarf, room_shelf` و فیلد `always_available` (کلکسیون همیشگی)؛ `exercises` فیلد `tab` و `reward_energy` و ۸ تمرین تنفس. فیلدهای اختیاری `kind` (`reflection|breathing|grounding|movement|timer`) و `icon` (شناسه‌ی استیکر، مثل `calm/zzz`) و ۲۳ تمرین اورجینال نوشتنی، زمین‌گیری، کششی و تایمر (جمعاً ۳۵).

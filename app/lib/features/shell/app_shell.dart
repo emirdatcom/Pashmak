@@ -11,20 +11,20 @@ import '../system/force_update_screen.dart' show SoftUpdateBanner;
 
 /// The five tabs, in order (the bar is RTL, so the first one, home, is at the right).
 class _Tab {
-  const _Tab(this.route, this.navKey, this.icon, this.iconColor, this.background);
+  const _Tab(this.route, this.navKey, this.emoji, this.background, {this.onDark = false});
   final String route;
   final String navKey;
-  final IconData icon;
-  final Color iconColor;
+  final String emoji;
   final Color background;
+  final bool onDark;
 }
 
 const _tabs = [
-  _Tab(Routes.home, 'nav.home', Icons.home_rounded, DS.primaryGreen, DS.bgHomeGround),
-  _Tab(Routes.quests, 'nav.quests', Icons.emoji_events_rounded, DS.energy, DS.bgQuests),
-  _Tab(Routes.shop, 'nav.shop', Icons.storefront_rounded, DS.areaNutrition, DS.bgShopPanel),
-  _Tab(Routes.bag, 'nav.bag', Icons.backpack_rounded, DS.premiumBadge, DS.bgBag),
-  _Tab(Routes.cat, 'nav.cat', Icons.pets_rounded, DS.areaMovement, DS.bgCat),
+  _Tab(Routes.home, 'nav.home', 'nav/home', DS.bgHomeGround, onDark: true),
+  _Tab(Routes.quests, 'nav.quests', 'nav/quests', DS.bgQuests, onDark: true),
+  _Tab(Routes.shop, 'nav.shop', 'nav/shop', DS.bgShopPanel, onDark: true),
+  _Tab(Routes.bag, 'nav.bag', 'misc/bag', DS.bgBag),
+  _Tab(Routes.cat, 'nav.cat', 'animals/cat', DS.bgCat),
 ];
 
 /// Index of the tab that owns [location] (a sub-route of a tab keeps that tab selected).
@@ -55,7 +55,7 @@ class AppShell extends ConsumerWidget {
         background: _tabs[index].background,
         index: index,
         onSelected: (i) => context.go(_tabs[i].route),
-        tabs: [for (final t in _tabs) TabSpec(icon: t.icon, label: copy.t(t.navKey), color: t.iconColor)],
+        tabs: [for (final t in _tabs) TabSpec(emoji: t.emoji, label: copy.t(t.navKey), onDark: t.onDark)],
       ),
     );
   }
