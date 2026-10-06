@@ -60,6 +60,9 @@ class _ExercisesState extends ConsumerState<ExercisesScreen> {
         backgroundColor: DS.bgExercises,
         foregroundColor: DS.onDark,
         title: Row(mainAxisSize: MainAxisSize.min, children: [const Icon(Icons.eco, color: DS.onDark), const SizedBox(width: 8), Text(copy.t('exercise.screen.title'))]),
+        actions: [
+          IconButton(tooltip: copy.t('sounds.title'), icon: const Icon(Icons.graphic_eq_rounded), onPressed: () => context.push(Routes.sounds)),
+        ],
       ),
       body: Column(children: [
         TabPills(

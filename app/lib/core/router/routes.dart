@@ -32,6 +32,7 @@ class Routes {
   static const restMode = '/settings/rest';
   static String exercisesTab(String tab) => '/exercises?tab=$tab';
   static const exercises = '/exercises';
+  static const sounds = '/sounds';
   static String exerciseRun(String id) => '/exercises/$id/run';
   static const adventure = '/adventure';
   static String adventureResult(String id) => '/adventure/result/$id';

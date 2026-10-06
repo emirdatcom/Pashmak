@@ -25,6 +25,7 @@ class MenuScreen extends ConsumerWidget {
     final premium = ref.watch(premiumProvider);
     final tiles = [
       ('menu.activities', Icons.self_improvement, Routes.exercises, false),
+      ('menu.sounds', Icons.graphic_eq_rounded, Routes.sounds, false),
       ('menu.areas', Icons.category, Routes.areas, false),
       ('menu.goals', Icons.checklist, Routes.goals, false),
       ('menu.insights', Icons.insights, Routes.stats, false),

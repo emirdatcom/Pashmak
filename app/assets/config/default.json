@@ -4,7 +4,15 @@
     "free_custom_habits": 0,
     "free_exercises": [
       "breathing_basic",
-      "breathing_square"
+      "breathing_square",
+      "breathing_coherent",
+      "breathing_sigh",
+      "ground_feet",
+      "move_eye_rest",
+      "timer_water",
+      "self_compassion",
+      "joy_list",
+      "sleep_wind_down"
     ],
     "free_adventure_locations": [
       "alley",

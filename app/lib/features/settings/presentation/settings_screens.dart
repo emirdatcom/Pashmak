@@ -63,7 +63,10 @@ class SettingsScreen extends ConsumerWidget {
             SwitchListTile(
               secondary: const Icon(Icons.spa_outlined, color: DS.textPrimary),
               title: Text(copy.t('settings.rest_mode'), style: const TextStyle(color: DS.textPrimary, fontWeight: FontWeight.w600)),
-              subtitle: Text(copy.t('settings.rest_mode.hint'), style: const TextStyle(color: DS.textSecondary)),
+              subtitle: GestureDetector(
+                onTap: () => context.push(Routes.restMode),
+                child: Text(copy.t('settings.rest_mode.hint'), style: const TextStyle(color: DS.textSecondary, decoration: TextDecoration.underline)),
+              ),
               value: paused,
               onChanged: (v) async {
                 await ref.read(pauseServiceProvider).set(v);
@@ -81,6 +84,7 @@ class SettingsScreen extends ConsumerWidget {
           tile(Icons.help_outline, copy.t('settings.help'), () => context.push('${Routes.settings}/help')),
           tile(Icons.favorite_border, copy.t('help.title'), () => context.push(Routes.safety)),
           tile(Icons.info_outline, copy.t('settings.about'), () => context.push('${Routes.settings}/about')),
+          tile(Icons.description_outlined, copy.t('terms.title'), () => context.push('${Routes.settings}/terms')),
           if (ref.watch(supportEnabledProvider)) tile(Icons.bug_report_outlined, copy.t('settings.report_issue'), () => context.push(Routes.support(source: 'bug'))),
         ]),
         Center(

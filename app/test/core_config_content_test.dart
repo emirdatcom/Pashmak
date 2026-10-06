@@ -19,7 +19,7 @@ void main() {
     test('bundled default.json exposes every typed getter', () async {
       final cfg = AppConfig(jsonDecode(realAssets().files['assets/config/default.json']!) as Map<String, dynamic>);
       expect(cfg.freeActiveHabits, 3);
-      expect(cfg.freeExercises, ['breathing_basic', 'breathing_square']);
+      expect(cfg.freeExercises, containsAll(['breathing_basic', 'breathing_square', 'breathing_sigh', 'ground_feet']));
       expect(cfg.energyPerGoal, 5);
       expect(cfg.dailyEnergyTarget, 20);
       expect((cfg.growthYoung, cfg.growthAdult), (7, 30));
