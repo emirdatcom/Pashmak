@@ -3,6 +3,7 @@ export 'chunky_button.dart';
 export 'countdown_chip.dart';
 export 'emoji_art.dart';
 export 'hint_button.dart';
+export 'hue.dart';
 export 'item_tile.dart';
 export 'premium_badge.dart';
 export 'progress_pill.dart';

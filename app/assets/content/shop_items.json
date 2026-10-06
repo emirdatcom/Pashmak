@@ -11,8 +11,9 @@
       "slot": "collar",
       "price_coins": 60,
       "premium_only": false,
-      "asset": "assets/shop/collar_turquoise.webp",
-      "always_available": true
+      "asset": "assets/art/items/collar_turquoise.png",
+      "always_available": true,
+      "collection": "everyday"
     },
     {
       "item_key": "collar_red",
@@ -20,7 +21,8 @@
       "slot": "collar",
       "price_coins": 80,
       "premium_only": false,
-      "asset": "assets/shop/collar_red.webp"
+      "asset": "assets/art/items/collar_red.png",
+      "collection": "everyday"
     },
     {
       "item_key": "hat_beanie",
@@ -28,8 +30,16 @@
       "slot": "hat",
       "price_coins": 120,
       "premium_only": false,
-      "asset": "assets/shop/hat_beanie.webp",
-      "always_available": true
+      "asset": "assets/art/items/hat_beanie.png",
+      "always_available": true,
+      "collection": "cozy",
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200
+      ]
     },
     {
       "item_key": "hat_flower",
@@ -37,7 +47,8 @@
       "slot": "hat",
       "price_coins": 150,
       "premium_only": false,
-      "asset": "assets/shop/hat_flower.webp"
+      "asset": "assets/art/items/hat_flower.png",
+      "collection": "garden"
     },
     {
       "item_key": "bg_alley_evening",
@@ -45,8 +56,9 @@
       "slot": "background",
       "price_coins": 200,
       "premium_only": false,
-      "asset": "assets/shop/bg_alley_evening.webp",
-      "always_available": true
+      "asset": "assets/art/items/bg_alley_evening.png",
+      "always_available": true,
+      "collection": "bazaar"
     },
     {
       "item_key": "bg_rooftop_night",
@@ -54,7 +66,8 @@
       "slot": "background",
       "price_coins": 220,
       "premium_only": false,
-      "asset": "assets/shop/bg_rooftop_night.webp"
+      "asset": "assets/art/items/bg_rooftop_night.png",
+      "collection": "cozy"
     },
     {
       "item_key": "bg_garden_spring",
@@ -62,7 +75,8 @@
       "slot": "background",
       "price_coins": 260,
       "premium_only": true,
-      "asset": "assets/shop/bg_garden_spring.webp"
+      "asset": "assets/art/items/bg_garden_spring.png",
+      "collection": "garden"
     },
     {
       "item_key": "samovar",
@@ -70,7 +84,8 @@
       "slot": "room_table",
       "price_coins": 180,
       "premium_only": false,
-      "asset": "assets/shop/samovar.webp"
+      "asset": "assets/art/items/samovar.png",
+      "collection": "bazaar"
     },
     {
       "item_key": "tea_glass",
@@ -78,8 +93,9 @@
       "slot": "room_table",
       "price_coins": 70,
       "premium_only": false,
-      "asset": "assets/shop/tea_glass.webp",
-      "always_available": true
+      "asset": "assets/art/items/tea_glass.png",
+      "always_available": true,
+      "collection": "bazaar"
     },
     {
       "item_key": "rug_small",
@@ -87,8 +103,15 @@
       "slot": "room_floor",
       "price_coins": 140,
       "premium_only": false,
-      "asset": "assets/shop/rug_small.webp",
-      "always_available": true
+      "asset": "assets/art/items/rug_small.png",
+      "always_available": true,
+      "collection": "everyday",
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
     },
     {
       "item_key": "blanket_floral",
@@ -96,7 +119,13 @@
       "slot": "room_floor",
       "price_coins": 160,
       "premium_only": false,
-      "asset": "assets/shop/blanket_floral.webp"
+      "asset": "assets/art/items/blanket_floral.png",
+      "collection": "cozy",
+      "hues": [
+        0,
+        35,
+        95
+      ]
     },
     {
       "item_key": "pillow_cozy",
@@ -104,7 +133,15 @@
       "slot": "room_floor",
       "price_coins": 90,
       "premium_only": true,
-      "asset": "assets/shop/pillow_cozy.webp"
+      "asset": "assets/art/items/pillow_cozy.png",
+      "collection": "cozy",
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200
+      ]
     },
     {
       "item_key": "glasses_round",
@@ -112,7 +149,14 @@
       "slot": "glasses",
       "price_coins": 90,
       "premium_only": false,
-      "asset": "assets/shop/glasses_round.webp"
+      "asset": "assets/art/items/glasses_round.png",
+      "collection": "school",
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
     },
     {
       "item_key": "glasses_star",
@@ -120,7 +164,14 @@
       "slot": "glasses",
       "price_coins": 140,
       "premium_only": true,
-      "asset": "assets/shop/glasses_star.webp"
+      "asset": "assets/art/items/glasses_star.png",
+      "collection": "party",
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
     },
     {
       "item_key": "scarf_wool",
@@ -128,7 +179,15 @@
       "slot": "scarf",
       "price_coins": 110,
       "premium_only": false,
-      "asset": "assets/shop/scarf_wool.webp"
+      "asset": "assets/art/items/scarf_wool.png",
+      "collection": "cozy",
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200
+      ]
     },
     {
       "item_key": "scarf_stripe",
@@ -136,7 +195,14 @@
       "slot": "scarf",
       "price_coins": 130,
       "premium_only": false,
-      "asset": "assets/shop/scarf_stripe.webp"
+      "asset": "assets/art/items/scarf_stripe.png",
+      "collection": "everyday",
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
     },
     {
       "item_key": "scarf_silk",
@@ -144,7 +210,13 @@
       "slot": "scarf",
       "price_coins": 210,
       "premium_only": true,
-      "asset": "assets/shop/scarf_silk.webp"
+      "asset": "assets/art/items/scarf_silk.png",
+      "collection": "bazaar",
+      "hues": [
+        0,
+        35,
+        95
+      ]
     },
     {
       "item_key": "hat_felt",
@@ -152,7 +224,8 @@
       "slot": "hat",
       "price_coins": 130,
       "premium_only": false,
-      "asset": "assets/shop/hat_felt.webp"
+      "asset": "assets/art/items/hat_felt.png",
+      "collection": "bazaar"
     },
     {
       "item_key": "collar_bell",
@@ -160,7 +233,8 @@
       "slot": "collar",
       "price_coins": 100,
       "premium_only": false,
-      "asset": "assets/shop/collar_bell.webp"
+      "asset": "assets/art/items/collar_bell.png",
+      "collection": "everyday"
     },
     {
       "item_key": "shelf_books",
@@ -168,7 +242,8 @@
       "slot": "room_shelf",
       "price_coins": 170,
       "premium_only": false,
-      "asset": "assets/shop/shelf_books.webp"
+      "asset": "assets/art/items/shelf_books.png",
+      "collection": "school"
     },
     {
       "item_key": "shelf_plants",
@@ -176,7 +251,8 @@
       "slot": "room_shelf",
       "price_coins": 150,
       "premium_only": false,
-      "asset": "assets/shop/shelf_plants.webp"
+      "asset": "assets/art/items/shelf_plants.png",
+      "collection": "garden"
     },
     {
       "item_key": "geranium_pot",
@@ -184,7 +260,8 @@
       "slot": "room_table",
       "price_coins": 100,
       "premium_only": false,
-      "asset": "assets/shop/geranium_pot.webp"
+      "asset": "assets/art/items/geranium_pot.png",
+      "collection": "garden"
     },
     {
       "item_key": "copper_bowl",
@@ -192,7 +269,8 @@
       "slot": "room_table",
       "price_coins": 120,
       "premium_only": false,
-      "asset": "assets/shop/copper_bowl.webp"
+      "asset": "assets/art/items/copper_bowl.png",
+      "collection": "bazaar"
     },
     {
       "item_key": "lamp_warm",
@@ -200,7 +278,8 @@
       "slot": "room_table",
       "price_coins": 160,
       "premium_only": true,
-      "asset": "assets/shop/lamp_warm.webp"
+      "asset": "assets/art/items/lamp_warm.png",
+      "collection": "cozy"
     },
     {
       "item_key": "rug_persian",
@@ -208,7 +287,8 @@
       "slot": "room_floor",
       "price_coins": 300,
       "premium_only": true,
-      "asset": "assets/shop/rug_persian.webp"
+      "asset": "assets/art/items/rug_persian.png",
+      "collection": "bazaar"
     },
     {
       "item_key": "cushion_back",
@@ -216,7 +296,13 @@
       "slot": "room_floor",
       "price_coins": 110,
       "premium_only": false,
-      "asset": "assets/shop/cushion_back.webp"
+      "asset": "assets/art/items/cushion_back.png",
+      "collection": "bazaar",
+      "hues": [
+        0,
+        35,
+        95
+      ]
     },
     {
       "item_key": "wall_frame",
@@ -224,7 +310,8 @@
       "slot": "room_wall",
       "price_coins": 130,
       "premium_only": false,
-      "asset": "assets/shop/wall_frame.webp"
+      "asset": "assets/art/items/wall_frame.png",
+      "collection": "everyday"
     },
     {
       "item_key": "wall_tapestry",
@@ -232,7 +319,1930 @@
       "slot": "room_wall",
       "price_coins": 190,
       "premium_only": true,
-      "asset": "assets/shop/wall_tapestry.webp"
+      "asset": "assets/art/items/wall_tapestry.png",
+      "collection": "bazaar"
+    },
+    {
+      "item_key": "top_tshirt",
+      "name_key": "shop.item.top_tshirt.name",
+      "slot": "top",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/top_tshirt.png",
+      "collection": "everyday",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200,
+        245
+      ]
+    },
+    {
+      "item_key": "top_striped",
+      "name_key": "shop.item.top_striped.name",
+      "slot": "top",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/top_striped.png",
+      "collection": "everyday",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "top_hoodie",
+      "name_key": "shop.item.top_hoodie.name",
+      "slot": "top",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/top_hoodie.png",
+      "collection": "cozy",
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200
+      ]
+    },
+    {
+      "item_key": "top_knit_sweater",
+      "name_key": "shop.item.top_knit_sweater.name",
+      "slot": "top",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/top_knit_sweater.png",
+      "collection": "cozy",
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "top_puffer",
+      "name_key": "shop.item.top_puffer.name",
+      "slot": "top",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/top_puffer.png",
+      "collection": "rainy",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200
+      ]
+    },
+    {
+      "item_key": "top_raincoat",
+      "name_key": "shop.item.top_raincoat.name",
+      "slot": "top",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/top_raincoat.png",
+      "collection": "rainy",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "top_polo",
+      "name_key": "shop.item.top_polo.name",
+      "slot": "top",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/top_polo.png",
+      "collection": "sporty",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200
+      ]
+    },
+    {
+      "item_key": "top_jersey",
+      "name_key": "shop.item.top_jersey.name",
+      "slot": "top",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/top_jersey.png",
+      "collection": "sporty",
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "top_vest_embroidered",
+      "name_key": "shop.item.top_vest_embroidered.name",
+      "slot": "top",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/top_vest_embroidered.png",
+      "collection": "bazaar",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "top_shirt_floral",
+      "name_key": "shop.item.top_shirt_floral.name",
+      "slot": "top",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/top_shirt_floral.png",
+      "collection": "garden",
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "top_cardigan",
+      "name_key": "shop.item.top_cardigan.name",
+      "slot": "top",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/top_cardigan.png",
+      "collection": "school",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "top_collar_shirt",
+      "name_key": "shop.item.top_collar_shirt.name",
+      "slot": "top",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/top_collar_shirt.png",
+      "collection": "school",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "top_tank",
+      "name_key": "shop.item.top_tank.name",
+      "slot": "top",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/top_tank.png",
+      "collection": "seaside",
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200,
+        245
+      ]
+    },
+    {
+      "item_key": "top_beach_shirt",
+      "name_key": "shop.item.top_beach_shirt.name",
+      "slot": "top",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/top_beach_shirt.png",
+      "collection": "seaside",
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "top_sequin",
+      "name_key": "shop.item.top_sequin.name",
+      "slot": "top",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/top_sequin.png",
+      "collection": "party",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "top_watermelon",
+      "name_key": "shop.item.top_watermelon.name",
+      "slot": "top",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/top_watermelon.png",
+      "collection": "fruity"
+    },
+    {
+      "item_key": "bottom_shorts",
+      "name_key": "shop.item.bottom_shorts.name",
+      "slot": "bottom",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/bottom_shorts.png",
+      "collection": "everyday",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200,
+        245
+      ]
+    },
+    {
+      "item_key": "bottom_jeans",
+      "name_key": "shop.item.bottom_jeans.name",
+      "slot": "bottom",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/bottom_jeans.png",
+      "collection": "everyday",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "bottom_pleated_skirt",
+      "name_key": "shop.item.bottom_pleated_skirt.name",
+      "slot": "bottom",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/bottom_pleated_skirt.png",
+      "collection": "school",
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200
+      ]
+    },
+    {
+      "item_key": "bottom_sweatpants",
+      "name_key": "shop.item.bottom_sweatpants.name",
+      "slot": "bottom",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/bottom_sweatpants.png",
+      "collection": "cozy",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200
+      ]
+    },
+    {
+      "item_key": "bottom_plaid_shorts",
+      "name_key": "shop.item.bottom_plaid_shorts.name",
+      "slot": "bottom",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/bottom_plaid_shorts.png",
+      "collection": "everyday",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "bottom_cargo",
+      "name_key": "shop.item.bottom_cargo.name",
+      "slot": "bottom",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/bottom_cargo.png",
+      "collection": "sporty",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "bottom_swim",
+      "name_key": "shop.item.bottom_swim.name",
+      "slot": "bottom",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/bottom_swim.png",
+      "collection": "seaside",
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200
+      ]
+    },
+    {
+      "item_key": "bottom_tutu",
+      "name_key": "shop.item.bottom_tutu.name",
+      "slot": "bottom",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/bottom_tutu.png",
+      "collection": "party",
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "bottom_rain_pants",
+      "name_key": "shop.item.bottom_rain_pants.name",
+      "slot": "bottom",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/bottom_rain_pants.png",
+      "collection": "rainy",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "bottom_folk_pants",
+      "name_key": "shop.item.bottom_folk_pants.name",
+      "slot": "bottom",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/bottom_folk_pants.png",
+      "collection": "bazaar",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "onesie_pajama",
+      "name_key": "shop.item.onesie_pajama.name",
+      "slot": "onesie",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/onesie_pajama.png",
+      "collection": "cozy",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200
+      ]
+    },
+    {
+      "item_key": "onesie_overalls",
+      "name_key": "shop.item.onesie_overalls.name",
+      "slot": "onesie",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/onesie_overalls.png",
+      "collection": "everyday",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "onesie_bear",
+      "name_key": "shop.item.onesie_bear.name",
+      "slot": "onesie",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/onesie_bear.png",
+      "collection": "cozy",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "onesie_dino",
+      "name_key": "shop.item.onesie_dino.name",
+      "slot": "onesie",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/onesie_dino.png",
+      "collection": "party",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "onesie_bee",
+      "name_key": "shop.item.onesie_bee.name",
+      "slot": "onesie",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/onesie_bee.png",
+      "collection": "garden"
+    },
+    {
+      "item_key": "onesie_rain_cape",
+      "name_key": "shop.item.onesie_rain_cape.name",
+      "slot": "onesie",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/onesie_rain_cape.png",
+      "collection": "rainy",
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "onesie_pomegranate",
+      "name_key": "shop.item.onesie_pomegranate.name",
+      "slot": "onesie",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/onesie_pomegranate.png",
+      "collection": "fruity"
+    },
+    {
+      "item_key": "onesie_tracksuit",
+      "name_key": "shop.item.onesie_tracksuit.name",
+      "slot": "onesie",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/onesie_tracksuit.png",
+      "collection": "sporty",
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "hat_cap",
+      "name_key": "shop.item.hat_cap.name",
+      "slot": "hat",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/hat_cap.png",
+      "collection": "sporty",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200,
+        245,
+        290,
+        330
+      ]
+    },
+    {
+      "item_key": "hat_straw",
+      "name_key": "shop.item.hat_straw.name",
+      "slot": "hat",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/hat_straw.png",
+      "collection": "seaside",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "hat_rain",
+      "name_key": "shop.item.hat_rain.name",
+      "slot": "hat",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/hat_rain.png",
+      "collection": "rainy",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "hat_party",
+      "name_key": "shop.item.hat_party.name",
+      "slot": "hat",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/hat_party.png",
+      "collection": "party",
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200
+      ]
+    },
+    {
+      "item_key": "hat_flower_crown",
+      "name_key": "shop.item.hat_flower_crown.name",
+      "slot": "hat",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/hat_flower_crown.png",
+      "collection": "garden",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "hat_beret",
+      "name_key": "shop.item.hat_beret.name",
+      "slot": "hat",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/hat_beret.png",
+      "collection": "everyday",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200,
+        245
+      ]
+    },
+    {
+      "item_key": "hat_pompom",
+      "name_key": "shop.item.hat_pompom.name",
+      "slot": "hat",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/hat_pompom.png",
+      "collection": "cozy",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200
+      ]
+    },
+    {
+      "item_key": "hat_bucket",
+      "name_key": "shop.item.hat_bucket.name",
+      "slot": "hat",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/hat_bucket.png",
+      "collection": "everyday",
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200
+      ]
+    },
+    {
+      "item_key": "hat_strawberry",
+      "name_key": "shop.item.hat_strawberry.name",
+      "slot": "hat",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/hat_strawberry.png",
+      "collection": "fruity"
+    },
+    {
+      "item_key": "hat_headband",
+      "name_key": "shop.item.hat_headband.name",
+      "slot": "hat",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/hat_headband.png",
+      "collection": "sporty",
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200,
+        245
+      ]
+    },
+    {
+      "item_key": "hat_hair_bow",
+      "name_key": "shop.item.hat_hair_bow.name",
+      "slot": "hat",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/hat_hair_bow.png",
+      "collection": "everyday",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200,
+        245
+      ]
+    },
+    {
+      "item_key": "hat_earmuffs",
+      "name_key": "shop.item.hat_earmuffs.name",
+      "slot": "hat",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/hat_earmuffs.png",
+      "collection": "cozy",
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "hat_graduation",
+      "name_key": "shop.item.hat_graduation.name",
+      "slot": "hat",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/hat_graduation.png",
+      "collection": "school"
+    },
+    {
+      "item_key": "glasses_sun",
+      "name_key": "shop.item.glasses_sun.name",
+      "slot": "glasses",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/glasses_sun.png",
+      "collection": "seaside",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "glasses_heart",
+      "name_key": "shop.item.glasses_heart.name",
+      "slot": "glasses",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/glasses_heart.png",
+      "collection": "party",
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "glasses_reading",
+      "name_key": "shop.item.glasses_reading.name",
+      "slot": "glasses",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/glasses_reading.png",
+      "collection": "school",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "glasses_swim",
+      "name_key": "shop.item.glasses_swim.name",
+      "slot": "glasses",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/glasses_swim.png",
+      "collection": "seaside",
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "glasses_ski",
+      "name_key": "shop.item.glasses_ski.name",
+      "slot": "glasses",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/glasses_ski.png",
+      "collection": "sporty",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "glasses_freckles",
+      "name_key": "shop.item.glasses_freckles.name",
+      "slot": "glasses",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/glasses_freckles.png",
+      "collection": "everyday"
+    },
+    {
+      "item_key": "scarf_long_knit",
+      "name_key": "shop.item.scarf_long_knit.name",
+      "slot": "scarf",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/scarf_long_knit.png",
+      "collection": "cozy",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200
+      ]
+    },
+    {
+      "item_key": "scarf_bandana",
+      "name_key": "shop.item.scarf_bandana.name",
+      "slot": "scarf",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/scarf_bandana.png",
+      "collection": "everyday",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200,
+        245
+      ]
+    },
+    {
+      "item_key": "collar_bowtie",
+      "name_key": "shop.item.collar_bowtie.name",
+      "slot": "collar",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/collar_bowtie.png",
+      "collection": "party",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200,
+        245
+      ]
+    },
+    {
+      "item_key": "collar_tie",
+      "name_key": "shop.item.collar_tie.name",
+      "slot": "collar",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/collar_tie.png",
+      "collection": "school",
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "collar_pearls",
+      "name_key": "shop.item.collar_pearls.name",
+      "slot": "collar",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/collar_pearls.png",
+      "collection": "party"
+    },
+    {
+      "item_key": "collar_turquoise_beads",
+      "name_key": "shop.item.collar_turquoise_beads.name",
+      "slot": "collar",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/collar_turquoise_beads.png",
+      "collection": "bazaar"
+    },
+    {
+      "item_key": "collar_lei",
+      "name_key": "shop.item.collar_lei.name",
+      "slot": "collar",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/collar_lei.png",
+      "collection": "seaside",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "shoes_sneakers",
+      "name_key": "shop.item.shoes_sneakers.name",
+      "slot": "shoes",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/shoes_sneakers.png",
+      "collection": "everyday",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200,
+        245
+      ]
+    },
+    {
+      "item_key": "shoes_rain_boots",
+      "name_key": "shop.item.shoes_rain_boots.name",
+      "slot": "shoes",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/shoes_rain_boots.png",
+      "collection": "rainy",
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "shoes_fluffy_slippers",
+      "name_key": "shop.item.shoes_fluffy_slippers.name",
+      "slot": "shoes",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/shoes_fluffy_slippers.png",
+      "collection": "cozy",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200
+      ]
+    },
+    {
+      "item_key": "shoes_striped_socks",
+      "name_key": "shop.item.shoes_striped_socks.name",
+      "slot": "shoes",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/shoes_striped_socks.png",
+      "collection": "everyday",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200
+      ]
+    },
+    {
+      "item_key": "shoes_giveh",
+      "name_key": "shop.item.shoes_giveh.name",
+      "slot": "shoes",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/shoes_giveh.png",
+      "collection": "bazaar",
+      "hues": [
+        0,
+        35
+      ]
+    },
+    {
+      "item_key": "shoes_sandals",
+      "name_key": "shop.item.shoes_sandals.name",
+      "slot": "shoes",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/shoes_sandals.png",
+      "collection": "seaside",
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "shoes_winter_boots",
+      "name_key": "shop.item.shoes_winter_boots.name",
+      "slot": "shoes",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/shoes_winter_boots.png",
+      "collection": "cozy",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "shoes_mary_janes",
+      "name_key": "shop.item.shoes_mary_janes.name",
+      "slot": "shoes",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/shoes_mary_janes.png",
+      "collection": "party",
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "held_balloon",
+      "name_key": "shop.item.held_balloon.name",
+      "slot": "held",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/held_balloon.png",
+      "collection": "party",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200,
+        245,
+        290,
+        330
+      ]
+    },
+    {
+      "item_key": "held_umbrella",
+      "name_key": "shop.item.held_umbrella.name",
+      "slot": "held",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/held_umbrella.png",
+      "collection": "rainy",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200
+      ]
+    },
+    {
+      "item_key": "held_book",
+      "name_key": "shop.item.held_book.name",
+      "slot": "held",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/held_book.png",
+      "collection": "school",
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "held_ice_pop",
+      "name_key": "shop.item.held_ice_pop.name",
+      "slot": "held",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/held_ice_pop.png",
+      "collection": "fruity",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200
+      ]
+    },
+    {
+      "item_key": "held_tea_glass",
+      "name_key": "shop.item.held_tea_glass.name",
+      "slot": "held",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/held_tea_glass.png",
+      "collection": "bazaar"
+    },
+    {
+      "item_key": "held_flower",
+      "name_key": "shop.item.held_flower.name",
+      "slot": "held",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/held_flower.png",
+      "collection": "garden",
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "held_racket",
+      "name_key": "shop.item.held_racket.name",
+      "slot": "held",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/held_racket.png",
+      "collection": "sporty",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "held_kite",
+      "name_key": "shop.item.held_kite.name",
+      "slot": "held",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/held_kite.png",
+      "collection": "garden",
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "held_teddy",
+      "name_key": "shop.item.held_teddy.name",
+      "slot": "held",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/held_teddy.png",
+      "collection": "cozy",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "bed_simple",
+      "name_key": "shop.item.bed_simple.name",
+      "slot": "room_bed",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/bed_simple.png",
+      "collection": "everyday",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "bed_round_nest",
+      "name_key": "shop.item.bed_round_nest.name",
+      "slot": "room_bed",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/bed_round_nest.png",
+      "collection": "cozy",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "bed_canopy",
+      "name_key": "shop.item.bed_canopy.name",
+      "slot": "room_bed",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/bed_canopy.png",
+      "collection": "party",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "bed_floor_mattress",
+      "name_key": "shop.item.bed_floor_mattress.name",
+      "slot": "room_bed",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/bed_floor_mattress.png",
+      "collection": "bazaar",
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "chair_wood",
+      "name_key": "shop.item.chair_wood.name",
+      "slot": "room_seat",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/chair_wood.png",
+      "collection": "everyday",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "sofa_small",
+      "name_key": "shop.item.sofa_small.name",
+      "slot": "room_seat",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/sofa_small.png",
+      "collection": "cozy",
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200
+      ]
+    },
+    {
+      "item_key": "beanbag",
+      "name_key": "shop.item.beanbag.name",
+      "slot": "room_seat",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/beanbag.png",
+      "collection": "cozy",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200,
+        245
+      ]
+    },
+    {
+      "item_key": "chair_rattan",
+      "name_key": "shop.item.chair_rattan.name",
+      "slot": "room_seat",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/chair_rattan.png",
+      "collection": "garden"
+    },
+    {
+      "item_key": "stool",
+      "name_key": "shop.item.stool.name",
+      "slot": "room_seat",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/stool.png",
+      "collection": "everyday",
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "lamp_pendant",
+      "name_key": "shop.item.lamp_pendant.name",
+      "slot": "room_lamp",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/lamp_pendant.png",
+      "collection": "everyday",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "chandelier_candle",
+      "name_key": "shop.item.chandelier_candle.name",
+      "slot": "room_lamp",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/chandelier_candle.png",
+      "collection": "party"
+    },
+    {
+      "item_key": "lantern",
+      "name_key": "shop.item.lantern.name",
+      "slot": "room_lamp",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/lantern.png",
+      "collection": "bazaar",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "string_lights",
+      "name_key": "shop.item.string_lights.name",
+      "slot": "room_lamp",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/string_lights.png",
+      "collection": "party",
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200
+      ]
+    },
+    {
+      "item_key": "lamp_floor",
+      "name_key": "shop.item.lamp_floor.name",
+      "slot": "room_lamp",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/lamp_floor.png",
+      "collection": "cozy",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "clock_wall",
+      "name_key": "shop.item.clock_wall.name",
+      "slot": "room_wall",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/clock_wall.png",
+      "collection": "everyday",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "mirror_tall",
+      "name_key": "shop.item.mirror_tall.name",
+      "slot": "room_wall",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/mirror_tall.png",
+      "collection": "everyday",
+      "always_available": true
+    },
+    {
+      "item_key": "photo_grid",
+      "name_key": "shop.item.photo_grid.name",
+      "slot": "room_wall",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/photo_grid.png",
+      "collection": "school"
+    },
+    {
+      "item_key": "tile_panel",
+      "name_key": "shop.item.tile_panel.name",
+      "slot": "room_wall",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/tile_panel.png",
+      "collection": "bazaar"
+    },
+    {
+      "item_key": "calligraphy_frame",
+      "name_key": "shop.item.calligraphy_frame.name",
+      "slot": "room_wall",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/calligraphy_frame.png",
+      "collection": "bazaar"
+    },
+    {
+      "item_key": "poster_cat",
+      "name_key": "shop.item.poster_cat.name",
+      "slot": "room_wall",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/poster_cat.png",
+      "collection": "everyday",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "macrame_hanging",
+      "name_key": "shop.item.macrame_hanging.name",
+      "slot": "room_wall",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/macrame_hanging.png",
+      "collection": "cozy"
+    },
+    {
+      "item_key": "shelf_niche",
+      "name_key": "shop.item.shelf_niche.name",
+      "slot": "room_shelf",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/shelf_niche.png",
+      "collection": "bazaar",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "bookcase_tall",
+      "name_key": "shop.item.bookcase_tall.name",
+      "slot": "room_shelf",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/bookcase_tall.png",
+      "collection": "school",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "desk_study",
+      "name_key": "shop.item.desk_study.name",
+      "slot": "room_table",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/desk_study.png",
+      "collection": "school",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "table_side",
+      "name_key": "shop.item.table_side.name",
+      "slot": "room_table",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/table_side.png",
+      "collection": "everyday",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "korsi",
+      "name_key": "shop.item.korsi.name",
+      "slot": "room_table",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/korsi.png",
+      "collection": "bazaar"
+    },
+    {
+      "item_key": "candle_vase",
+      "name_key": "shop.item.candle_vase.name",
+      "slot": "room_table",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/candle_vase.png",
+      "collection": "cozy"
+    },
+    {
+      "item_key": "radio_old",
+      "name_key": "shop.item.radio_old.name",
+      "slot": "room_table",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/radio_old.png",
+      "collection": "bazaar",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "fish_bowl",
+      "name_key": "shop.item.fish_bowl.name",
+      "slot": "room_table",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/fish_bowl.png",
+      "collection": "garden"
+    },
+    {
+      "item_key": "plant_snake",
+      "name_key": "shop.item.plant_snake.name",
+      "slot": "room_plant",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/plant_snake.png",
+      "collection": "everyday",
+      "always_available": true
+    },
+    {
+      "item_key": "plant_hanging",
+      "name_key": "shop.item.plant_hanging.name",
+      "slot": "room_plant",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/plant_hanging.png",
+      "collection": "garden",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "plant_monstera",
+      "name_key": "shop.item.plant_monstera.name",
+      "slot": "room_plant",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/plant_monstera.png",
+      "collection": "garden",
+      "always_available": true
+    },
+    {
+      "item_key": "cactus",
+      "name_key": "shop.item.cactus.name",
+      "slot": "room_plant",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/cactus.png",
+      "collection": "everyday",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "bonsai",
+      "name_key": "shop.item.bonsai.name",
+      "slot": "room_plant",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/bonsai.png",
+      "collection": "garden"
+    },
+    {
+      "item_key": "dresser_wood",
+      "name_key": "shop.item.dresser_wood.name",
+      "slot": "room_dresser",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/dresser_wood.png",
+      "collection": "everyday",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "sideboard",
+      "name_key": "shop.item.sideboard.name",
+      "slot": "room_dresser",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/sideboard.png",
+      "collection": "everyday",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "chest_trunk",
+      "name_key": "shop.item.chest_trunk.name",
+      "slot": "room_dresser",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/chest_trunk.png",
+      "collection": "bazaar",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "rug_round",
+      "name_key": "shop.item.rug_round.name",
+      "slot": "room_floor",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/rug_round.png",
+      "collection": "everyday",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200
+      ]
+    },
+    {
+      "item_key": "rug_fluffy",
+      "name_key": "shop.item.rug_fluffy.name",
+      "slot": "room_floor",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/rug_fluffy.png",
+      "collection": "cozy",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200
+      ]
+    },
+    {
+      "item_key": "gabbeh",
+      "name_key": "shop.item.gabbeh.name",
+      "slot": "room_floor",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/gabbeh.png",
+      "collection": "bazaar",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "doormat",
+      "name_key": "shop.item.doormat.name",
+      "slot": "room_doorside",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/doormat.png",
+      "collection": "everyday",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200
+      ]
+    },
+    {
+      "item_key": "coat_rack",
+      "name_key": "shop.item.coat_rack.name",
+      "slot": "room_doorside",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/coat_rack.png",
+      "collection": "everyday",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "shoe_rack",
+      "name_key": "shop.item.shoe_rack.name",
+      "slot": "room_doorside",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/shoe_rack.png",
+      "collection": "everyday",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "umbrella_stand",
+      "name_key": "shop.item.umbrella_stand.name",
+      "slot": "room_doorside",
+      "price_coins": 50,
+      "premium_only": false,
+      "asset": "assets/art/items/umbrella_stand.png",
+      "collection": "rainy"
+    },
+    {
+      "item_key": "wallpaper_stripes",
+      "name_key": "shop.item.wallpaper_stripes.name",
+      "slot": "room_wallpaper",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/wallpaper_stripes.png",
+      "collection": "everyday",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200
+      ]
+    },
+    {
+      "item_key": "wallpaper_floral",
+      "name_key": "shop.item.wallpaper_floral.name",
+      "slot": "room_wallpaper",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/wallpaper_floral.png",
+      "collection": "garden",
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "wallpaper_brick",
+      "name_key": "shop.item.wallpaper_brick.name",
+      "slot": "room_wallpaper",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/wallpaper_brick.png",
+      "collection": "everyday",
+      "always_available": true
+    },
+    {
+      "item_key": "wallpaper_stars",
+      "name_key": "shop.item.wallpaper_stars.name",
+      "slot": "room_wallpaper",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/wallpaper_stars.png",
+      "collection": "cozy",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "floor_wood",
+      "name_key": "shop.item.floor_wood.name",
+      "slot": "room_flooring",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/floor_wood.png",
+      "collection": "everyday",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "floor_tiles",
+      "name_key": "shop.item.floor_tiles.name",
+      "slot": "room_flooring",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/floor_tiles.png",
+      "collection": "bazaar",
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "floor_checker",
+      "name_key": "shop.item.floor_checker.name",
+      "slot": "room_flooring",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/floor_checker.png",
+      "collection": "party",
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "window_blinds",
+      "name_key": "shop.item.window_blinds.name",
+      "slot": "room_window",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/window_blinds.png",
+      "collection": "everyday",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95
+      ]
+    },
+    {
+      "item_key": "window_orosi",
+      "name_key": "shop.item.window_orosi.name",
+      "slot": "room_window",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/window_orosi.png",
+      "collection": "bazaar"
+    },
+    {
+      "item_key": "curtains",
+      "name_key": "shop.item.curtains.name",
+      "slot": "room_window",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/curtains.png",
+      "collection": "everyday",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150,
+        200
+      ]
+    },
+    {
+      "item_key": "window_round",
+      "name_key": "shop.item.window_round.name",
+      "slot": "room_window",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/window_round.png",
+      "collection": "garden"
+    },
+    {
+      "item_key": "door_white",
+      "name_key": "shop.item.door_white.name",
+      "slot": "room_door",
+      "price_coins": 90,
+      "premium_only": false,
+      "asset": "assets/art/items/door_white.png",
+      "collection": "everyday",
+      "always_available": true,
+      "hues": [
+        0,
+        35,
+        95,
+        150
+      ]
+    },
+    {
+      "item_key": "door_carved",
+      "name_key": "shop.item.door_carved.name",
+      "slot": "room_door",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/door_carved.png",
+      "collection": "bazaar"
+    },
+    {
+      "item_key": "door_arched",
+      "name_key": "shop.item.door_arched.name",
+      "slot": "room_door",
+      "price_coins": 150,
+      "premium_only": false,
+      "asset": "assets/art/items/door_arched.png",
+      "collection": "garden",
+      "hues": [
+        0,
+        35,
+        95
+      ]
     }
   ]
 }

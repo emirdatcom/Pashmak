@@ -24,6 +24,9 @@ import 'package:pashmak_app/features/menu/presentation/menu_screens.dart';
 import 'package:pashmak_app/features/quests/presentation/quests_screen.dart';
 import 'package:pashmak_app/features/settings/presentation/settings_screens.dart';
 import 'package:pashmak_app/features/shell/app_shell.dart';
+import 'package:pashmak_app/features/shop/presentation/closet_screen.dart';
+import 'package:pashmak_app/features/shop/presentation/inventory_screen.dart';
+import 'package:pashmak_app/features/shop/presentation/item_screen.dart';
 import 'package:pashmak_app/features/shop/presentation/shop_screens.dart';
 
 import '../helpers.dart';
@@ -75,6 +78,10 @@ void main() {
     const _Shot('15', 'breathing-run', '/exercises/x/run', ExerciseRunScreen(exerciseKey: 'breathing_basic'), shell: false, tapStart: true),
     const _Shot('16', 'exercises', '/exercises', ExercisesScreen(), shell: false),
     const _Shot('17', 'reflect', '/quests/reflect', ReflectScreen(), shell: false),
+    const _Shot('18', 'shop-furniture', '/shop/furniture', ShopDetailScreen(shop: 'furniture'), shell: false),
+    const _Shot('19', 'shop-item', '/shop/outfit/item/hat_beret', ShopItemScreen(shop: 'outfit', itemKey: 'hat_beret'), shell: false),
+    const _Shot('20', 'shop-catalog', '/shop/outfit/catalog', ShopInventoryScreen(shop: 'outfit', sell: false), shell: false),
+    const _Shot('21', 'closet', '/shop/closet', ClosetScreen(), shell: false),
   ];
 
   setUpAll(_loadFont);

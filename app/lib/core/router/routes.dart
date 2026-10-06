@@ -37,6 +37,10 @@ class Routes {
   static String adventureResult(String id) => '/adventure/result/$id';
   static const shop = '/shop';
   static const closet = '/shop/closet';
+  static String closetOf(String shop) => '/shop/closet?shop=$shop';
+  static String shopItem(String shop, String key) => '/shop/$shop/item/$key';
+  static String shopCatalog(String shop) => '/shop/$shop/catalog';
+  static String shopSell(String shop) => '/shop/$shop/sell';
   static const stats = '/stats';
   static const statsDeep = '/stats/deep';
   static String paywall(String trigger) => '/paywall?trigger=$trigger';

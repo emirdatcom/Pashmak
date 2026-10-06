@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../../core/widgets/cat_renderer.dart';
+import '../../../core/widgets/hue.dart';
 
 /// The final layered cat art (assets/art/cat): body, head with attached ears, two arms, two legs, a tail and two dot
 /// eyes, stacked in a fixed design space and animated with a single looping controller (tail sway, arm swing, head
@@ -16,7 +17,7 @@ class LayeredCat extends StatefulWidget {
   /// Whether [state] can be drawn by the layered art.
   static bool supports(CatVisualState s) =>
       !s.faceOnly &&
-      s.accessories.isEmpty &&
+      (s.accessories.isEmpty || s.worn.isNotEmpty) &&
       s.background == null &&
       s.fur == CatFur.orangeCream;
 
@@ -47,6 +48,21 @@ const _legR = _Part('leg_right', 110, 760, 228, 412);
 const _tail = _Part('tail', 357, 520, 334, 414);
 const _eyeL = _Part('eye_left', -135, 255, 55, 58);
 const _eyeR = _Part('eye_right', 135, 255, 56, 58);
+
+/// Where each worn slot sits in the design space: (centre x from the cat axis, top, width, height).
+/// Item art is fitted (contain) into its box; hats and glasses ride the head bob.
+const _wornBox = <String, (double, double, double, double)>{
+  'bottom': (0, 720, 520, 330),
+  'shoes': (0, 1000, 540, 210),
+  'onesie': (0, 410, 680, 740),
+  'top': (0, 420, 660, 480),
+  'scarf': (0, 395, 500, 270),
+  'collar': (0, 405, 420, 200),
+  'glasses': (0, 165, 470, 200),
+  'hat': (0, -175, 540, 370),
+  'held': (330, 500, 330, 400),
+};
+const _bobbing = {'glasses', 'hat'};
 
 class _LayeredCatState extends State<LayeredCat>
     with SingleTickerProviderStateMixin {
@@ -94,6 +110,23 @@ class _LayeredCatState extends State<LayeredCat>
     );
   }
 
+  /// Worn items of [slots], in that order. Art not in the bundle yet draws nothing.
+  List<Widget> _worn(List<String> slots, double bob) => [
+        for (final slot in slots)
+          for (final w in widget.state.worn.where((w) => w.slot == slot))
+            if (_wornBox[slot] case final b?)
+              Positioned(
+                left: b.$1 + _ox - b.$3 / 2,
+                top: b.$2 + (_bobbing.contains(slot) ? bob : 0),
+                width: b.$3,
+                height: b.$4,
+                child: HueShift(
+                  degrees: w.hue,
+                  child: Image.asset(w.asset, fit: BoxFit.contain, filterQuality: FilterQuality.medium, gaplessPlayback: true, errorBuilder: (_, _, _) => const SizedBox.shrink()),
+                ),
+              ),
+      ];
+
   @override
   Widget build(BuildContext context) {
     final reduce = MediaQuery.of(context).disableAnimations;
@@ -124,11 +157,14 @@ class _LayeredCatState extends State<LayeredCat>
                   _img(_legL),
                   _img(_legR),
                   _img(_body),
+                  ..._worn(const ['bottom', 'shoes'], bob),
                   _img(_armL, angle: arm, pivot: const Alignment(0.7, -1)),
                   _img(_armR, angle: -arm, pivot: const Alignment(-0.7, -1)),
+                  ..._worn(const ['onesie', 'top', 'scarf', 'collar'], bob),
                   _img(_head, dy: bob),
                   _img(_eyeL, scaleY: eye, dy: bob),
                   _img(_eyeR, scaleY: eye, dy: bob),
+                  ..._worn(const ['glasses', 'hat', 'held'], bob),
                 ],
               );
             },

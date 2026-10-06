@@ -11,10 +11,37 @@ import '../../wallet/domain/wallet_service.dart';
 import 'shop_rotation.dart';
 
 class ShopItem {
-  const ShopItem({required this.itemKey, required this.nameKey, required this.slot, required this.priceCoins, required this.premiumOnly, this.seasonalKey, this.alwaysAvailable = false});
+  const ShopItem({
+    required this.itemKey,
+    required this.nameKey,
+    required this.slot,
+    required this.priceCoins,
+    required this.premiumOnly,
+    this.seasonalKey,
+    this.alwaysAvailable = false,
+    this.collection,
+    this.hues = const [],
+  });
   factory ShopItem.fromJson(Map<String, dynamic> j) => ShopItem(
-      itemKey: j['item_key'] as String, nameKey: j['name_key'] as String, slot: j['slot'] as String, priceCoins: j['price_coins'] as int, premiumOnly: j['premium_only'] as bool, alwaysAvailable: (j['always_available'] as bool?) ?? false);
+        itemKey: j['item_key'] as String,
+        nameKey: j['name_key'] as String,
+        slot: j['slot'] as String,
+        priceCoins: j['price_coins'] as int,
+        premiumOnly: j['premium_only'] as bool,
+        alwaysAvailable: (j['always_available'] as bool?) ?? false,
+        collection: j['collection'] as String?,
+        hues: [for (final h in (j['hues'] as List?) ?? const []) h as int],
+      );
   final String? seasonalKey;
+
+  /// Collection key (`shop.collection.<key>`); seasonal items belong to their season instead.
+  final String? collection;
+
+  /// Colour variants as hue shifts of the base art (empty = one colour). Owning the item unlocks all of them.
+  final List<int> hues;
+
+  /// Art of the item, also drawn on the cat when worn.
+  String get asset => 'assets/art/items/$itemKey.png';
   final String itemKey;
   final String nameKey;
   final String slot;
@@ -24,7 +51,10 @@ class ShopItem {
 
   /// Shop tab: `cat` (collar, hat), `room` (room_*), `background`.
   /// The two shops of prompt 22: `outfit` (what the cat wears) and `furniture` (the home).
-  String get shop => const ['collar', 'hat', 'glasses', 'scarf'].contains(slot) ? 'outfit' : 'furniture';
+  String get shop => outfitSlots.contains(slot) ? 'outfit' : 'furniture';
+
+  /// What the cat can wear. A onesie covers both the top and the bottom.
+  static const outfitSlots = ['top', 'bottom', 'onesie', 'hat', 'glasses', 'scarf', 'collar', 'shoes', 'held'];
 
   String get tab => slot == 'background' ? 'background' : (slot.startsWith('room_') ? 'room' : 'cat');
 }
@@ -103,7 +133,9 @@ class ShopService {
     }
     if ((item(itemKey)?.premiumOnly ?? false) && !isPremium) return EquipStatus.premiumLocked;
     await _db.transaction(() async {
-      await (_db.update(_db.inventory)..where((i) => i.slot.equals(owned.slot))).write(const InventoryCompanion(equipped: Value(false)));
+      // One item per slot; a onesie and a top/bottom exclude each other.
+      final clash = switch (owned.slot) { 'onesie' => ['onesie', 'top', 'bottom'], 'top' || 'bottom' => [owned.slot, 'onesie'], _ => [owned.slot] };
+      await (_db.update(_db.inventory)..where((i) => i.slot.isIn(clash))).write(const InventoryCompanion(equipped: Value(false)));
       await (_db.update(_db.inventory)..where((i) => i.itemKey.equals(itemKey))).write(const InventoryCompanion(equipped: Value(true)));
     });
     await _analytics.track(AnalyticsEvent.itemEquipped, {'item_key': itemKey, 'slot': owned.slot});
@@ -165,6 +197,12 @@ class ShopService {
     await _analytics.track(AnalyticsEvent.itemSold, {'item_key': itemKey});
     await _publisher.refresh();
     return SellStatus.sold;
+  }
+
+  /// Takes off everything worn in [slot] (the "none" tile of the closet).
+  Future<void> unequipSlot(String slot) async {
+    await (_db.update(_db.inventory)..where((i) => i.slot.equals(slot))).write(const InventoryCompanion(equipped: Value(false)));
+    await _publisher.refresh();
   }
 
   /// Sell value shown next to an owned item.

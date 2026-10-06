@@ -8,6 +8,7 @@ import '../../../core/db/app_database.dart';
 import '../../../core/time/clock.dart';
 import '../../../core/widget_snapshot.dart';
 import '../../wallet/domain/wallet_service.dart';
+import '../../shop/domain/shop_service.dart' show ShopItem;
 import 'quest_engine.dart';
 
 enum ClaimStatus { claimed, notReady, alreadyClaimed, unknown }
@@ -91,7 +92,7 @@ class QuestService {
       'shop_visit_today': await _db.meta('visit:shop:$day') == '1' ? 1 : 0,
       'cat_visit_today': await _db.meta('visit:cat:$day') == '1' ? 1 : 0,
       'adventures_count': claimed.length,
-      'owned_outfit': owned.where((i) => const ['collar', 'hat', 'glasses', 'scarf'].contains(i.slot)).length,
+      'owned_outfit': owned.where((i) => ShopItem.outfitSlots.contains(i.slot)).length,
       'owned_furniture': owned.where((i) => i.slot.startsWith('room_') || i.slot == 'background').length,
       'locations_visited': adventures.map((a) => a.locationKey).toSet().length,
       'streak_days': streak.current,

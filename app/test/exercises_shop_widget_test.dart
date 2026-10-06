@@ -10,6 +10,7 @@ import 'package:pashmak_app/core/screen_awake.dart';
 import 'package:pashmak_app/core/theme/app_theme.dart';
 import 'package:pashmak_app/features/core_loop_providers.dart';
 import 'package:pashmak_app/features/exercises/presentation/exercises_screens.dart';
+import 'package:pashmak_app/features/shop/presentation/item_screen.dart';
 import 'package:pashmak_app/features/shop/presentation/shop_screens.dart';
 import 'package:pashmak_app/features/wallet/domain/wallet_service.dart';
 
@@ -42,7 +43,11 @@ void main() {
       GoRoute(path: Routes.exercises, builder: (_, _) => const ExercisesScreen(), routes: [
         GoRoute(path: ':id/run', builder: (_, s) => ExerciseRunScreen(exerciseKey: s.pathParameters['id']!)),
       ]),
-      GoRoute(path: Routes.shop, builder: (_, _) => const ShopScreen(), routes: [GoRoute(path: 'outfit', builder: (_, _) => const ShopDetailScreen(shop: 'outfit'))]),
+      GoRoute(path: Routes.shop, builder: (_, _) => const ShopScreen(), routes: [
+        GoRoute(path: 'outfit', builder: (_, _) => const ShopDetailScreen(shop: 'outfit'), routes: [
+          GoRoute(path: 'item/:key', builder: (_, s) => ShopItemScreen(shop: 'outfit', itemKey: s.pathParameters['key']!, keys: (s.extra as List?)?.cast<String>())),
+        ]),
+      ]),
       GoRoute(path: Routes.quests, builder: (_, _) => const SizedBox()),
       GoRoute(path: '/paywall', builder: (_, s) => Text('paywall:${s.uri.queryParameters['trigger']}')),
       GoRoute(path: Routes.adventure, builder: (_, _) => const SizedBox()),
@@ -89,23 +94,40 @@ void main() {
     expect(find.textContaining('پریمیوم'), findsNothing, reason: 'no upsell after an exercise');
   });
 
-  testWidgets('shop: buy from the permanent collection shows "داری"; too few coins gives a kind message', (tester) async {
+  testWidgets('shop: open an everyday item, too few coins gives a kind message, then buy it through the confirm sheet', (tester) async {
     final (c, _, app) = await setup(tester, Routes.shopOutfit);
     await tester.runAsync(() => c.read(walletServiceProvider).grant(Currency.coins, 50, 'promo', 'seed'));
     await tester.pumpWidget(app);
-    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 300)));
-    await tester.pump(const Duration(milliseconds: 300));
-    final tile = find.text('گردنبند فیروزه‌ای'); // permanent, 60 coins
+    Future<void> settle() async {
+      for (var i = 0; i < 3; i++) {
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 200)));
+        await tester.pump(const Duration(milliseconds: 400));
+      }
+    }
+
+    await settle();
+    final tile = find.byKey(const ValueKey('tile-collar_turquoise')); // everyday, 60 coins
     await tester.scrollUntilVisible(tile, 200, scrollable: find.byType(Scrollable).first);
     await tester.tap(tile);
-    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 200)));
-    await tester.pump(const Duration(milliseconds: 300));
-    expect(find.text('سکه‌ات کمه؛ با ماجراجویی جمع می‌شه.'), findsOneWidget);
+    await settle();
+    expect(find.text('گردنبند فیروزه‌ای'), findsWidgets, reason: 'the item screen shows its name');
+    await tester.tap(find.byKey(const ValueKey('buy')));
+    await settle();
+    expect(find.text('سکه‌ات هنوز کمه'), findsOneWidget);
+    await tester.tap(find.text('بعداً'));
+    await settle();
     await tester.runAsync(() => c.read(walletServiceProvider).grant(Currency.coins, 100, 'promo', 'more'));
-    await tester.tap(tile);
-    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 300)));
-    await tester.pump(const Duration(milliseconds: 300));
-    expect(find.text('داری'), findsOneWidget);
+    await settle();
+    await tester.tap(find.byKey(const ValueKey('buy')));
+    await settle();
+    await tester.tap(find.text('بخر'));
+    await settle();
+    expect(find.text('مال خودت شد!'), findsOneWidget);
+    await tester.tap(find.text('بعداً'));
+    await settle();
+    expect(find.text('بپوشون'), findsOneWidget, reason: 'owned: the price button turns into wear');
+    final coins = (await tester.runAsync(() => c.read(walletServiceProvider).balance()))!.coins;
+    expect(coins, 150 - 60);
   });
 }
 

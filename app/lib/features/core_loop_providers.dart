@@ -1,4 +1,5 @@
 import 'goals/domain/goal_title.dart';
+import 'package:drift/drift.dart' show StringExpressionOperators;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/content/content_repository.dart';
@@ -175,6 +176,23 @@ final tickProvider = StreamProvider<DateTime>((ref) async* {
   }
 });
 
+/// Chosen colour of each owned item with colour variants: item key → hue shift (app_meta `item_hue:<key>`).
+final itemHuesProvider = StreamProvider<Map<String, int>>((ref) {
+  final db = ref.watch(databaseProvider);
+  return (db.select(db.appMeta)..where((m) => m.key.like('item_hue:%')))
+      .watch()
+      .map((rows) => {for (final r in rows) r.key.substring('item_hue:'.length): int.tryParse(r.value) ?? 0});
+});
+
+/// What the cat wears, ready to draw: equipped outfit items with their art and chosen colour.
+List<WornItem> wornItems(List<ShopItem> catalog, Iterable<String> equippedKeys, Map<String, int> hues) {
+  final byKey = {for (final i in catalog) i.itemKey: i};
+  return [
+    for (final k in equippedKeys)
+      if (byKey[k] case final it? when ShopItem.outfitSlots.contains(it.slot)) WornItem(asset: it.asset, slot: it.slot, hue: hues[k] ?? 0),
+  ];
+}
+
 final catStateProvider = Provider<CatVisualState>((ref) {
   ref.watch(tickProvider);
   final adv = ref.watch(currentAdventureProvider).value;
@@ -192,6 +210,9 @@ final catStateProvider = Provider<CatVisualState>((ref) {
     background: equipped.where((i) => i.slot == 'background').map((i) => i.itemKey).firstOrNull,
     stage: ref.watch(catStageProvider),
     fur: ref.watch(catProfileProvider).value?.fur ?? CatFur.orangeCream,
+  ).copyWith(
+    worn: wornItems(shopCatalog(ref.watch(contentRepositoryProvider), ref.watch(seasonalCatalogProvider)), [for (final i in equipped) i.itemKey],
+        ref.watch(itemHuesProvider).value ?? const {}),
   );
 });
 

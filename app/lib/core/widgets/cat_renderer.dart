@@ -10,6 +10,19 @@ enum CatFur { orangeCream, smokeGray, tricolor }
 
 enum CatActivity { idle, eating, away, returning }
 
+/// An item the cat wears, drawn from its art at its slot (top, hat, shoes, held, …) and tinted by [hue] degrees.
+class WornItem {
+  const WornItem({required this.asset, required this.slot, this.hue = 0});
+  final String asset;
+  final String slot;
+  final int hue;
+
+  @override
+  bool operator ==(Object other) => other is WornItem && other.asset == asset && other.slot == slot && other.hue == hue;
+  @override
+  int get hashCode => Object.hash(asset, slot, hue);
+}
+
 class CatVisualState {
   const CatVisualState({
     this.mood = CatMood.happy,
@@ -19,7 +32,14 @@ class CatVisualState {
     this.stage = CatStage.kitten,
     this.fur = CatFur.orangeCream,
     this.faceOnly = false,
+    this.worn = const [],
   });
+
+  /// Clothes drawn on the layered cat (see [WornItem]).
+  final List<WornItem> worn;
+
+  CatVisualState copyWith({List<WornItem>? worn}) =>
+      CatVisualState(mood: mood, accessories: accessories, background: background, activity: activity, stage: stage, fur: fur, faceOnly: faceOnly, worn: worn ?? this.worn);
   final CatStage stage;
   final CatFur fur;
 

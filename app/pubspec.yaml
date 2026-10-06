@@ -100,6 +100,7 @@ flutter:
     - assets/keys/
     - assets/art/background/
     - assets/art/cat/
+    - assets/art/items/
     - assets/art/emoji/
     - assets/art/emoji/animals/
     - assets/art/emoji/body/

@@ -59,11 +59,26 @@
               "hat",
               "glasses",
               "scarf",
+              "top",
+              "bottom",
+              "onesie",
+              "shoes",
+              "held",
               "background",
               "room_table",
               "room_floor",
               "room_wall",
-              "room_shelf"
+              "room_shelf",
+              "room_bed",
+              "room_seat",
+              "room_lamp",
+              "room_plant",
+              "room_dresser",
+              "room_doorside",
+              "room_wallpaper",
+              "room_flooring",
+              "room_window",
+              "room_door"
             ]
           },
           "price_coins": {
@@ -78,6 +93,21 @@
           },
           "always_available": {
             "type": "boolean"
+          },
+          "collection": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]{1,32}$",
+            "description": "collection key; its name is copy `shop.collection.<key>`"
+          },
+          "hues": {
+            "type": "array",
+            "description": "colour variants as hue shifts (degrees) of the base art; 0 = the art as drawn",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 359
+            },
+            "uniqueItems": true
           }
         }
       }

@@ -21,6 +21,9 @@ import '../../features/onboarding/presentation/onboarding_screen.dart';
 import '../../features/stats/presentation/deep_stats_screen.dart';
 import '../../features/stats/presentation/stats_screen.dart';
 import '../../features/safety/presentation/safety_screen.dart';
+import '../../features/shop/presentation/closet_screen.dart';
+import '../../features/shop/presentation/inventory_screen.dart';
+import '../../features/shop/presentation/item_screen.dart';
 import '../../features/shop/presentation/shop_screens.dart';
 import '../../features/settings/presentation/settings_screens.dart';
 import '../../features/support/presentation/support_screen.dart';
@@ -65,8 +68,17 @@ final routerProvider = Provider<GoRouter>((ref) {
             GoRoute(path: 'reflect', builder: (_, _) => const ReflectScreen()),
           ]),
           GoRoute(path: Routes.shop, builder: (_, _) => const ShopScreen(), routes: [
-            GoRoute(path: 'outfit', builder: (_, _) => const ShopDetailScreen(shop: 'outfit')),
-            GoRoute(path: 'furniture', builder: (_, _) => const ShopDetailScreen(shop: 'furniture')),
+            GoRoute(path: 'outfit', builder: (_, _) => const ShopDetailScreen(shop: 'outfit'), routes: [
+              GoRoute(path: 'item/:key', builder: (_, s) => ShopItemScreen(shop: 'outfit', itemKey: s.pathParameters['key']!, keys: (s.extra as List?)?.cast<String>())),
+              GoRoute(path: 'catalog', builder: (_, _) => const ShopInventoryScreen(shop: 'outfit', sell: false)),
+              GoRoute(path: 'sell', builder: (_, _) => const ShopInventoryScreen(shop: 'outfit', sell: true)),
+            ]),
+            GoRoute(path: 'closet', builder: (_, s) => ClosetScreen(shop: s.uri.queryParameters['shop'] ?? 'outfit')),
+            GoRoute(path: 'furniture', builder: (_, _) => const ShopDetailScreen(shop: 'furniture'), routes: [
+              GoRoute(path: 'item/:key', builder: (_, s) => ShopItemScreen(shop: 'furniture', itemKey: s.pathParameters['key']!, keys: (s.extra as List?)?.cast<String>())),
+              GoRoute(path: 'catalog', builder: (_, _) => const ShopInventoryScreen(shop: 'furniture', sell: false)),
+              GoRoute(path: 'sell', builder: (_, _) => const ShopInventoryScreen(shop: 'furniture', sell: true)),
+            ]),
           ]),
           GoRoute(path: Routes.bag, builder: (_, _) => const BagScreen()),
           GoRoute(path: Routes.cat, builder: (_, _) => const CatProfileScreen(), routes: [
