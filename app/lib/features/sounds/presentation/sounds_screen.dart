@@ -67,7 +67,7 @@ class _SoundsScreenState extends ConsumerState<SoundsScreen> {
             Text(copy.t('sounds.presets'), style: const TextStyle(color: DS.onDark, fontWeight: FontWeight.w800, fontSize: 17)),
             const SizedBox(height: 8),
             SizedBox(
-              height: 104,
+              height: 116 * MediaQuery.textScalerOf(context).scale(1).clamp(1.0, 1.6),
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: SoundPreset.all.length,
@@ -168,7 +168,7 @@ class _Chip extends StatelessWidget {
                   if (locked) const PositionedDirectional(end: -6, bottom: -4, child: EmojiArt('misc/padlock', size: 20, fallback: 'ui/lock')),
                 ]),
                 const SizedBox(height: 6),
-                Text(label, maxLines: 2, textAlign: TextAlign.center, style: const TextStyle(color: DS.onDark, fontSize: 13, fontWeight: FontWeight.w700)),
+                Flexible(child: Text(label, maxLines: 2, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center, style: const TextStyle(color: DS.onDark, fontSize: 13, fontWeight: FontWeight.w700))),
               ]),
             ),
           ),

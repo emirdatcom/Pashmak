@@ -29,7 +29,7 @@ class MenuScreen extends ConsumerWidget {
       ('menu.areas', Icons.category, Routes.areas, false),
       ('menu.goals', Icons.checklist, Routes.goals, false),
       ('menu.insights', Icons.insights, Routes.stats, false),
-      ('menu.journal', Icons.newspaper, '', true),
+      ('menu.journal', Icons.menu_book_rounded, Routes.journal, false),
       ('menu.history', Icons.history, Routes.history, false),
     ];
     return Scaffold(

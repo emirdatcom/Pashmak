@@ -19,7 +19,10 @@ import 'package:pashmak_app/features/habits/domain/habit_service.dart';
 import 'package:pashmak_app/features/home/presentation/home_screen.dart';
 import 'package:pashmak_app/features/menu/presentation/menu_screens.dart';
 import 'package:pashmak_app/features/quests/presentation/quests_screen.dart';
+import 'package:pashmak_app/features/journal/presentation/journal_screens.dart';
+import 'package:pashmak_app/features/settings/presentation/info_screens.dart';
 import 'package:pashmak_app/features/settings/presentation/settings_screens.dart';
+import 'package:pashmak_app/features/sounds/presentation/sounds_screen.dart';
 import 'package:pashmak_app/features/shop/presentation/shop_screens.dart';
 
 import 'helpers.dart';
@@ -48,6 +51,11 @@ void main() {
     'exercises': const ExercisesScreen(),
     'settings': const SettingsScreen(),
     'help': const HelpScreen(),
+    'journal': const JournalScreen(),
+    'journal write': const JournalWriteScreen(templateKey: 'reframe'),
+    'sounds': const SoundsScreen(),
+    'terms': const TermsScreen(),
+    'rest mode': const RestModeScreen(),
   };
 
   for (final scale in [1.0, 1.3]) {

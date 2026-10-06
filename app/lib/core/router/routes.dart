@@ -33,6 +33,8 @@ class Routes {
   static String exercisesTab(String tab) => '/exercises?tab=$tab';
   static const exercises = '/exercises';
   static const sounds = '/sounds';
+  static const journal = '/journal';
+  static String journalWrite(String template) => '/journal/write/$template';
   static String exerciseRun(String id) => '/exercises/$id/run';
   static const adventure = '/adventure';
   static String adventureResult(String id) => '/adventure/result/$id';
