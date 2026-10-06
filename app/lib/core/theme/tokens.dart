@@ -89,6 +89,8 @@ class DS {
   static const neutralButton = Color(0xFFE3E7EA);
   static const neutralButtonEdge = Color(0xFFB9C1C6);
   static const progressYellow = Color(0xFFFFC845);
+  static const progressYellowGloss = Color(0xFFFFE28E);
+  static const progressYellowShade = Color(0xFFF7B52C);
   static const progressRail = Color(0xFFEFEFEF);
   static const doneBg = Color(0xFFE8E9C1);
   static const doneText = Color(0xFF256D2A);

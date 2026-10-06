@@ -41,9 +41,28 @@ class ProgressPill extends StatelessWidget {
                     duration: MediaQuery.of(context).disableAnimations ? Duration.zero : const Duration(milliseconds: 250),
                     width: w,
                     height: height,
-                    decoration: BoxDecoration(color: DS.progressYellow, borderRadius: BorderRadius.circular(height)),
-                    alignment: AlignmentDirectional.centerEnd,
-                    child: endEmoji == null ? null : EmojiArt(endEmoji!, size: height),
+                    // A slightly deeper lower edge plus a light gloss stripe across the top: the fill reads as a
+                    // rounded, shiny bar instead of a flat band.
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(height),
+                      gradient: const LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        stops: [0, 0.62, 1],
+                        colors: [DS.progressYellow, DS.progressYellow, DS.progressYellowShade],
+                      ),
+                    ),
+                    child: Stack(children: [
+                      if (height >= 14 && w >= height * 1.2)
+                        PositionedDirectional(
+                          start: height * 0.45,
+                          end: endEmoji == null ? height * 0.45 : height * 1.1,
+                          top: height * 0.16,
+                          height: height * 0.2,
+                          child: DecoratedBox(decoration: BoxDecoration(color: DS.progressYellowGloss, borderRadius: BorderRadius.circular(height))),
+                        ),
+                      if (endEmoji != null) Align(alignment: AlignmentDirectional.centerEnd, child: EmojiArt(endEmoji!, size: height)),
+                    ]),
                   ),
                 );
               },
