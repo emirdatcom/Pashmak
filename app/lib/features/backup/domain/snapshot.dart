@@ -8,7 +8,10 @@ import '../../../core/time/clock.dart';
 import 'snapshot_upgraders.dart';
 
 /// `app_meta` keys that belong to the user (the rest — install id, tokens' flags, caches — are per device).
-const backedUpMetaKeys = ['cat_name', 'onboarding_completed'];
+const backedUpMetaKeys = ['cat_name', 'onboarding_completed', 'cat_fur', 'cat_trait', 'cat_arrived_at', 'user_name', 'onboarding_goals'];
+
+/// `app_meta` key prefixes that are user data too: chosen item colours and reopenable adventure results.
+const backedUpMetaPrefixes = ['item_hue:', 'adventure_result:'];
 
 class SnapshotSummary {
   const SnapshotSummary({required this.exportedAt, required this.habits, required this.checkins, required this.logs});
@@ -41,7 +44,13 @@ class SnapshotExporter {
       'streak_state': rows(await _db.select(_db.streakState).get()),
       'safety_flags': rows(await _db.select(_db.safetyFlags).get()),
       'user_settings': rows(await _db.select(_db.userSettings).get()),
-      'meta': {for (final k in backedUpMetaKeys) if (await _db.meta(k) != null) k: await _db.meta(k)},
+      'discoveries_found': rows(await _db.select(_db.discoveriesFound).get()),
+      'quest_progress': rows(await _db.select(_db.questProgress).get()),
+      'onboarding_answers': rows(await _db.select(_db.onboardingAnswers).get()),
+      'meta': {
+        for (final r in await _db.select(_db.appMeta).get())
+          if (backedUpMetaKeys.contains(r.key) || backedUpMetaPrefixes.any(r.key.startsWith)) r.key: r.value,
+      },
     };
   }
 
@@ -72,8 +81,12 @@ class SnapshotImporter {
     List<Map<String, dynamic>> list(String k) => ((s[k] as List?) ?? const []).cast<Map<String, dynamic>>();
     await _db.transaction(() async {
       // children before parents
-      for (final t in <TableInfo>[_db.habitLogs, _db.exerciseSessions, _db.walletLedger, _db.checkins, _db.adventures, _db.inventory, _db.safetyFlags, _db.habits, _db.wallet, _db.streakState, _db.userSettings]) {
+      for (final t in <TableInfo>[_db.habitLogs, _db.exerciseSessions, _db.walletLedger, _db.checkins, _db.adventures, _db.inventory, _db.safetyFlags, _db.habits, _db.wallet, _db.streakState, _db.userSettings, _db.discoveriesFound, _db.questProgress, _db.onboardingAnswers]) {
         await _db.delete(t).go();
+      }
+      // per-item meta of the replaced data must not outlive it
+      for (final prefix in backedUpMetaPrefixes) {
+        await (_db.delete(_db.appMeta)..where((m) => m.key.like('$prefix%'))).go();
       }
       Future<void> put<D extends DataClass>(TableInfo<Table, D> t, String key, D Function(Map<String, dynamic>) from) async {
         for (final j in list(key)) {
@@ -92,12 +105,16 @@ class SnapshotImporter {
       await put(_db.streakState, 'streak_state', StreakStateData.fromJson);
       await put(_db.safetyFlags, 'safety_flags', SafetyFlag.fromJson);
       await put(_db.userSettings, 'user_settings', UserSetting.fromJson);
+      // added later in format 1 (optional keys: older snapshots simply have none)
+      await put(_db.discoveriesFound, 'discoveries_found', DiscoveriesFoundData.fromJson);
+      await put(_db.questProgress, 'quest_progress', QuestProgressData.fromJson);
+      await put(_db.onboardingAnswers, 'onboarding_answers', OnboardingAnswer.fromJson);
       // singleton rows must exist even for a very old snapshot
       if ((await _db.select(_db.wallet).get()).isEmpty) await _db.into(_db.wallet).insert(WalletCompanion.insert(id: const Value(1), updatedAt: 0));
       if ((await _db.select(_db.streakState).get()).isEmpty) await _db.into(_db.streakState).insert(StreakStateCompanion.insert(id: const Value(1)));
       final meta = (s['meta'] as Map?)?.cast<String, dynamic>() ?? const {};
-      for (final k in backedUpMetaKeys) {
-        if (meta[k] is String) await _db.setMeta(k, meta[k] as String);
+      for (final e in meta.entries) {
+        if ((backedUpMetaKeys.contains(e.key) || backedUpMetaPrefixes.any(e.key.startsWith)) && e.value is String) await _db.setMeta(e.key, e.value as String);
       }
     });
   }

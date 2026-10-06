@@ -1505,6 +1505,7 @@
     "closet.colors": "رنگ‌ها",
     "closet.grow": "{CAT_NAME} باید بزرگ‌تر بشه تا ظاهرهای بیشتری باز بشه! ماجراجویی‌های روزانه رو ادامه بده.",
     "closet.fur": "رنگ خز",
-    "closet.home": "خونه‌ی {CAT_NAME}"
+    "closet.home": "خونه‌ی {CAT_NAME}",
+    "common.list_separator": "، "
   }
 }

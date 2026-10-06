@@ -156,7 +156,8 @@ class _GoalEditorState extends ConsumerState<GoalEditorScreen> {
   static String _repeatOf(String repeatType, String scheduleType, int mask) => repeatType == 'once' || repeatType == 'monthly'
       ? repeatType
       : (repeatType == 'weekly' || scheduleType == 'weekly')
-          ? (mask == weekdaysMask ? 'weekdays' : 'custom')
+          // one day a week reopens as "every week on <day>", not as a one-day custom set
+          ? (mask == weekdaysMask ? 'weekdays' : (mask != 0 && mask & (mask - 1) == 0 ? 'weekly_on' : 'custom'))
           : 'daily';
 
   Future<void> _load() async {
@@ -360,10 +361,15 @@ class _GoalEditorState extends ConsumerState<GoalEditorScreen> {
 
   /// "More / less options" on one side, the save button on the other.
   Widget _footer(CopyResolver copy) => Row(children: [
-        TextButton(
-          onPressed: () => setState(() => _more = !_more),
-          child: Text(copy.t(_more ? 'goal.editor.less' : 'goal.editor.more'), style: const TextStyle(color: DS.textSecondary, fontSize: 15, fontWeight: FontWeight.w700)),
+        // Flexible: on narrow screens / large text the toggle shrinks instead of pushing the save button out
+        Flexible(
+          child: TextButton(
+            onPressed: () => setState(() => _more = !_more),
+            child: Text(copy.t(_more ? 'goal.editor.less' : 'goal.editor.more'),
+                maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: DS.textSecondary, fontSize: 15, fontWeight: FontWeight.w700)),
+          ),
         ),
+        const SizedBox(width: 8),
         const Spacer(),
         ChunkyButton(label: copy.t('common.save'), expand: false, height: 44, onPressed: _canSave ? _save : null),
       ]);

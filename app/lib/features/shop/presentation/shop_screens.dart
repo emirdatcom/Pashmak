@@ -280,7 +280,7 @@ class _ShopDetailState extends ConsumerState<ShopDetailScreen> {
                       child: Text(copy.t('shop.items_refresh', {'time': clock}), style: const TextStyle(color: DS.onDark, fontSize: 17, fontWeight: FontWeight.w600)),
                     ),
                   ),
-                  _RefreshPill(cost: cfg.shopRefreshCost, onTap: _refresh),
+                  _RefreshPill(key: const ValueKey('shop-refresh'), cost: cfg.shopRefreshCost, onTap: _refresh),
                 ]),
                 const SizedBox(height: 14),
                 grid(_stock),
@@ -409,7 +409,7 @@ class _PremiumCard extends ConsumerWidget {
 
 /// Orange price pill ending in a yellow refresh disc.
 class _RefreshPill extends ConsumerWidget {
-  const _RefreshPill({required this.cost, required this.onTap});
+  const _RefreshPill({super.key, required this.cost, required this.onTap});
   final int cost;
   final VoidCallback onTap;
   @override

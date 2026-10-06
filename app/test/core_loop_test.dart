@@ -70,8 +70,9 @@ void main() {
       expect((await l.wallet.balance()).energy, 5);
       // …but only once: undo/redo cycles cannot farm energy
       expect(await l.habits.undo(id), isTrue);
+      expect((await l.wallet.balance()).energy, 0, reason: 'the second undo takes back the re-grant, not the already-reversed first one');
       await l.habits.complete(id);
-      expect((await l.wallet.balance()).energy, lessThanOrEqualTo(5));
+      expect((await l.wallet.balance()).energy, 5, reason: 'net effect of any undo/redo cycle is exactly one reward');
     });
 
     test('undo keeps the energy when it was already spent', () async {
@@ -201,6 +202,20 @@ void main() {
       expect(r.reset, isTrue);
       expect(r.snapshot.current, 1, reason: 'starts over without blame');
       expect(r.snapshot.longest, 3);
+    });
+    test('rest mode freezes the streak: activity during a long pause continues it, resuming does not double count', () async {
+      final l = Loop(at(5));
+      await l.streak.recordActivity(l.today());
+      l.clock.set(at(6));
+      await l.streak.recordActivity(l.today()); // 2
+      await l.pause.set(true);
+      l.clock.set(at(10)); // 3 days gap while resting
+      final o = await l.streak.recordActivity(l.today());
+      expect(o.reset, isFalse);
+      expect(o.snapshot.current, 3, reason: 'a rest-mode gap never resets the streak');
+      await l.pause.set(false); // same day: already active today
+      l.clock.set(at(11));
+      expect((await l.streak.recordActivity(l.today())).snapshot.current, 4, reason: 'resume did not move the last active day back');
     });
     test('freeze budget resets on the first day of the Persian month (1 Aban = 2026-10-23)', () async {
       final l = Loop(at(20));

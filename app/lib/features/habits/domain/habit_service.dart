@@ -322,14 +322,12 @@ class HabitService {
             count: Value(log.deletedAt != null ? 1 : log.count + 1), deletedAt: const Value(null), completedAt: Value(now), updatedAt: Value(now)));
       }
       var granted = await _wallet.grant(Currency.energy, energyPerGoal(), 'habit_done', logId) ?? 0;
-      if (granted == 0 && log != null && log.deletedAt != null) {
-        // Re-completing after an undo that really took the energy back: grant once more (net effect
-        // stays one reward, so there is nothing to farm). If the undo kept the energy, nothing is granted.
-        final orig = await (_db.select(_db.walletLedger)..where((t) => t.reason.equals('habit_done') & t.refId.equals(logId))).getSingleOrNull();
-        final reversed = orig == null
-            ? null
-            : await (_db.select(_db.walletLedger)..where((t) => t.reason.equals('adjust') & t.refId.equals('undo:${orig.id}'))).getSingleOrNull();
-        if (reversed != null) granted = await _wallet.grant(Currency.energy, energyPerGoal(), 'habit_done', '$logId:redo') ?? 0;
+      if (granted == 0 && log != null && log.deletedAt != null && await _liveGrant(logId) == null) {
+        // Re-completing after an undo that really took the energy back: grant once more under a fresh ref (net effect
+        // stays one reward, so there is nothing to farm). If the undo kept the energy, a grant is still live and
+        // nothing is granted.
+        final n = (await _grants(logId)).length;
+        granted = await _wallet.grant(Currency.energy, energyPerGoal(), 'habit_done', '$logId:redo:$n') ?? 0;
       }
       return CompleteResult(CompleteStatus.completed, energyGranted: granted, logId: logId);
     });
@@ -349,10 +347,28 @@ class HabitService {
     if (log == null) return false;
     await _db.transaction(() async {
       await (_db.update(_db.habitLogs)..where((l) => l.id.equals(log.id))).write(HabitLogsCompanion(deletedAt: Value(_now()), updatedAt: Value(_now())));
-      await _wallet.reverse('habit_done', log.id);
+      final live = await _liveGrant(log.id);
+      if (live != null) await _wallet.reverse('habit_done', live.refId);
     });
     await _publisher.refresh();
     return true;
+  }
+
+  /// Every `habit_done` grant of one log: the first (ref = log id) and the re-grants after undo (`<id>:redo:<n>`).
+  Future<List<WalletLedgerData>> _grants(String logId) async {
+    final rows = await (_db.select(_db.walletLedger)..where((t) => t.reason.equals('habit_done') & (t.refId.equals(logId) | t.refId.like('$logId:redo%')))).get();
+    // In grant order: the first grant, a legacy `<id>:redo`, then `<id>:redo:<n>` by n.
+    int order(String ref) => ref == logId ? -2 : (int.tryParse(ref.split(':').last) ?? -1);
+    return rows..sort((a, b) => order(a.refId).compareTo(order(b.refId)));
+  }
+
+  /// The latest grant of the log that no undo has taken back yet.
+  Future<WalletLedgerData?> _liveGrant(String logId) async {
+    for (final g in (await _grants(logId)).reversed) {
+      final undone = await (_db.select(_db.walletLedger)..where((t) => t.reason.equals('adjust') & t.refId.equals('undo:${g.id}'))).getSingleOrNull();
+      if (undone == null) return g;
+    }
+    return null;
   }
 
   /// Completed days of [habitId] within [start]..[end] (inclusive), for the weekly calendar.

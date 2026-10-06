@@ -36,6 +36,9 @@ func (s *Service) AddPassGrant(ctx context.Context, q *dbgen.Queries, userID, pu
 func (s *Service) UpsertSubscriptionGrant(ctx context.Context, q *dbgen.Queries, userID, purchaseID uuid.UUID, starts, ends time.Time) error {
 	g, err := q.GetGrantByPurchase(ctx, uuid.NullUUID{UUID: purchaseID, Valid: true})
 	if err == nil {
+		if ends.IsZero() {
+			return nil // the market gave no expiry this time: keep the known end rather than ending premium
+		}
 		if err := q.UpdateGrantEnd(ctx, dbgen.UpdateGrantEndParams{ID: g.ID, EndsAt: ends}); err != nil {
 			return fmt.Errorf("update grant: %w", err)
 		}

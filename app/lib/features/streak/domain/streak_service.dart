@@ -81,7 +81,9 @@ class StreakService {
         final s = await _db.select(_db.streakState).getSingle();
         final last = s.lastActiveDay == null ? null : LocalDay.parse(s.lastActiveDay!);
         if (last == today) return StreakOutcome(snapshot: _snap(s), reset: before.reset, freezeUsed: before.freezeUsed);
-        final continues = last != null && last.daysUntil(today) == 1 && s.current > 0;
+        // In rest mode the streak is frozen: an activity after a gap continues it instead of starting over.
+        final paused = await _db.setting('pause_mode') == 'true';
+        final continues = last != null && s.current > 0 && (last.daysUntil(today) == 1 || (paused && last.daysUntil(today) > 1));
         final current = continues ? s.current + 1 : 1;
         final longest = current > s.longest ? current : s.longest;
         await _db.update(_db.streakState).write(StreakStateCompanion(current: Value(current), longest: Value(longest), lastActiveDay: Value(today.value)));
@@ -94,6 +96,9 @@ class StreakService {
   Future<void> resumeFromPause(LocalDay today) async {
     final s = await _db.select(_db.streakState).getSingle();
     if (s.current <= 0) return;
+    // Already active today or yesterday: nothing to bridge (moving it back would count today twice).
+    final last = s.lastActiveDay == null ? null : LocalDay.parse(s.lastActiveDay!);
+    if (last != null && last.daysUntil(today) <= 1) return;
     await _db.update(_db.streakState).write(StreakStateCompanion(lastActiveDay: Value(today.addDays(-1).value)));
   }
 }

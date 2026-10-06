@@ -63,8 +63,8 @@ void main() {
     await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 300)));
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('هنوز عادتی نداری'), findsOneWidget);
-    expect(find.text('چک‌این امروز'), findsOneWidget);
     expect(find.text('۰/۲۰'), findsOneWidget, reason: 'daily energy bar with Persian digits');
+    expect(find.text('ماجراجویی اول'), findsOneWidget, reason: 'the energy card names the adventure it fills');
     expect(Directionality.of(tester.element(find.byType(HomeScreen))), TextDirection.rtl);
   });
 
@@ -75,7 +75,7 @@ void main() {
     await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 200)));
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('آب خوردن'), findsOneWidget);
-    await tester.tap(find.widgetWithIcon(ChunkyButton, Icons.check));
+    await tester.tap(find.byWidgetPredicate((w) => w is ChunkyButton && w.glyph == 'check'));
     for (var i = 0; i < 4; i++) {
       await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 300)));
       await tester.pump(const Duration(milliseconds: 400));

@@ -40,6 +40,9 @@ class OutboxWorker {
 
   Future<int> pending() async => (await _db.select(_db.outbox).get()).length;
 
+  /// Whether the job [id] (from [enqueue]) is still waiting.
+  Future<bool> isQueued(String id) async => (await (_db.select(_db.outbox)..where((t) => t.id.equals(id))).getSingleOrNull()) != null;
+
   /// Runs every due row once. Returns how many were delivered. Safe to call concurrently.
   Future<int> runDue() async {
     if (_running) return 0;

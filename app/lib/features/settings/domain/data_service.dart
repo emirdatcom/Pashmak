@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import '../../backup/domain/snapshot.dart' show backedUpMetaKeys, backedUpMetaPrefixes;
 import '../../../core/auth/token_store.dart';
 import '../../../core/db/app_database.dart';
 import '../../../core/network/api_client.dart';
@@ -36,6 +37,13 @@ class DataService {
       'inventory': rows(await _db.select(_db.inventory).get()),
       'streak': rows(await _db.select(_db.streakState).get()),
       'settings': rows(await _db.select(_db.userSettings).get()),
+      'discoveries': rows(await _db.select(_db.discoveriesFound).get()),
+      'quest_progress': rows(await _db.select(_db.questProgress).get()),
+      'onboarding_answers': rows(await _db.select(_db.onboardingAnswers).get()),
+      'profile': {
+        for (final r in await _db.select(_db.appMeta).get())
+          if (backedUpMetaKeys.contains(r.key) || backedUpMetaPrefixes.any(r.key.startsWith)) r.key: r.value,
+      },
     };
   }
 

@@ -180,10 +180,13 @@ String goalDayLabel(CopyResolver copy, LocalDay day, LocalDay today) => day == t
 String goalRepeatLabel(CopyResolver copy, String repeat, int mask, LocalDay day) => switch (repeat) {
       'once' => copy.t('goal.editor.repeat.once'),
       'weekdays' => copy.t('goal.editor.repeat.weekdays'),
-      'weekly_on' => copy.t('goal.editor.repeat.weekly_on', {'day': JalaliFormatter.weekday(day)}),
+      // the stored mask decides the weekday; the picked date only seeds it for a new choice
+      'weekly_on' => copy.t('goal.editor.repeat.weekly_on', {
+          'day': mask != 0 && mask & (mask - 1) == 0 ? JalaliFormatter.weekdayNames[mask.bitLength - 1] : JalaliFormatter.weekday(day),
+        }),
       'monthly' => copy.t('goal.editor.repeat.monthly_on', {'n': JalaliFormatter.toJalali(day).day}),
       'custom' => copy.t('goal.editor.repeat.custom_days', {
-          'days': [for (var i = 0; i < 7; i++) if ((mask >> i) & 1 == 1) JalaliFormatter.weekdayNames[i]].join('، '),
+          'days': [for (var i = 0; i < 7; i++) if ((mask >> i) & 1 == 1) JalaliFormatter.weekdayNames[i]].join(copy.t('common.list_separator')),
         }),
       _ => copy.t('goal.editor.repeat.daily'),
     };

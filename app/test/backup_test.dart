@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pashmak_app/core/db/app_database.dart';
 import 'package:pashmak_app/core/analytics/analytics_event.dart';
 import 'package:pashmak_app/core/auth/token_store.dart';
 import 'package:pashmak_app/features/backup/data/backup_service.dart';
@@ -86,6 +87,9 @@ void main() {
     await la.checkins.submit(2, note: 'یادداشت خیلی خصوصی من');
     await la.wallet.grant(Currency.coins, 77, 'promo', 'x');
     await ha.db.setMeta('cat_name', 'پشمک');
+    await ha.db.setMeta('cat_fur', 'tricolor');
+    await ha.db.setMeta('item_hue:hat_cap', '95');
+    await ha.db.into(ha.db.discoveriesFound).insert(DiscoveriesFoundCompanion.insert(discoveryKey: 'd1', foundAt: 1));
     final challenge = a.beginSetup();
     await a.enable(challenge);
     expect(await a.isEnabled(), isTrue);
@@ -115,6 +119,9 @@ void main() {
     expect((c.moodLevel, c.note), (2, 'یادداشت خیلی خصوصی من'));
     expect((await lb.wallet.balance()).coins, 77);
     expect(await hb.db.meta('cat_name'), 'پشمک');
+    expect(await hb.db.meta('cat_fur'), 'tricolor', reason: 'the cat profile travels with the backup');
+    expect(await hb.db.meta('item_hue:hat_cap'), '95');
+    expect((await hb.db.select(hb.db.discoveriesFound).get()).map((d) => d.discoveryKey), ['d1']);
     expect(await b.isEnabled(), isTrue, reason: 'the code is kept so automatic backups continue');
   });
 

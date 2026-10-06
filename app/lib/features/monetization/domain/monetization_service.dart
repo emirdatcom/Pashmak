@@ -151,7 +151,7 @@ class MonetizationService {
     final pur = res.purchase!;
     // Paid: give provisional premium right away, then verify (outbox survives a kill/offline).
     await repo.setPending(Duration(hours: config().pendingVerificationHours));
-    await outbox.enqueue('purchase_verify', {
+    final job = await outbox.enqueue('purchase_verify', {
       'market': gateway.market.name,
       'product_id': productId,
       'market_sku': pur.sku,
@@ -159,7 +159,7 @@ class MonetizationService {
       'order_id': pur.orderId,
     });
     await outbox.runDue();
-    final stillQueued = await outbox.pending() > 0;
+    final stillQueued = await outbox.isQueued(job);
     return PurchaseReport(stillQueued ? PurchaseOutcome.pending : PurchaseOutcome.verified);
   }
 

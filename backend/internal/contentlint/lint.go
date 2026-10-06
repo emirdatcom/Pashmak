@@ -32,7 +32,7 @@ const (
 )
 
 var (
-	allowedVars = map[string]bool{"APP_NAME": true, "CAT_NAME": true, "n": true, "habit": true, "place": true, "date": true, "time": true, "item": true}
+	allowedVars = map[string]bool{"APP_NAME": true, "CAT_NAME": true, "n": true, "habit": true, "place": true, "date": true, "time": true, "item": true, "day": true, "days": true}
 	varRe       = regexp.MustCompile(`\{([^{}]*)\}`)
 	// copy key prefixes that may mention medical words (they state "not therapy").
 	exemptPrefixes = []string{"disclaimer.", "safety.", "help.", "legal."}

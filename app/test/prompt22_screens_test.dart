@@ -175,12 +175,14 @@ void main() {
   testWidgets('goal editor: pick a suggestion, save → a goal with its area and time of day', (tester) async {
     final c = await bootInteractive(tester, const GoalEditorScreen());
     await settle(tester);
+    // the page list, not the horizontal tab strip
+    final vertical = find.byWidgetPredicate((w) => w is Scrollable && w.axisDirection == AxisDirection.down).first;
     await tester.tap(find.text('بُردهای آسون'));
     await settle(tester, 1);
-    await tester.scrollUntilVisible(find.text('یه لیوان آب بخور'), 200, scrollable: find.byType(Scrollable).first);
+    await tester.scrollUntilVisible(find.text('یه لیوان آب بخور'), 200, scrollable: vertical);
     await tester.tap(find.text('یه لیوان آب بخور'));
     await settle(tester, 1);
-    await tester.scrollUntilVisible(find.text('ذخیره'), -200, scrollable: find.byType(Scrollable).first);
+    await tester.scrollUntilVisible(find.text('ذخیره'), -200, scrollable: vertical);
     await tester.tap(find.text('ذخیره'));
     await settle(tester);
     final goals = (await tester.runAsync(() => c.read(habitServiceProvider).activeHabits()))!;
@@ -192,10 +194,9 @@ void main() {
   testWidgets('shop: refresh button shows the price from config and refuses kindly without coins', (tester) async {
     await bootInteractive(tester, const ShopDetailScreen(shop: 'furniture'));
     await settle(tester);
-    final btn = find.text('تازه‌سازی با ۳۰ سکه');
-    await tester.scrollUntilVisible(btn, 300, scrollable: find.byType(Scrollable).first);
-    await tester.drag(find.byType(Scrollable).first, const Offset(0, -150));
-    await tester.pump();
+    // the refresh pill carries the config price and is labelled with it for screen readers
+    final btn = find.byKey(const ValueKey('shop-refresh'));
+    expect(find.descendant(of: btn, matching: find.text('۳۰')), findsOneWidget, reason: 'price from config');
     await tester.tap(btn);
     await settle(tester, 1);
     expect(find.text('سکه‌ات کمه؛ با ماجراجویی جمع می‌شه.'), findsOneWidget);

@@ -79,6 +79,18 @@ class QuestService {
     final ledger = await (_db.select(_db.walletLedger)
           ..where((l) => l.currency.equals('energy') & l.delta.isBiggerThanValue(0) & l.createdAt.isBiggerOrEqualValue(startMs) & l.reason.isIn(const ['habit_done', 'checkin', 'exercise_done'])))
         .get();
+    // Energy an undo took back (`adjust` / `undo:<ledger id>`) does not count toward today's energy.
+    final undone = ledger.isEmpty
+        ? const <String>{}
+        : {
+            for (final a in await (_db.select(_db.walletLedger)..where((l) => l.reason.equals('adjust') & l.refId.isIn([for (final l in ledger) 'undo:${l.id}']))).get())
+              a.refId.substring('undo:'.length),
+          };
+    // A goal counts as done once its log reaches the goal's times per day.
+    final logs = await (_db.select(_db.habitLogs).join([innerJoin(_db.habits, _db.habits.id.equalsExp(_db.habitLogs.habitId))])
+          ..where(_db.habitLogs.deletedAt.isNull() & _db.habitLogs.count.isBiggerOrEqual(_db.habits.targetPerDay)))
+        .get();
+    final doneLogs = [for (final r in logs) r.readTable(_db.habitLogs)];
     final adventures = await _db.select(_db.adventures).get();
     final claimed = adventures.where((a) => a.status == 'claimed');
     final owned = await _db.select(_db.inventory).get();
@@ -86,9 +98,9 @@ class QuestService {
     return {
       'checkin_today': await _count(_db.checkins, () => _db.checkins.localDay.equals(day) & _db.checkins.deletedAt.isNull()),
       'exercise_today': await _count(_db.exerciseSessions, () => _db.exerciseSessions.localDay.equals(day) & _db.exerciseSessions.completedAt.isNotNull()),
-      'goals_done_today': await _count(_db.habitLogs, () => _db.habitLogs.localDay.equals(day) & _db.habitLogs.deletedAt.isNull()),
+      'goals_done_today': doneLogs.where((l) => l.localDay == day).length,
       'reflection_today': row?.reflectionAnswer == null ? 0 : 1,
-      'energy_today': ledger.fold<int>(0, (a, l) => a + l.delta),
+      'energy_today': ledger.where((l) => !undone.contains(l.id)).fold<int>(0, (a, l) => a + l.delta),
       'shop_visit_today': await _db.meta('visit:shop:$day') == '1' ? 1 : 0,
       'cat_visit_today': await _db.meta('visit:cat:$day') == '1' ? 1 : 0,
       'adventures_count': claimed.length,
@@ -97,7 +109,7 @@ class QuestService {
       'locations_visited': adventures.map((a) => a.locationKey).toSet().length,
       'streak_days': streak.current,
       'discoveries_count': (await _db.select(_db.discoveriesFound).get()).length,
-      'goals_done_total': await _count(_db.habitLogs, () => _db.habitLogs.deletedAt.isNull()),
+      'goals_done_total': doneLogs.length,
     };
   }
 
