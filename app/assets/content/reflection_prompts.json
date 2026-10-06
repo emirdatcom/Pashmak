@@ -1,6 +1,6 @@
 {
   "pack_key": "reflection_prompts",
-  "version": 1,
+  "version": 2,
   "pack_schema_version": 1,
   "locale": "fa",
   "min_app_version": "1.0.0",
@@ -9,61 +9,131 @@
       "key": "energy_pick",
       "prompt_key": "reflect.energy_pick.prompt",
       "a_key": "reflect.energy_pick.a",
-      "b_key": "reflect.energy_pick.b"
+      "b_key": "reflect.energy_pick.b",
+      "c_key": "reflect.energy_pick.c",
+      "a_icon": "calm/meditation",
+      "b_icon": "ui/bolt",
+      "c_icon": "misc/star"
     },
     {
       "key": "time_pick",
       "prompt_key": "reflect.time_pick.prompt",
       "a_key": "reflect.time_pick.a",
-      "b_key": "reflect.time_pick.b"
+      "b_key": "reflect.time_pick.b",
+      "c_key": "reflect.time_pick.c",
+      "a_icon": "connection/people_hugging",
+      "b_icon": "calm/candle",
+      "c_icon": "faces/thinking"
     },
     {
       "key": "mood_color",
       "prompt_key": "reflect.mood_color.prompt",
       "a_key": "reflect.mood_color.a",
-      "b_key": "reflect.mood_color.b"
+      "b_key": "reflect.mood_color.b",
+      "c_key": "reflect.mood_color.c",
+      "a_icon": "nature/sun_face",
+      "b_icon": "nature/moon",
+      "c_icon": "nature/cloud"
     },
     {
       "key": "need_pick",
       "prompt_key": "reflect.need_pick.prompt",
       "a_key": "reflect.need_pick.a",
-      "b_key": "reflect.need_pick.b"
+      "b_key": "reflect.need_pick.b",
+      "c_key": "reflect.need_pick.c",
+      "a_icon": "home/bed",
+      "b_icon": "nature/seedling",
+      "c_icon": "connection/speech_bubble"
     },
     {
       "key": "place_pick",
       "prompt_key": "reflect.place_pick.prompt",
       "a_key": "reflect.place_pick.a",
-      "b_key": "reflect.place_pick.b"
+      "b_key": "reflect.place_pick.b",
+      "c_key": "reflect.place_pick.c",
+      "a_icon": "nature/landscape",
+      "b_icon": "hobbies/music_note",
+      "c_icon": "home/pillow"
     },
     {
       "key": "step_pick",
       "prompt_key": "reflect.step_pick.prompt",
       "a_key": "reflect.step_pick.a",
-      "b_key": "reflect.step_pick.b"
+      "b_key": "reflect.step_pick.b",
+      "c_key": "reflect.step_pick.c",
+      "a_icon": "time/bedtime",
+      "b_icon": "hobbies/paintbrush",
+      "c_icon": "hygiene/shower"
     },
     {
       "key": "drink_pick",
       "prompt_key": "reflect.drink_pick.prompt",
       "a_key": "reflect.drink_pick.a",
-      "b_key": "reflect.drink_pick.b"
+      "b_key": "reflect.drink_pick.b",
+      "c_key": "reflect.drink_pick.c",
+      "a_icon": "food/tea_glass",
+      "b_icon": "food/water_glass",
+      "c_icon": "treats/chocolate"
     },
     {
       "key": "talk_pick",
       "prompt_key": "reflect.talk_pick.prompt",
       "a_key": "reflect.talk_pick.a",
-      "b_key": "reflect.talk_pick.b"
+      "b_key": "reflect.talk_pick.b",
+      "c_key": "reflect.talk_pick.c",
+      "a_icon": "connection/telephone",
+      "b_icon": "hands/raised_hand",
+      "c_icon": "misc/hourglass"
     },
     {
       "key": "body_pick",
       "prompt_key": "reflect.body_pick.prompt",
       "a_key": "reflect.body_pick.a",
-      "b_key": "reflect.body_pick.b"
+      "b_key": "reflect.body_pick.b",
+      "c_key": "reflect.body_pick.c",
+      "a_icon": "people/stretching",
+      "b_icon": "home/pillow",
+      "c_icon": "hobbies/footprints"
     },
     {
       "key": "proud_pick",
       "prompt_key": "reflect.proud_pick.prompt",
       "a_key": "reflect.proud_pick.a",
-      "b_key": "reflect.proud_pick.b"
+      "b_key": "reflect.proud_pick.b",
+      "c_key": "reflect.proud_pick.c",
+      "a_icon": "misc/star_badge",
+      "b_icon": "body/flexed_arm",
+      "c_icon": "hearts/sparkling_heart"
+    },
+    {
+      "key": "feel_tidy",
+      "prompt_key": "reflect.feel_tidy.prompt",
+      "a_key": "reflect.feel_tidy.a",
+      "b_key": "reflect.feel_tidy.b",
+      "c_key": "reflect.feel_tidy.c",
+      "a_icon": "faces/blob_low",
+      "b_icon": "faces/blob_mid",
+      "c_icon": "faces/blob_high"
+    },
+    {
+      "key": "feel_cooking",
+      "prompt_key": "reflect.feel_cooking.prompt",
+      "a_key": "reflect.feel_cooking.a",
+      "b_key": "reflect.feel_cooking.b",
+      "c_key": "reflect.feel_cooking.c",
+      "a_icon": "faces/blob_low",
+      "b_icon": "faces/blob_mid",
+      "c_icon": "faces/blob_high"
+    },
+    {
+      "key": "feel_morning",
+      "prompt_key": "reflect.feel_morning.prompt",
+      "a_key": "reflect.feel_morning.a",
+      "b_key": "reflect.feel_morning.b",
+      "c_key": "reflect.feel_morning.c",
+      "a_icon": "faces/blob_low",
+      "b_icon": "faces/blob_mid",
+      "c_icon": "faces/blob_high"
     }
   ]
 }

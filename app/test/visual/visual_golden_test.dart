@@ -74,6 +74,7 @@ void main() {
     const _Shot('14', 'menu', '/menu', MenuScreen(), shell: false),
     const _Shot('15', 'breathing-run', '/exercises/x/run', ExerciseRunScreen(exerciseKey: 'breathing_basic'), shell: false, tapStart: true),
     const _Shot('16', 'exercises', '/exercises', ExercisesScreen(), shell: false),
+    const _Shot('17', 'reflect', '/quests/reflect', ReflectScreen(), shell: false),
   ];
 
   setUpAll(_loadFont);

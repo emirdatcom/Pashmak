@@ -159,6 +159,19 @@ void main() {
     expect(find.text('دریافت'), findsNothing, reason: 'claimed quests show a done state, not the button again');
   });
 
+  testWidgets('reflect: submit stays disabled until an answer is picked, then the daily question counts as done', (tester) async {
+    final c = await bootInteractive(tester, const ReflectScreen());
+    await settle(tester);
+    expect(find.widgetWithText(ChunkyButton, 'ثبت جواب'), findsNothing, reason: 'no answer picked yet');
+    final prompt = c.read(todayReflectionProvider)!;
+    await tester.tap(find.text(c.read(copyProvider).t(prompt['c_key'] as String)));
+    await settle(tester, 1);
+    await tester.tap(find.widgetWithText(ChunkyButton, 'ثبت جواب'));
+    await settle(tester);
+    final m = (await tester.runAsync(() => c.read(questServiceProvider).metrics()))!;
+    expect(m['reflection_today'], 1);
+  });
+
   testWidgets('goal editor: pick a suggestion, save → a goal with its area and time of day', (tester) async {
     final c = await bootInteractive(tester, const GoalEditorScreen());
     await settle(tester);

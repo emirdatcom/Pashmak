@@ -5,9 +5,12 @@ import '../theme/tokens.dart';
 /// One sticker from `assets/art/emoji/` (see its `manifest.json`); [id] is `<folder>/<name>`, e.g. `food/matcha`.
 /// Decorative: callers own the semantics label.
 class EmojiArt extends StatelessWidget {
-  const EmojiArt(this.id, {super.key, this.size = 24});
+  const EmojiArt(this.id, {super.key, this.size = 24, this.fallback});
   final String id;
   final double size;
+
+  /// Sticker drawn while [id] is not in the bundle yet (new art that is still being drawn).
+  final String? fallback;
 
   /// Stickers with a direction: drawn for left-to-right, mirrored in RTL.
   static const _directional = {'ui/arrow', 'ui/undo'};
@@ -22,8 +25,8 @@ class EmojiArt extends StatelessWidget {
         filterQuality: FilterQuality.medium,
         excludeFromSemantics: true,
         matchTextDirection: _directional.contains(id),
-        // A sticker missing from the bundle leaves an empty box, not an error mark.
-        errorBuilder: (_, _, _) => SizedBox(width: size, height: size),
+        // A sticker missing from the bundle shows its fallback, else an empty box, never an error mark.
+        errorBuilder: (_, _, _) => fallback == null ? SizedBox(width: size, height: size) : EmojiArt(fallback!, size: size),
       );
 }
 

@@ -58,6 +58,25 @@
           "b_key": {
             "type": "string",
             "pattern": "^[a-z0-9_]+(\\.[a-z0-9_]+)+$"
+          },
+          "c_key": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+(\\.[a-z0-9_]+)+$"
+          },
+          "a_icon": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+/[a-z0-9_]+$",
+            "description": "sticker id under assets/art/emoji/ (folder/name)"
+          },
+          "b_icon": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+/[a-z0-9_]+$",
+            "description": "sticker id under assets/art/emoji/ (folder/name)"
+          },
+          "c_icon": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+/[a-z0-9_]+$",
+            "description": "sticker id under assets/art/emoji/ (folder/name)"
           }
         }
       }

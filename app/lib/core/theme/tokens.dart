@@ -112,6 +112,31 @@ class DS {
   static const scrimDeep = Color(0xD9061A12);
   static const radiusSheet = 32.0;
 
+  // quests (screenshots 01/04 + the daily question)
+  /// Open timeline marker: a tan dot one step lighter than the quests page.
+  static const questMarker = Color(0xFFE3A869);
+  static const questDone = Color(0xFF4CAF50);
+  static const questKicker = Color(0xFF5E6E78);
+  static const seasonBanner = Color(0xFF2B1A12);
+  static const seasonScrim = Color(0x73000000);
+  static const questCardEdge = Color(0x1F000000);
+  static const questRay = Color(0x24FFFFFF);
+  static const seasonRibbon = Color(0xFF4CAF50);
+  static const seasonRibbonLight = Color(0xFF6CC46F);
+  static const questTileGrey = Color(0xFF8E8E8E);
+  static const questTilePink = Color(0xFFE48CB4);
+  static const questTilePurple = Color(0xFF6F52BC);
+  static const questTileBlue = Color(0xFF6FB6E6);
+  static const questTileGreen = Color(0xFF7CC47A);
+  static const questTileOrange = Color(0xFFF3A25A);
+  static const questTileTeal = Color(0xFF5DBFB0);
+  /// The daily question: off-white bubble on a purple page, round option buttons.
+  static const reflectBubble = Color(0xFFF7F7F7);
+  static const reflectGround = Color(0xFF5E44A6);
+  static const reflectOptionRing = Color(0xFFE9E9E9);
+  static const submitDisabled = Color(0xFFEFEFEF);
+  static const submitDisabledText = Color(0xFFA9B4BB);
+
   // exercise kinds (the blob behind an exercise sticker)
   static const exReflection = Color(0xFF6FBFD0);
   static const exBreathing = Color(0xFF7B6FE0);
