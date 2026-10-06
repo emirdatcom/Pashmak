@@ -31,6 +31,7 @@ class MenuScreen extends ConsumerWidget {
       ('menu.insights', Icons.insights, Routes.stats, false),
       ('menu.journal', Icons.menu_book_rounded, Routes.journal, false),
       ('menu.history', Icons.history, Routes.history, false),
+      ('menu.assessments', Icons.fact_check_outlined, Routes.assessments, false),
     ];
     return Scaffold(
       backgroundColor: DS.bgSettings,

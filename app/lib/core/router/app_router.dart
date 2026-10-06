@@ -25,6 +25,7 @@ import '../../features/shop/presentation/closet_screen.dart';
 import '../../features/shop/presentation/inventory_screen.dart';
 import '../../features/shop/presentation/item_screen.dart';
 import '../../features/shop/presentation/shop_screens.dart';
+import '../../features/assessments/presentation/assessment_screens.dart';
 import '../../features/journal/presentation/journal_screens.dart';
 import '../../features/settings/presentation/info_screens.dart';
 import '../../features/sounds/presentation/sounds_screen.dart';
@@ -102,6 +103,9 @@ final routerProvider = Provider<GoRouter>((ref) {
       ]),
       GoRoute(path: Routes.exercises, builder: (_, s) => ExercisesScreen(initialTab: s.uri.queryParameters['tab']), routes: [
         GoRoute(path: ':id/run', builder: (_, s) => ExerciseRunScreen(exerciseKey: s.pathParameters['id']!)),
+      ]),
+      GoRoute(path: Routes.assessments, builder: (_, _) => const AssessmentsScreen(), routes: [
+        GoRoute(path: ':key', builder: (_, s) => AssessmentRunScreen(assessmentKey: s.pathParameters['key']!)),
       ]),
       GoRoute(path: Routes.journal, builder: (_, _) => const JournalScreen(), routes: [
         GoRoute(path: 'write/:template', builder: (_, s) => JournalWriteScreen(templateKey: s.pathParameters['template']!)),

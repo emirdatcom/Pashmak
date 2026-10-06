@@ -11,7 +11,7 @@ import 'snapshot_upgraders.dart';
 const backedUpMetaKeys = ['cat_name', 'onboarding_completed', 'cat_fur', 'cat_trait', 'cat_arrived_at', 'user_name', 'onboarding_goals'];
 
 /// `app_meta` key prefixes that are user data too: chosen item colours and reopenable adventure results.
-const backedUpMetaPrefixes = ['item_hue:', 'adventure_result:'];
+const backedUpMetaPrefixes = ['item_hue:', 'adventure_result:', 'assessment:'];
 
 class SnapshotSummary {
   const SnapshotSummary({required this.exportedAt, required this.habits, required this.checkins, required this.logs});
