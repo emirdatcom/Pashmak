@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/l10n/ordinal.dart';
 import '../../../core/analytics/analytics_event.dart';
 import '../../../core/entitlement/premium_gate.dart';
 import '../../../core/db/app_database.dart';
@@ -397,21 +398,31 @@ class _EnergyCard extends ConsumerWidget {
     final target = ref.watch(appConfigProvider).dailyEnergyTarget;
     final energy = ref.watch(walletProvider).value?.energy ?? 0;
     final startedToday = ref.watch(adventureStartedTodayProvider).value ?? false;
+    // The title counts the adventure this energy is for: done ones + 1 ("ماجراجویی دوم").
+    final next = (ref.watch(adventuresCountProvider).value ?? 0) + (startedToday ? 0 : 1);
+    final title = copy.t('home.adventure.title', {'item': ordinalOf(copy, next < 1 ? 1 : next)});
     return _Glass(
-      semanticLabel: copy.t('home.energy.label'),
+      semanticLabel: '$title. ${copy.t('home.energy.label')}',
       child: Row(
         children: [
           const _Tile(emoji: 'ui/bolt', color: DS.progressYellow),
           const SizedBox(width: 16),
           Expanded(
-            child: ProgressPill(
-              value: startedToday ? target : energy,
-              max: target,
-              height: 30,
-              fill: DS.adventureFill,
-              gloss: DS.adventureGloss,
-              shade: DS.adventureShade,
-              rail: DS.card,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ExcludeSemantics(child: Text(title, style: const TextStyle(color: DS.onDark, fontSize: 16, fontWeight: FontWeight.w800))),
+                const SizedBox(height: 6),
+                ProgressPill(
+                  value: startedToday ? target : energy,
+                  max: target,
+                  height: 30,
+                  fill: DS.adventureFill,
+                  gloss: DS.adventureGloss,
+                  shade: DS.adventureShade,
+                  rail: DS.card,
+                ),
+              ],
             ),
           ),
         ],

@@ -1280,6 +1280,18 @@
     "quest.kicker.reflect_one": "یه سؤال دربارهٔ خودت:",
     "quest.kicker.grow": "رشد {CAT_NAME}",
     "quest.season.kicker": "رویداد فصلی",
-    "quest.reflect.submit": "ثبت جواب"
+    "quest.reflect.submit": "ثبت جواب",
+    "ordinal.1": "اول",
+    "ordinal.2": "دوم",
+    "ordinal.3": "سوم",
+    "ordinal.4": "چهارم",
+    "ordinal.5": "پنجم",
+    "ordinal.6": "ششم",
+    "ordinal.7": "هفتم",
+    "ordinal.8": "هشتم",
+    "ordinal.9": "نهم",
+    "ordinal.10": "دهم",
+    "ordinal.many": "{n}ام",
+    "home.adventure.title": "ماجراجویی {item}"
   }
 }
