@@ -18,6 +18,7 @@ import (
 	"github.com/emirdatcom/pashmak/backend/internal/modules/content"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/entitlement"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/remoteconfig"
+	"github.com/emirdatcom/pashmak/backend/internal/modules/social"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/support"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/support/operatorpanel"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/user"
@@ -44,6 +45,7 @@ type Services struct {
 	Backup       *backup.Service
 	Support      *support.Service
 	SupportPanel *operatorpanel.Panel
+	Social       *social.Service
 }
 
 // entitlementConfig adapts remoteconfig to entitlement.ConfigReader using the active base config
@@ -168,6 +170,8 @@ func BuildServices(ctx context.Context, cfg config.Config, pool *db.Pool, clk cl
 	}
 	sv.Backup = backup.NewService(pool, clk, cfg.BackupMaxBytes)
 	sv.User.AddHook(sv.Backup)
+	sv.Social = social.NewService(pool, clk)
+	sv.User.AddHook(sv.Social)
 	if cfg.SMSProvider != "" {
 		key := cfg.DataEncKey
 		if key == nil {
@@ -184,7 +188,7 @@ func BuildServices(ctx context.Context, cfg config.Config, pool *db.Pool, clk cl
 		default:
 			sender = smslog.Adapter{}
 		}
-		sv.Phone = auth.NewPhoneService(pool, sv.Auth, box, sender, clk, sv.Billing)
+		sv.Phone = auth.NewPhoneService(pool, sv.Auth, box, sender, clk, sv.Billing, sv.Social)
 	}
 	{
 		key := cfg.DataEncKey
@@ -230,7 +234,7 @@ func BuildServices(ctx context.Context, cfg config.Config, pool *db.Pool, clk cl
 func (s *Services) Deps(pool *db.Pool, m *metrics.Metrics, clk clock.Clock) Deps {
 	return Deps{DB: pool, Metrics: m, Clock: clk, Auth: s.Auth, User: s.User, Entitle: s.Entitlement, Billing: s.Billing,
 		RemoteConfig: s.RemoteConfig, Content: s.Content, Analytics: s.Analytics, Admin: s.Admin,
-		Phone: s.Phone, Backup: s.Backup, Support: s.Support, SupportPanel: s.SupportPanel}
+		Phone: s.Phone, Backup: s.Backup, Support: s.Support, SupportPanel: s.SupportPanel, Social: s.Social}
 }
 
 // ConfigDataFile reads a file under the config-data directory (used by tools and tests).

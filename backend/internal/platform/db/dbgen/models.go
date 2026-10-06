@@ -113,6 +113,12 @@ type Experiment struct {
 	UpdatedAt time.Time
 }
 
+type Friendship struct {
+	UserA     uuid.UUID
+	UserB     uuid.UUID
+	CreatedAt time.Time
+}
+
 type OperatorSession struct {
 	ID         uuid.UUID
 	OperatorID uuid.UUID
@@ -171,6 +177,17 @@ type RefreshToken struct {
 	ExpiresAt time.Time
 	RevokedAt *time.Time
 	CreatedAt time.Time
+}
+
+type SocialProfile struct {
+	UserID     uuid.UUID
+	FriendCode string
+	Nickname   string
+	CatName    string
+	CatFur     string
+	CatStage   string
+	CatHue     int32
+	UpdatedAt  time.Time
 }
 
 type SupportCannedReply struct {
@@ -234,4 +251,14 @@ type User struct {
 	PhoneEnc        []byte
 	PhoneHash       *string
 	PhoneLast4      *string
+}
+
+type Vibe struct {
+	ID        uuid.UUID
+	FromUser  uuid.UUID
+	ToUser    uuid.UUID
+	Kind      string
+	Day       time.Time
+	CreatedAt time.Time
+	ReadAt    *time.Time
 }

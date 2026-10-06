@@ -14,6 +14,7 @@ import (
 	"github.com/emirdatcom/pashmak/backend/internal/modules/content"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/entitlement"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/remoteconfig"
+	"github.com/emirdatcom/pashmak/backend/internal/modules/social"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/support"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/support/operatorpanel"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/user"
@@ -59,6 +60,7 @@ type Deps struct {
 	Backup       *backup.Service
 	Support      *support.Service
 	SupportPanel *operatorpanel.Panel
+	Social       *social.Service
 }
 
 // Handler builds the router with the global middleware chain:
@@ -104,6 +106,9 @@ func Handler(d Deps) (*httpx.Router, http.Handler) {
 		}
 		if d.Support != nil {
 			support.Register(r, d.Support, requireAuth, d.Auth, d.Clock)
+		}
+		if d.Social != nil {
+			social.Register(r, d.Social, requireAuth, d.Clock)
 		}
 	}
 	if d.Content != nil {

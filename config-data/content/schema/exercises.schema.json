@@ -54,7 +54,7 @@
           "duration_s": {
             "type": "integer",
             "minimum": 60,
-            "maximum": 300
+            "maximum": 1800
           },
           "type": {
             "enum": [

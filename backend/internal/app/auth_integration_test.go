@@ -31,6 +31,7 @@ import (
 	"github.com/emirdatcom/pashmak/backend/internal/modules/content"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/entitlement"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/remoteconfig"
+	"github.com/emirdatcom/pashmak/backend/internal/modules/social"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/support"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/support/operatorpanel"
 	"github.com/emirdatcom/pashmak/backend/internal/modules/user"
@@ -170,7 +171,9 @@ func newEnv(t *testing.T) *env {
 		t.Fatal(err)
 	}
 	sms := &recordingSMS{}
-	ph := auth.NewPhoneService(pool, a, box, sms, clk, bs)
+	soc := social.NewService(pool, clk)
+	u.AddHook(soc)
+	ph := auth.NewPhoneService(pool, a, box, sms, clk, bs, soc)
 	bk := backup.NewService(pool, clk, 0)
 	u.AddHook(bk)
 	scfg := &testSupportCfg{c: support.DefaultConfig()}
@@ -183,7 +186,7 @@ func newEnv(t *testing.T) *env {
 	go hub.Run(ctxHub)
 	panel := operatorpanel.New(operatorpanel.Options{Pool: pool, Support: sup, Grants: ent, Clock: clk, Guard: adm.IPGuard()})
 	_, h := app.Handler(app.Deps{DB: pool, Metrics: metrics.New(), Clock: clk, Auth: a, User: u, Entitle: ent, Billing: bs,
-		RemoteConfig: rc, Content: ct, Analytics: an, Admin: adm, Phone: ph, Backup: bk, Support: sup, SupportPanel: panel})
+		RemoteConfig: rc, Content: ct, Analytics: an, Admin: adm, Phone: ph, Backup: bk, Support: sup, SupportPanel: panel, Social: soc})
 	doc, err := openapi3.NewLoader().LoadFromFile("../../api/openapi.yaml")
 	if err != nil {
 		t.Fatal(err)

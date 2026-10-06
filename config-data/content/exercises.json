@@ -1148,7 +1148,7 @@
     {
       "key": "breathing_sigh",
       "premium": false,
-      "duration_s": 56,
+      "duration_s": 60,
       "type": "timer_steps",
       "collection": "stress",
       "disclaimer_key": "disclaimer.exercise",
@@ -1451,7 +1451,7 @@
     {
       "key": "ground_hand",
       "premium": true,
-      "duration_s": 50,
+      "duration_s": 60,
       "type": "timer_steps",
       "collection": "stress",
       "disclaimer_key": "disclaimer.exercise",
@@ -1648,7 +1648,7 @@
     {
       "key": "move_hands",
       "premium": true,
-      "duration_s": 55,
+      "duration_s": 60,
       "type": "timer_steps",
       "collection": "focus",
       "disclaimer_key": "disclaimer.exercise",
@@ -1721,7 +1721,7 @@
     {
       "key": "move_posture",
       "premium": true,
-      "duration_s": 55,
+      "duration_s": 60,
       "type": "timer_steps",
       "collection": "focus",
       "disclaimer_key": "disclaimer.exercise",

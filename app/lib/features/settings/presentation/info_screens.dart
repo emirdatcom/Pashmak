@@ -21,7 +21,7 @@ class TermsScreen extends ConsumerWidget {
         padding: const EdgeInsets.all(16),
         children: [
           RoundCard(
-            child: Text(copy.t('terms.body'), style: const TextStyle(color: DS.textPrimary, height: 1.8, fontSize: 15)),
+            child: Text(copy.t('legal.terms'), style: const TextStyle(color: DS.textPrimary, height: 1.8, fontSize: 15)),
           ),
         ],
       ),

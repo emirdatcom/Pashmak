@@ -413,6 +413,93 @@ paths:
       responses:
         "204": {description: deleted}
         "401": {$ref: "#/components/responses/Error"}
+  /v1/social/me:
+    get:
+      operationId: socialMe
+      security: [{bearer: []}]
+      responses:
+        "200": {description: my public profile (created on first call), content: {application/json: {schema: {$ref: "#/components/schemas/SocialProfile"}}}}
+        "401": {$ref: "#/components/responses/Error"}
+    put:
+      operationId: socialUpdateMe
+      security: [{bearer: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [nickname, cat_name, cat_fur, cat_stage, cat_hue]
+              properties:
+                nickname: {type: string, maxLength: 80}
+                cat_name: {type: string, maxLength: 64}
+                cat_fur: {type: string, enum: [orangeCream, smokeGray, tricolor]}
+                cat_stage: {type: string, enum: [kitten, young, adult]}
+                cat_hue: {type: integer, minimum: 0, maximum: 359}
+      responses:
+        "200": {description: updated, content: {application/json: {schema: {$ref: "#/components/schemas/SocialProfile"}}}}
+        "400": {$ref: "#/components/responses/Error"}
+        "401": {$ref: "#/components/responses/Error"}
+  /v1/social/friends:
+    get:
+      operationId: socialFriends
+      security: [{bearer: []}]
+      responses:
+        "200":
+          description: friends, oldest first
+          content: {application/json: {schema: {type: object, required: [friends], properties: {friends: {type: array, items: {$ref: "#/components/schemas/SocialFriend"}}}}}}
+        "401": {$ref: "#/components/responses/Error"}
+    post:
+      operationId: socialAddFriend
+      security: [{bearer: []}]
+      requestBody:
+        required: true
+        content: {application/json: {schema: {type: object, required: [code], properties: {code: {type: string, maxLength: 32}}}}}
+      responses:
+        "200": {description: friends now (idempotent), content: {application/json: {schema: {$ref: "#/components/schemas/SocialFriend"}}}}
+        "400": {$ref: "#/components/responses/Error"}
+        "401": {$ref: "#/components/responses/Error"}
+        "404": {$ref: "#/components/responses/Error"}
+        "409": {$ref: "#/components/responses/Error"}
+        "429": {$ref: "#/components/responses/Error"}
+  /v1/social/friends/{code}:
+    delete:
+      operationId: socialRemoveFriend
+      security: [{bearer: []}]
+      parameters:
+        - {name: code, in: path, required: true, schema: {type: string}}
+      responses:
+        "204": {description: no longer friends}
+        "401": {$ref: "#/components/responses/Error"}
+  /v1/social/vibes:
+    get:
+      operationId: socialVibes
+      security: [{bearer: []}]
+      responses:
+        "200":
+          description: vibes received in the last 30 days, newest first
+          content: {application/json: {schema: {type: object, required: [vibes], properties: {vibes: {type: array, items: {$ref: "#/components/schemas/SocialVibe"}}}}}}
+        "401": {$ref: "#/components/responses/Error"}
+    post:
+      operationId: socialSendVibe
+      security: [{bearer: []}]
+      requestBody:
+        required: true
+        content: {application/json: {schema: {type: object, required: [to, kind], properties: {to: {type: string}, kind: {type: string, enum: [hug, sun, tea, cheer, star]}}}}}
+      responses:
+        "204": {description: sent}
+        "400": {$ref: "#/components/responses/Error"}
+        "401": {$ref: "#/components/responses/Error"}
+        "403": {$ref: "#/components/responses/Error"}
+        "404": {$ref: "#/components/responses/Error"}
+        "409": {$ref: "#/components/responses/Error"}
+  /v1/social/vibes/read:
+    post:
+      operationId: socialReadVibes
+      security: [{bearer: []}]
+      responses:
+        "204": {description: all received vibes are read}
+        "401": {$ref: "#/components/responses/Error"}
   /v1/support/conversation:
     get:
       operationId: supportConversation
@@ -632,6 +719,36 @@ components:
       description: error
       content: {application/json: {schema: {$ref: "#/components/schemas/Error"}}}
   schemas:
+    SocialProfile:
+      type: object
+      required: [friend_code, nickname, cat_name, cat_fur, cat_stage, cat_hue]
+      properties:
+        friend_code: {type: string}
+        nickname: {type: string}
+        cat_name: {type: string}
+        cat_fur: {type: string}
+        cat_stage: {type: string}
+        cat_hue: {type: integer}
+    SocialFriend:
+      allOf:
+        - {$ref: "#/components/schemas/SocialProfile"}
+        - type: object
+          required: [since, vibed_today]
+          properties:
+            since: {type: string, format: date-time}
+            vibed_today: {type: boolean}
+    SocialVibe:
+      type: object
+      required: [id, kind, from_code, from_nickname, from_cat_name, sent_at, read_at, unread]
+      properties:
+        id: {type: string, format: uuid}
+        kind: {type: string}
+        from_code: {type: string}
+        from_nickname: {type: string}
+        from_cat_name: {type: string}
+        sent_at: {type: string, format: date-time}
+        read_at: {type: string, format: date-time, nullable: true}
+        unread: {type: boolean}
     Session:
       type: object
       required: [user_id, access_token, access_expires_at, refresh_token]
@@ -648,7 +765,7 @@ components:
           type: object
           required: [code, message, request_id]
           properties:
-            code: {type: string, enum: [INVALID_INPUT, UNAUTHENTICATED, TOKEN_INVALID, TOKEN_REUSED, FORBIDDEN, NOT_FOUND, TRIAL_ALREADY_USED, TRIAL_DISABLED, PURCHASE_ALREADY_CLAIMED, PURCHASE_INVALID, PAYLOAD_TOO_LARGE, BACKUP_TOO_LARGE, RATE_LIMITED, UPGRADE_REQUIRED, MARKET_UNAVAILABLE, INTERNAL, PHONE_INVALID, OTP_INVALID, OTP_EXPIRED, SMS_UNAVAILABLE, SUPPORT_DISABLED]}
+            code: {type: string, enum: [INVALID_INPUT, UNAUTHENTICATED, TOKEN_INVALID, TOKEN_REUSED, FORBIDDEN, NOT_FOUND, TRIAL_ALREADY_USED, TRIAL_DISABLED, PURCHASE_ALREADY_CLAIMED, PURCHASE_INVALID, PAYLOAD_TOO_LARGE, BACKUP_TOO_LARGE, RATE_LIMITED, UPGRADE_REQUIRED, MARKET_UNAVAILABLE, INTERNAL, PHONE_INVALID, OTP_INVALID, OTP_EXPIRED, SMS_UNAVAILABLE, SUPPORT_DISABLED, FRIEND_CODE_INVALID, FRIEND_LIMIT, VIBE_ALREADY_SENT]}
             message: {type: string}
             request_id: {type: string}
     EntitlementState:

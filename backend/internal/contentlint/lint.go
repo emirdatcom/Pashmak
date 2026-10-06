@@ -255,6 +255,14 @@ func Run(dir string) ([]Issue, error) {
 			}
 		}
 		ex := toSet(canonicalIDs["exercises"])
+		var exList []map[string]any
+		if p, ok := packs["exercises"]; ok && json.Unmarshal(p.Entries, &exList) == nil {
+			for _, e := range exList {
+				if k, ok := e["key"].(string); ok {
+					ex[k] = true
+				}
+			}
+		}
 		for _, e := range cfg.Limits.FreeExercises {
 			if !ex[e] {
 				issues = append(issues, Issue{"config/default.json", "limits.free_exercises", "unknown exercise " + e})

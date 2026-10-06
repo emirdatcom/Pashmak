@@ -32,6 +32,9 @@ const (
 	CodeOTPExpired        Code = "OTP_EXPIRED"
 	CodeSMSUnavailable    Code = "SMS_UNAVAILABLE"
 	CodeSupportDisabled   Code = "SUPPORT_DISABLED"
+	CodeFriendCodeInvalid Code = "FRIEND_CODE_INVALID"
+	CodeFriendLimit       Code = "FRIEND_LIMIT"
+	CodeVibeAlreadySent   Code = "VIBE_ALREADY_SENT"
 )
 
 // Status maps every API code to its HTTP status.
@@ -57,6 +60,9 @@ var Status = map[Code]int{
 	CodeOTPExpired:        http.StatusBadRequest,
 	CodeSMSUnavailable:    http.StatusServiceUnavailable,
 	CodeSupportDisabled:   http.StatusServiceUnavailable,
+	CodeFriendCodeInvalid: http.StatusNotFound,
+	CodeFriendLimit:       http.StatusConflict,
+	CodeVibeAlreadySent:   http.StatusConflict,
 }
 
 // Error is a domain error carrying an API code. Services return these (or wrap them with %w).
