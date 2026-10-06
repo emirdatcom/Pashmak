@@ -33,13 +33,17 @@ class CatVisualState {
     this.fur = CatFur.orangeCream,
     this.faceOnly = false,
     this.worn = const [],
+    this.hue = 0,
   });
+
+  /// Fur tint from the colour studio, in degrees (0 = the fur's own colour).
+  final int hue;
 
   /// Clothes drawn on the layered cat (see [WornItem]).
   final List<WornItem> worn;
 
-  CatVisualState copyWith({List<WornItem>? worn}) =>
-      CatVisualState(mood: mood, accessories: accessories, background: background, activity: activity, stage: stage, fur: fur, faceOnly: faceOnly, worn: worn ?? this.worn);
+  CatVisualState copyWith({List<WornItem>? worn, int? hue}) =>
+      CatVisualState(mood: mood, accessories: accessories, background: background, activity: activity, stage: stage, fur: fur, faceOnly: faceOnly, worn: worn ?? this.worn, hue: hue ?? this.hue);
   final CatStage stage;
   final CatFur fur;
 

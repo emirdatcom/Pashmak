@@ -33,6 +33,7 @@ class Routes {
   static String exercisesTab(String tab) => '/exercises?tab=$tab';
   static const exercises = '/exercises';
   static const sounds = '/sounds';
+  static const friends = '/friends';
   static const journal = '/journal';
   static const journeys = '/journeys';
   static String journey(String key) => '/journeys/$key';

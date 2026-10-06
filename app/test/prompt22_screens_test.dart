@@ -25,9 +25,25 @@ import 'package:pashmak_app/features/journeys/presentation/journey_screens.dart'
 import 'package:pashmak_app/features/settings/presentation/info_screens.dart';
 import 'package:pashmak_app/features/settings/presentation/settings_screens.dart';
 import 'package:pashmak_app/features/sounds/presentation/sounds_screen.dart';
+import 'package:pashmak_app/features/social/domain/social.dart';
+import 'package:pashmak_app/features/social/presentation/friends_screen.dart';
 import 'package:pashmak_app/features/shop/presentation/shop_screens.dart';
 
 import 'helpers.dart';
+
+const _p = SocialProfile(code: 'ABCD2345', nickname: 'سارا', catName: 'پشمک', fur: 'smokeGray', stage: 'young');
+final _socialSnapshot = SocialSnapshot(me: _p, friends: [
+  Friend(profile: _p, since: DateTime(2026, 10, 1), vibedToday: false),
+  Friend(profile: const SocialProfile(code: 'QWER7890', nickname: '', catName: 'یه گربه با اسم خیلی خیلی بلند', fur: 'tricolor', stage: 'adult'), since: DateTime(2026, 10, 2), vibedToday: true),
+], vibes: [
+  ReceivedVibe(id: 'v1', kind: 'tea', fromCode: 'ABCD2345', fromNickname: 'سارا', fromCatName: 'پشمک', sentAt: DateTime(2026, 10, 5), unread: true),
+]);
+
+class _OfflineSocial extends SocialService {
+  _OfflineSocial(ApiHarness h) : super(h.db, h.api, defaultCatName: 'پشمک', stage: () => 'kitten');
+  @override
+  Future<void> markRead() async {}
+}
 
 /// Every redesigned screen builds without overflow at text scale 1.0 and 1.3 (docs/22 acceptance), in RTL.
 void main() {
@@ -62,6 +78,7 @@ void main() {
     'journeys': const JourneysScreen(),
     'journey': const JourneyScreen(journeyKey: 'calm_start'),
     'assessment phq9': const AssessmentRunScreen(assessmentKey: 'phq9'),
+    'friends': const FriendsScreen(),
   };
 
   for (final scale in [1.0, 1.3]) {
@@ -93,6 +110,8 @@ void main() {
           appVersionProvider.overrideWithValue('1.0.0'),
           tickProvider.overrideWith((ref) => Stream.value(h.clock.now())),
           analyticsProvider.overrideWithValue(const NoopAnalytics()),
+          socialServiceProvider.overrideWithValue(_OfflineSocial(h)),
+          socialSnapshotProvider.overrideWith((ref) async => _socialSnapshot),
         ]);
         addTearDown(c.dispose);
         // data so lists are not empty

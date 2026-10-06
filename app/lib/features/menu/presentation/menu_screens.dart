@@ -24,6 +24,7 @@ class MenuScreen extends ConsumerWidget {
     final user = ref.watch(catProfileProvider).value?.userName ?? '';
     final premium = ref.watch(premiumProvider);
     final tiles = [
+      ('menu.friends', Icons.people_alt_rounded, Routes.friends, false),
       ('menu.activities', Icons.self_improvement, Routes.exercises, false),
       ('menu.sounds', Icons.graphic_eq_rounded, Routes.sounds, false),
       ('menu.journeys', Icons.route_rounded, Routes.journeys, false),
